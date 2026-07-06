@@ -1,13 +1,32 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
+const path = require('path');
+const fs = require('fs');
 
 const app = express();
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
+const HOST = process.env.HOST || '0.0.0.0';
 const SECRET = 'hengwei-mock-secret-2024';
 
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
+
+// ============ 静态资源托管（前端构建产物）============
+const DIST_DIR = path.join(__dirname, '..', 'frontend', 'dist');
+if (fs.existsSync(DIST_DIR)) {
+  app.use(express.static(DIST_DIR));
+}
+
+// ============ /api/v1 -> /v1 路径重写（兼容前端 baseURL）============
+app.use((req, res, next) => {
+  if (req.url.startsWith('/api/v1/')) {
+    req.url = req.url.replace('/api/v1/', '/v1/');
+  } else if (req.url === '/api/v1') {
+    req.url = '/v1';
+  }
+  next();
+});
 
 // ============ Response wrapper middleware ============
 app.use((req, res, next) => {
@@ -605,6 +624,20 @@ app.get('/v1/dashboard/summary', auth, (req, res) => {
 // ============ Health check ============
 app.get('/health', (req, res) => res.json({ status: 'ok', modules: Object.keys(modules).length }));
 
+// ============ SPA 路由回退：非 API 请求返回 index.html ============
+const INDEX_HTML = fs.existsSync(path.join(DIST_DIR, 'index.html'))
+  ? path.join(DIST_DIR, 'index.html')
+  : null;
+app.use((req, res, next) => {
+  // API 请求（/v1 或 /api/v1）未命中则交给后续 404
+  if (req.url.startsWith('/v1/') || req.url.startsWith('/api/')) return next();
+  // 已存在的静态资源由 express.static 处理，未命中的 GET 文本请求回退到 SPA
+  if (req.method === 'GET' && INDEX_HTML) {
+    return res.sendFile(INDEX_HTML);
+  }
+  next();
+});
+
 // ============ Fallback ============
 app.use((req, res) => {
   res.status(404).json({ code: 404, message: `Not Found: ${req.method} ${req.url}`, data: null });
@@ -615,7 +648,8 @@ app.use((err, req, res, next) => {
   res.status(500).json({ code: 500, message: err.message, data: null });
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Mock server running on http://localhost:${PORT}`);
+app.listen(PORT, HOST, () => {
+  console.log(`Mock server running on http://${HOST}:${PORT}`);
   console.log(`Modules registered: ${Object.keys(modules).length}`);
+  if (INDEX_HTML) console.log(`Frontend dist served from: ${DIST_DIR}`);
 });
