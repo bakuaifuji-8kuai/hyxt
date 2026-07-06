@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Button, Table, Modal, Form, Input, InputNumber, Select, Space, Popconfirm, message, Card } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
-import { fetchList, createItem, updateItem, deleteItem, toggleStatus } from '../services/request';
+import { fetchListData, createItemData, updateItemData, deleteItemData, toggleStatusData } from '../services/request';
 import { getModule } from '../services/modules';
 import type { FieldConfig } from '../services/modules';
 import FeatureDescription from '../components/FeatureDescription';
@@ -23,7 +23,7 @@ export default function GenericCRUD({ moduleKey }: { moduleKey: string }) {
     if (!module) return;
     setLoading(true);
     try {
-      const res: any = await fetchList(module.path, { page, pageSize, keyword: searchKeyword || undefined });
+      const res: any = await fetchListData(module.path, { page, pageSize, keyword: searchKeyword || undefined });
       const list = res?.list ?? res ?? [];
       setData(list);
       setTotal(res?.total ?? list.length);
@@ -43,7 +43,6 @@ export default function GenericCRUD({ moduleKey }: { moduleKey: string }) {
   const handleAdd = () => {
     setEditId(null);
     form.resetFields();
-    // set default status
     form.setFieldsValue({ status: 'enabled' });
     setModalOpen(true);
   };
@@ -56,7 +55,7 @@ export default function GenericCRUD({ moduleKey }: { moduleKey: string }) {
 
   const handleDelete = async (id: number) => {
     try {
-      await deleteItem(module.path, id);
+      await deleteItemData(module.path, id);
       message.success('删除成功');
       loadData();
     } catch (e: any) {
@@ -68,23 +67,23 @@ export default function GenericCRUD({ moduleKey }: { moduleKey: string }) {
     try {
       const values = await form.validateFields();
       if (editId != null) {
-        await updateItem(module.path, editId, values);
+        await updateItemData(module.path, editId, values);
         message.success('编辑成功');
       } else {
-        await createItem(module.path, values);
+        await createItemData(module.path, values);
         message.success('新增成功');
       }
       setModalOpen(false);
       loadData();
     } catch (e: any) {
-      if (e?.errorFields) return; // validation error, ignore
+      if (e?.errorFields) return;
       message.error(e.message || '操作失败');
     }
   };
 
   const handleToggle = async (id: number) => {
     try {
-      await toggleStatus(module.path, id);
+      await toggleStatusData(module.path, id);
       message.success('状态已切换');
       loadData();
     } catch (e: any) {

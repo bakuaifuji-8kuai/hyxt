@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Card, Col, Row, Statistic, message } from 'antd';
-import { fetchDashboard } from '../services/request';
+import { fetchDashboardSummary } from '../services/request';
 
 export default function Dashboard() {
   const [stats, setStats] = useState<any>({});
 
   useEffect(() => {
-    fetchDashboard().then((res: any) => setStats(res || {})).catch((e) => message.error(e.message));
+    fetchDashboardSummary().then((res: any) => setStats(res || {})).catch((e) => message.error(e.message));
   }, []);
 
   return (

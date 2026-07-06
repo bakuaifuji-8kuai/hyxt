@@ -11,6 +11,7 @@ import {
   BarChartOutlined
 } from '@ant-design/icons';
 import { getMenuTree } from './services/modules';
+import { isAuthenticated, handleLogout } from './services/request';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import GenericCRUD from './pages/GenericCRUD';
@@ -51,8 +52,7 @@ export default function App() {
   const { token: themeToken } = theme.useToken();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    setAuthed(!!token);
+    setAuthed(isAuthenticated());
   }, [location.pathname]);
 
   if (!authed && !location.pathname.startsWith('/login')) {
@@ -82,7 +82,6 @@ export default function App() {
   ];
 
   const selectedKeys = [location.pathname];
-  // open the group containing current module
   const openKeys: string[] = [];
   for (const g of menuTree) {
     if (g.items.some((m) => location.pathname === `/m/${m.key}`)) {
@@ -92,8 +91,8 @@ export default function App() {
 
   const userInfo = (() => { try { return JSON.parse(localStorage.getItem('userInfo') || '{}'); } catch { return {}; } })();
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
+  const handleLogoutClick = () => {
+    handleLogout();
     localStorage.removeItem('userInfo');
     navigate('/login');
   };
@@ -118,7 +117,7 @@ export default function App() {
             <span style={{ fontWeight: 600 }}>恒伟智慧商业会员营销平台</span>
           </Space>
           <Dropdown menu={{ items: [
-            { key: 'logout', icon: <LogoutOutlined />, label: '退出登录', onClick: handleLogout }
+            { key: 'logout', icon: <LogoutOutlined />, label: '退出登录', onClick: handleLogoutClick }
           ] }}>
             <Space style={{ cursor: 'pointer' }}>
               <Avatar icon={<UserOutlined />} />
