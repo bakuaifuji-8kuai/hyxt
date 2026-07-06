@@ -75,6 +75,15 @@ export const MODULES: ModuleConfig[] = [
     fields: [
       { name: 'name', label: '姓名', type: 'text', required: true },
       { name: 'phone', label: '手机号', type: 'text', required: true },
+      { name: 'gender', label: '性别', type: 'select', options: [
+        { label: '男', value: 'male' }, { label: '女', value: 'female' }, { label: '保密', value: 'unknown' }
+      ] },
+      { name: 'birthday', label: '生日', type: 'text' },
+      { name: 'age', label: '年龄', type: 'number' },
+      { name: 'address', label: '家庭住址', type: 'text' },
+      { name: 'occupation', label: '职业', type: 'text' },
+      { name: 'hobby', label: '爱好', type: 'text' },
+      { name: 'email', label: '电子邮箱', type: 'text' },
       { name: 'level', label: '会员等级', type: 'select', options: [
         { label: '普通会员', value: 'NORMAL' }, { label: '银卡会员', value: 'SILVER' },
         { label: '金卡会员', value: 'GOLD' }, { label: '钻石会员', value: 'DIAMOND' }
@@ -83,8 +92,8 @@ export const MODULES: ModuleConfig[] = [
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
     doc: {
-      overview: '会员档案管理，记录会员基本信息、等级、积分等。是会员营销的基础数据。',
-      features: ['新增/编辑/删除会员', '查看会员积分余额', '管理会员等级', '启用/禁用会员'],
+      overview: '会员档案管理，记录会员基本信息、等级、积分、生日、地址、职业、爱好等，是会员营销和画像的基础数据。',
+      features: ['新增/编辑/删除会员', '完善会员资料', '查看会员积分余额', '管理会员等级', '启用/禁用会员'],
       tips: ['手机号作为会员唯一标识', '删除会员不影响历史订单记录']
     }
   },
@@ -869,6 +878,706 @@ export const MODULES: ModuleConfig[] = [
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
     doc: { overview: '分析报表管理，配置各类经营分析报表。', features: ['新增/编辑/删除报表', '多维度分析'] }
+  },
+  {
+    key: 'analytics-overview', path: 'analytics/overview', name: '数据总览', category: '数据中心',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '指标名称', dataIndex: 'name' },
+      { title: '指标值', dataIndex: 'value' },
+      { title: '环比', dataIndex: 'mom' },
+      { title: '统计周期', dataIndex: 'period' }
+    ],
+    fields: [
+      { name: 'name', label: '指标名称', type: 'text', required: true },
+      { name: 'value', label: '指标值', type: 'number' },
+      { name: 'mom', label: '环比', type: 'text' },
+      { name: 'period', label: '统计周期', type: 'text' }
+    ],
+    doc: { overview: '平台核心运营数据总览，包含会员数、订单数、销售额、积分发放等关键指标。', features: ['新增/编辑/删除指标', '查看核心运营数据'] }
+  },
+  // ===== 会员数字化（补充）=====
+  {
+    key: 'member-benefits', path: 'member/benefits', name: '会员权益', category: '会员数字化',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '权益名称', dataIndex: 'name' },
+      { title: '适用等级', dataIndex: 'levels' },
+      { title: '权益类型', dataIndex: 'type', render: (v) => ({ discount: '折扣', points: '积分倍率', parking: '停车', service: '服务', gift: '礼品' }[v] || v) },
+      { title: '权益值', dataIndex: 'value' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '权益名称', type: 'text', required: true },
+      { name: 'levels', label: '适用等级', type: 'text' },
+      { name: 'type', label: '权益类型', type: 'select', options: [
+        { label: '折扣', value: 'discount' }, { label: '积分倍率', value: 'points' }, { label: '停车', value: 'parking' }, { label: '服务', value: 'service' }, { label: '礼品', value: 'gift' }
+      ] },
+      { name: 'value', label: '权益值', type: 'text' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '会员权益管理，为不同等级会员配置差异化权益，用于小程序展示。', features: ['新增/编辑/删除权益', '按等级配置权益', '权益类型多样化'] }
+  },
+  {
+    key: 'member-profiles', path: 'member/profiles', name: '会员画像', category: '会员数字化',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '会员', dataIndex: 'member' },
+      { title: '标签', dataIndex: 'tags' },
+      { title: '消费偏好', dataIndex: 'consumeTag' },
+      { title: '品牌偏好', dataIndex: 'brandTag' },
+      { title: '积分偏好', dataIndex: 'pointsTag' },
+      { title: '最近活跃', dataIndex: 'lastActive' }
+    ],
+    fields: [
+      { name: 'member', label: '会员', type: 'text', required: true },
+      { name: 'tags', label: '标签', type: 'text' },
+      { name: 'consumeTag', label: '消费偏好', type: 'text' },
+      { name: 'brandTag', label: '品牌偏好', type: 'text' },
+      { name: 'pointsTag', label: '积分偏好', type: 'text' },
+      { name: 'lastActive', label: '最近活跃', type: 'text' }
+    ],
+    doc: { overview: '会员 360 画像，汇总会员消费、互动、品牌、积分等多维标签，为精准营销提供数据支撑。', features: ['新增/编辑/删除画像', '多维标签管理', '消费偏好分析'] }
+  },
+  {
+    key: 'member-tag-relations', path: 'member/tag-relations', name: '会员打标签', category: '会员数字化',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '会员', dataIndex: 'member' },
+      { title: '标签', dataIndex: 'tag' },
+      { title: '打标方式', dataIndex: 'source', render: (v) => ({ manual: '手动', auto: '自动' }[v] || v) },
+      { title: '时间', dataIndex: 'time' }
+    ],
+    fields: [
+      { name: 'member', label: '会员', type: 'text', required: true },
+      { name: 'tag', label: '标签', type: 'text', required: true },
+      { name: 'source', label: '打标方式', type: 'select', options: [
+        { label: '手动', value: 'manual' }, { label: '自动', value: 'auto' }
+      ] },
+      { name: 'time', label: '时间', type: 'text' }
+    ],
+    doc: { overview: '会员与标签的关联管理，支持手动打标和规则自动打标。', features: ['新增/编辑/删除标签关系', '手动/自动打标'] }
+  },
+  // ===== 积分中心（补充）=====
+  {
+    key: 'points-mall-orders', path: 'points/mall-orders', name: '积分商城订单', category: '积分中心',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '订单号', dataIndex: 'orderNo' },
+      { title: '会员', dataIndex: 'member' },
+      { title: '商品', dataIndex: 'goods' },
+      { title: '消耗积分', dataIndex: 'points' },
+      { title: '提货方式', dataIndex: 'delivery', render: (v) => ({ self: '自提', express: '邮寄' }[v] || v) },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ pending: '待发货', shipped: '已发货', done: '已完成', cancelled: '已取消' }[v] || v) }
+    ],
+    fields: [
+      { name: 'orderNo', label: '订单号', type: 'text', required: true },
+      { name: 'member', label: '会员', type: 'text', required: true },
+      { name: 'goods', label: '商品', type: 'text' },
+      { name: 'points', label: '消耗积分', type: 'number' },
+      { name: 'delivery', label: '提货方式', type: 'select', options: [
+        { label: '自提', value: 'self' }, { label: '邮寄', value: 'express' }
+      ] },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '待发货', value: 'pending' }, { label: '已发货', value: 'shipped' }, { label: '已完成', value: 'done' }, { label: '已取消', value: 'cancelled' }
+      ] }
+    ],
+    doc: { overview: '积分商城兑换订单管理，支持自提和邮寄两种履约方式。', features: ['新增/编辑/删除积分商城订单', '自提/邮寄管理', '订单状态流转'] }
+  },
+  // ===== 智慧停车（补充）=====
+  {
+    key: 'parking-lots', path: 'parking/lots', name: '停车场管理', category: '智慧停车',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '停车场名称', dataIndex: 'name' },
+      { title: '所属项目', dataIndex: 'project' },
+      { title: '总车位', dataIndex: 'totalSpaces' },
+      { title: '空闲车位', dataIndex: 'availableSpaces' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '停车场名称', type: 'text', required: true },
+      { name: 'project', label: '所属项目', type: 'text' },
+      { name: 'totalSpaces', label: '总车位', type: 'number' },
+      { name: 'availableSpaces', label: '空闲车位', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '停车场基础信息管理，配置项目名称、车位数量、空闲车位等。', features: ['新增/编辑/删除停车场', '车位数量管理'] }
+  },
+  {
+    key: 'parking-rules', path: 'parking/rules', name: '停车计费规则', category: '智慧停车',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '规则名称', dataIndex: 'name' },
+      { title: '免费时长(分)', dataIndex: 'freeMinutes' },
+      { title: '单价(元/小时)', dataIndex: 'pricePerHour' },
+      { title: '封顶金额', dataIndex: 'capAmount' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '规则名称', type: 'text', required: true },
+      { name: 'freeMinutes', label: '免费时长(分钟)', type: 'number' },
+      { name: 'pricePerHour', label: '单价(元/小时)', type: 'number' },
+      { name: 'capAmount', label: '封顶金额', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '停车计费规则配置，支持免费时长、按时计费、封顶金额等策略。', features: ['新增/编辑/删除计费规则', '差异化计费策略'] }
+  },
+  // ===== 商户营销（补充）=====
+  {
+    key: 'merchant-verification', path: 'merchant/verification', name: '商户核销统计', category: '商户营销',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '商户', dataIndex: 'merchant' },
+      { title: '核销类型', dataIndex: 'type' },
+      { title: '核销数量', dataIndex: 'count' },
+      { title: '核销金额', dataIndex: 'amount' },
+      { title: '统计日期', dataIndex: 'date' }
+    ],
+    fields: [
+      { name: 'merchant', label: '商户', type: 'text', required: true },
+      { name: 'type', label: '核销类型', type: 'select', options: [
+        { label: '优惠券', value: 'coupon' }, { label: '积分商品', value: 'points' }, { label: '商城订单', value: 'shop' }, { label: '活动报名', value: 'activity' }
+      ] },
+      { name: 'count', label: '核销数量', type: 'number' },
+      { name: 'amount', label: '核销金额', type: 'number' },
+      { name: 'date', label: '统计日期', type: 'text' }
+    ],
+    doc: { overview: '商户核销数据统计，汇总各商户的券、积分商品、商城订单等核销情况。', features: ['新增/编辑/删除核销统计', '多类型核销汇总'] }
+  },
+  {
+    key: 'merchant-coupon-issue', path: 'merchant/coupon-issue', name: '商户发券', category: '商户营销',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '商户', dataIndex: 'merchant' },
+      { title: '券模板', dataIndex: 'template' },
+      { title: '发放会员', dataIndex: 'member' },
+      { title: '数量', dataIndex: 'count' },
+      { title: '时间', dataIndex: 'time' }
+    ],
+    fields: [
+      { name: 'merchant', label: '商户', type: 'text', required: true },
+      { name: 'template', label: '券模板', type: 'text' },
+      { name: 'member', label: '发放会员', type: 'text' },
+      { name: 'count', label: '数量', type: 'number' },
+      { name: 'time', label: '时间', type: 'text' }
+    ],
+    doc: { overview: '商户在商户助手小程序上向会员发放优惠券/停车券的记录管理。', features: ['新增/编辑/删除发券记录', '单个/批量发放'] }
+  },
+  // ===== 在线商城（补充）=====
+  {
+    key: 'shop-home-config', path: 'shop/home-config', name: '商城首页配置', category: '在线商城',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '配置名称', dataIndex: 'name' },
+      { title: '页面类型', dataIndex: 'pageType', render: (v) => ({ home: '商场首页', category: '分类页', custom: '自定义页' }[v] || v) },
+      { title: '组件配置', dataIndex: 'components' },
+      { title: '排序', dataIndex: 'sort' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '配置名称', type: 'text', required: true },
+      { name: 'pageType', label: '页面类型', type: 'select', options: [
+        { label: '商场首页', value: 'home' }, { label: '分类页', value: 'category' }, { label: '自定义页', value: 'custom' }
+      ] },
+      { name: 'components', label: '组件配置(JSON)', type: 'textarea' },
+      { name: 'sort', label: '排序', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '小程序线上商城首页配置，支持门店切换、搜索、广告轮播、分类导购、促销活动、推荐商品、底部菜单等组件。', features: ['新增/编辑/删除首页配置', '可视化组件配置', '页面启停管理'] }
+  },
+  {
+    key: 'shop-bottom-menu', path: 'shop/bottom-menu', name: '商城底部菜单', category: '在线商城',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '菜单名称', dataIndex: 'name' },
+      { title: '图标', dataIndex: 'icon' },
+      { title: '链接', dataIndex: 'link' },
+      { title: '排序', dataIndex: 'sort' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '菜单名称', type: 'text', required: true },
+      { name: 'icon', label: '图标', type: 'text' },
+      { name: 'link', label: '链接', type: 'text' },
+      { name: 'sort', label: '排序', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '小程序线上商城底部导航菜单配置，控制小程序底部tab的菜单名称、图标、跳转链接、排序及显隐。', features: ['新增/编辑/删除底部菜单', '配置图标与跳转链接', '排序管理'] }
+  },
+  {
+    key: 'shop-brands', path: 'shop/brands', name: '品牌管理', category: '在线商城',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '品牌名称', dataIndex: 'name' },
+      { title: 'LOGO', dataIndex: 'logo' },
+      { title: '分类', dataIndex: 'category' },
+      { title: '联系电话', dataIndex: 'phone' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '品牌名称', type: 'text', required: true },
+      { name: 'logo', label: 'LOGO地址', type: 'text' },
+      { name: 'category', label: '分类', type: 'text' },
+      { name: 'phone', label: '联系电话', type: 'text' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '在线商城品牌管理，维护品牌 LOGO、形象、电话、在售商品等信息，用于品牌导览。', features: ['新增/编辑/删除品牌', '品牌分类管理'] }
+  },
+  {
+    key: 'shop-returns', path: 'shop/returns', name: '订单退货', category: '在线商城',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '退货单号', dataIndex: 'returnNo' },
+      { title: '原订单号', dataIndex: 'orderNo' },
+      { title: '会员', dataIndex: 'member' },
+      { title: '退款金额', dataIndex: 'amount' },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ pending: '待审核', approved: '已通过', rejected: '已拒绝', refunded: '已退款' }[v] || v) },
+      { title: '申请时间', dataIndex: 'time' }
+    ],
+    fields: [
+      { name: 'returnNo', label: '退货单号', type: 'text', required: true },
+      { name: 'orderNo', label: '原订单号', type: 'text', required: true },
+      { name: 'member', label: '会员', type: 'text' },
+      { name: 'amount', label: '退款金额', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '待审核', value: 'pending' }, { label: '已通过', value: 'approved' }, { label: '已拒绝', value: 'rejected' }, { label: '已退款', value: 'refunded' }
+      ] },
+      { name: 'time', label: '申请时间', type: 'text' }
+    ],
+    doc: { overview: '线上商城订单退货/退款管理，会员发起退款后，后台审核并原路退回。', features: ['新增/编辑/删除退货单', '退款审核', '状态流转'] }
+  },
+  // ===== 营销中心（补充）=====
+  {
+    key: 'activity-signups', path: 'activity/signups', name: '活动报名', category: '营销中心',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '活动名称', dataIndex: 'name' },
+      { title: '报名时间', dataIndex: 'signupTime' },
+      { title: '会员', dataIndex: 'member' },
+      { title: '人数', dataIndex: 'count' },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ pending: '待签到', checked: '已签到', cancelled: '已取消' }[v] || v) }
+    ],
+    fields: [
+      { name: 'name', label: '活动名称', type: 'text', required: true },
+      { name: 'signupTime', label: '报名时间', type: 'text' },
+      { name: 'member', label: '会员', type: 'text' },
+      { name: 'count', label: '人数', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '待签到', value: 'pending' }, { label: '已签到', value: 'checked' }, { label: '已取消', value: 'cancelled' }
+      ] }
+    ],
+    doc: { overview: '活动报名管理，会员在小程序报名商场活动，后台管理报名列表和签到。', features: ['新增/编辑/删除报名', '报名签到管理'] }
+  },
+  {
+    key: 'checkin-activities', path: 'activity/checkin', name: '签到活动', category: '营销中心',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '活动名称', dataIndex: 'name' },
+      { title: '奖励类型', dataIndex: 'rewardType', render: (v) => ({ points: '积分', coupon: '优惠券', parking: '停车券' }[v] || v) },
+      { title: '奖励值', dataIndex: 'rewardValue' },
+      { title: '周期', dataIndex: 'period', render: (v) => ({ daily: '每日', weekly: '每周', monthly: '每月' }[v] || v) },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '活动名称', type: 'text', required: true },
+      { name: 'rewardType', label: '奖励类型', type: 'select', options: [
+        { label: '积分', value: 'points' }, { label: '优惠券', value: 'coupon' }, { label: '停车券', value: 'parking' }
+      ] },
+      { name: 'rewardValue', label: '奖励值', type: 'text' },
+      { name: 'period', label: '周期', type: 'select', options: [
+        { label: '每日', value: 'daily' }, { label: '每周', value: 'weekly' }, { label: '每月', value: 'monthly' }
+      ] },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '会员签到活动配置，支持积分、优惠券、停车券等奖励，培养会员活跃习惯。', features: ['新增/编辑/删除签到活动', '多种奖励配置'] }
+  },
+  {
+    key: 'referral-gifts', path: 'marketing/referral', name: '推荐有礼', category: '营销中心',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '活动名称', dataIndex: 'name' },
+      { title: '推荐人奖励', dataIndex: 'referrerReward' },
+      { title: '被邀人奖励', dataIndex: 'inviteeReward' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '活动名称', type: 'text', required: true },
+      { name: 'referrerReward', label: '推荐人奖励', type: 'text' },
+      { name: 'inviteeReward', label: '被邀人奖励', type: 'text' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '推荐有礼活动，老会员分享推荐码，新会员注册后双方获得积分、优惠券或实物奖励。', features: ['新增/编辑/删除活动', '双向奖励配置'] }
+  },
+  {
+    key: 'new-member-gifts', path: 'marketing/new-member', name: '新人礼', category: '营销中心',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '礼包名称', dataIndex: 'name' },
+      { title: '奖励内容', dataIndex: 'rewards' },
+      { title: '有效期(天)', dataIndex: 'validDays' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '礼包名称', type: 'text', required: true },
+      { name: 'rewards', label: '奖励内容', type: 'text' },
+      { name: 'validDays', label: '有效期(天)', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '新会员注册礼包，自动发放停车券、积分、优惠券等新人礼。', features: ['新增/编辑/删除新人礼', '配置奖励内容和有效期'] }
+  },
+  {
+    key: 'help-coupons', path: 'marketing/help-coupon', name: '助力领券', category: '营销中心',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '活动名称', dataIndex: 'name' },
+      { title: '券模板', dataIndex: 'template' },
+      { title: '所需人数', dataIndex: 'needHelp' },
+      { title: '已助力', dataIndex: 'helped' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '活动名称', type: 'text', required: true },
+      { name: 'template', label: '券模板', type: 'text' },
+      { name: 'needHelp', label: '所需助力人数', type: 'number' },
+      { name: 'helped', label: '已助力', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '助力领券活动，会员邀请好友助力，达到人数后以低价或免费获得优惠券。', features: ['新增/编辑/删除活动', '助力人数配置'] }
+  },
+  {
+    key: 'word-coupons', path: 'marketing/word-coupon', name: '口令领券', category: '营销中心',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '活动名称', dataIndex: 'name' },
+      { title: '口令', dataIndex: 'word' },
+      { title: '券模板', dataIndex: 'template' },
+      { title: '已领取', dataIndex: 'claimed' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '活动名称', type: 'text', required: true },
+      { name: 'word', label: '口令', type: 'text', required: true },
+      { name: 'template', label: '券模板', type: 'text' },
+      { name: 'claimed', label: '已领取', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '口令领券活动，会员输入专属口令后领取优惠券，常用于社群运营。', features: ['新增/编辑/删除口令活动', '口令配置'] }
+  },
+  {
+    key: 'games', path: 'marketing/games', name: '游戏互动', category: '营销中心',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '游戏名称', dataIndex: 'name' },
+      { title: '类型', dataIndex: 'type', render: (v) => ({ wheel: '大转盘', slot: '老虎机', redpacket: '抢红包', grid: '九宫格' }[v] || v) },
+      { title: '奖励', dataIndex: 'rewards' },
+      { title: '参与次数', dataIndex: 'plays' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '游戏名称', type: 'text', required: true },
+      { name: 'type', label: '类型', type: 'select', options: [
+        { label: '大转盘', value: 'wheel' }, { label: '老虎机', value: 'slot' }, { label: '抢红包', value: 'redpacket' }, { label: '九宫格', value: 'grid' }
+      ] },
+      { name: 'rewards', label: '奖励配置', type: 'text' },
+      { name: 'plays', label: '参与次数', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '游戏互动营销，支持大转盘、老虎机、抢红包、九宫格等，会员参与可获得积分、停车券、代金券。', features: ['新增/编辑/删除游戏', '多种游戏类型', '奖励配置'] }
+  },
+  {
+    key: 'surveys', path: 'marketing/surveys', name: '调查问卷', category: '营销中心',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '问卷标题', dataIndex: 'title' },
+      { title: '参与人数', dataIndex: 'participants' },
+      { title: '奖励', dataIndex: 'reward' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'title', label: '问卷标题', type: 'text', required: true },
+      { name: 'participants', label: '参与人数', type: 'number' },
+      { name: 'reward', label: '奖励', type: 'text' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '调查问卷功能，与会员互动并收集意见，可配置参与奖励。', features: ['新增/编辑/删除问卷', '参与人数统计'] }
+  },
+  {
+    key: 'votes', path: 'marketing/votes', name: '投票活动', category: '营销中心',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '投票标题', dataIndex: 'title' },
+      { title: '选项', dataIndex: 'options' },
+      { title: '总票数', dataIndex: 'totalVotes' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'title', label: '投票标题', type: 'text', required: true },
+      { name: 'options', label: '选项(JSON)', type: 'textarea' },
+      { name: 'totalVotes', label: '总票数', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '投票活动管理，上传投票素材、发起投票、统计结果，可给参与会员奖励。', features: ['新增/编辑/删除投票', '选项与票数统计'] }
+  },
+  {
+    key: 'countdown-sales', path: 'marketing/countdown', name: '限时购', category: '营销中心',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '活动名称', dataIndex: 'name' },
+      { title: '商品', dataIndex: 'goods' },
+      { title: '活动价', dataIndex: 'price' },
+      { title: '原价', dataIndex: 'originalPrice' },
+      { title: '开始时间', dataIndex: 'startTime' },
+      { title: '结束时间', dataIndex: 'endTime' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '活动名称', type: 'text', required: true },
+      { name: 'goods', label: '商品', type: 'text' },
+      { name: 'price', label: '活动价', type: 'number' },
+      { name: 'originalPrice', label: '原价', type: 'number' },
+      { name: 'startTime', label: '开始时间', type: 'text' },
+      { name: 'endTime', label: '结束时间', type: 'text' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '限时购活动，在指定时间段内以特价销售商品，营造紧迫感。', features: ['新增/编辑/删除限时购', '配置活动时间与价格'] }
+  },
+  {
+    key: 'pre-sales', path: 'marketing/pre-sale', name: '预售', category: '营销中心',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '商品', dataIndex: 'goods' },
+      { title: '定金', dataIndex: 'deposit' },
+      { title: '尾款', dataIndex: 'finalPayment' },
+      { title: '预售时间', dataIndex: 'preTime' },
+      { title: '发货时间', dataIndex: 'deliveryTime' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'goods', label: '商品', type: 'text', required: true },
+      { name: 'deposit', label: '定金', type: 'number' },
+      { name: 'finalPayment', label: '尾款', type: 'number' },
+      { name: 'preTime', label: '预售时间', type: 'text' },
+      { name: 'deliveryTime', label: '发货时间', type: 'text' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '预售活动管理，支持定金+尾款模式，提前锁定销售。', features: ['新增/编辑/删除预售', '定金尾款配置'] }
+  },
+  {
+    key: 'bargain', path: 'marketing/bargain', name: '帮砍价', category: '营销中心',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '活动名称', dataIndex: 'name' },
+      { title: '商品', dataIndex: 'goods' },
+      { title: '原价', dataIndex: 'originalPrice' },
+      { title: '底价', dataIndex: 'floorPrice' },
+      { title: '已发起', dataIndex: 'started' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '活动名称', type: 'text', required: true },
+      { name: 'goods', label: '商品', type: 'text' },
+      { name: 'originalPrice', label: '原价', type: 'number' },
+      { name: 'floorPrice', label: '底价', type: 'number' },
+      { name: 'started', label: '已发起', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '帮砍价活动，会员邀请好友帮忙砍价，砍到低价即可购买。', features: ['新增/编辑/删除砍价活动', '底价配置'] }
+  },
+  {
+    key: 'lucky-draws', path: 'marketing/lucky-draw', name: '众筹抽奖', category: '营销中心',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '活动名称', dataIndex: 'name' },
+      { title: '奖品', dataIndex: 'prize' },
+      { title: '参与人数', dataIndex: 'participants' },
+      { title: '开奖时间', dataIndex: 'drawTime' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '活动名称', type: 'text', required: true },
+      { name: 'prize', label: '奖品', type: 'text' },
+      { name: 'participants', label: '参与人数', type: 'number' },
+      { name: 'drawTime', label: '开奖时间', type: 'text' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '众筹抽奖活动，会员参与众筹达到一定人数后开奖。', features: ['新增/编辑/删除抽奖', '奖品与开奖时间配置'] }
+  },
+  {
+    key: 'blind-boxes', path: 'marketing/blind-box', name: '盲盒活动', category: '营销中心',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '活动名称', dataIndex: 'name' },
+      { title: '价格', dataIndex: 'price' },
+      { title: '奖品池', dataIndex: 'prizes' },
+      { title: '已开盒', dataIndex: 'opened' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '活动名称', type: 'text', required: true },
+      { name: 'price', label: '价格', type: 'number' },
+      { name: 'prizes', label: '奖品池', type: 'text' },
+      { name: 'opened', label: '已开盒', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '盲盒营销活动，会员购买盲盒随机获得奖品，增加趣味性。', features: ['新增/编辑/删除盲盒', '奖品池配置'] }
+  },
+  {
+    key: 'count-cards', path: 'marketing/count-cards', name: '计次卡', category: '营销中心',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '卡名称', dataIndex: 'name' },
+      { title: '可用次数', dataIndex: 'times' },
+      { title: '价格', dataIndex: 'price' },
+      { title: '适用商户', dataIndex: 'merchants' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '卡名称', type: 'text', required: true },
+      { name: 'times', label: '可用次数', type: 'number' },
+      { name: 'price', label: '价格', type: 'number' },
+      { name: 'merchants', label: '适用商户', type: 'text' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '计次卡管理，会员在线购买计次卡，在指定商户消费享受折扣。', features: ['新增/编辑/删除计次卡', '次数与适用商户配置'] }
+  },
+  {
+    key: 'checkin-coupons', path: 'marketing/checkin-coupon', name: '现场打卡领券', category: '营销中心',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '活动名称', dataIndex: 'name' },
+      { title: '打卡位置', dataIndex: 'location' },
+      { title: '券模板', dataIndex: 'template' },
+      { title: '已领取', dataIndex: 'claimed' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '活动名称', type: 'text', required: true },
+      { name: 'location', label: '打卡位置', type: 'text' },
+      { name: 'template', label: '券模板', type: 'text' },
+      { name: 'claimed', label: '已领取', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '现场打卡领券，会员到店扫码打卡后领取优惠券。', features: ['新增/编辑/删除打卡活动', '位置与券模板配置'] }
+  },
+  {
+    key: 'douyin-coupons', path: 'marketing/douyin-coupon', name: '抖音兑换券', category: '营销中心',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '活动名称', dataIndex: 'name' },
+      { title: '抖音券码', dataIndex: 'douyinCode' },
+      { title: '兑换权益', dataIndex: 'reward' },
+      { title: '已兑换', dataIndex: 'exchanged' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '活动名称', type: 'text', required: true },
+      { name: 'douyinCode', label: '抖音券码', type: 'text' },
+      { name: 'reward', label: '兑换权益', type: 'text' },
+      { name: 'exchanged', label: '已兑换', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '抖音兑换券管理，顾客在抖音购买的团购券到小程序兑换，系统自动核销并发放权益。', features: ['新增/编辑/删除抖音券活动', '兑换权益配置'] }
+  },
+  // ===== 地产积分（补充）=====
+  {
+    key: 'property-tasks', path: 'property/tasks', name: '地产积分任务', category: '地产积分',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '任务名称', dataIndex: 'name' },
+      { title: '分类', dataIndex: 'category' },
+      { title: '积分', dataIndex: 'points' },
+      { title: '限制', dataIndex: 'limit' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '任务名称', type: 'text', required: true },
+      { name: 'category', label: '分类', type: 'text' },
+      { name: 'points', label: '积分', type: 'number' },
+      { name: 'limit', label: '限制', type: 'text' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '地产积分任务管理，包括发言建议、朋友圈转发、关注账号、暖场活动、圈层活动、推荐到访、推荐签约、新房置业等任务。', features: ['新增/编辑/删除任务', '积分与限制配置'] }
+  },
+  {
+    key: 'property-activities', path: 'property/activities', name: '地产活动报名', category: '地产积分',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '活动名称', dataIndex: 'name' },
+      { title: '业主', dataIndex: 'owner' },
+      { title: '报名时间', dataIndex: 'time' },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ pending: '待审核', approved: '已通过', checked: '已打卡' }[v] || v) }
+    ],
+    fields: [
+      { name: 'name', label: '活动名称', type: 'text', required: true },
+      { name: 'owner', label: '业主', type: 'text' },
+      { name: 'time', label: '报名时间', type: 'text' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '待审核', value: 'pending' }, { label: '已通过', value: 'approved' }, { label: '已打卡', value: 'checked' }
+      ] }
+    ],
+    doc: { overview: '地产活动报名管理，管理业主活动报名、打卡信息。', features: ['新增/编辑/删除报名', '报名审核与打卡'] }
+  },
+  // ===== 内容管理（补充）=====
+  {
+    key: 'applet-decorations', path: 'content/applet-decoration', name: '小程序装修', category: '内容管理',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '页面名称', dataIndex: 'name' },
+      { title: '页面标识', dataIndex: 'pageKey' },
+      { title: '模板', dataIndex: 'template' },
+      { title: '版本', dataIndex: 'version' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '页面名称', type: 'text', required: true },
+      { name: 'pageKey', label: '页面标识', type: 'text' },
+      { name: 'template', label: '模板配置(JSON)', type: 'textarea' },
+      { name: 'version', label: '版本', type: 'text' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '小程序页面装修，支持可视化组件、预览、多模板切换、热图、历史版本恢复、页面码下载等。', features: ['新增/编辑/删除装修页面', '模板与组件配置', '版本管理'] }
+  },
+  // ===== 系统管理（补充）=====
+  {
+    key: 'operation-logs', path: 'system/logs', name: '操作日志', category: '系统管理',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '操作人', dataIndex: 'operator' },
+      { title: '模块', dataIndex: 'module' },
+      { title: '操作类型', dataIndex: 'action' },
+      { title: 'IP', dataIndex: 'ip' },
+      { title: '时间', dataIndex: 'time' }
+    ],
+    fields: [
+      { name: 'operator', label: '操作人', type: 'text', required: true },
+      { name: 'module', label: '模块', type: 'text' },
+      { name: 'action', label: '操作类型', type: 'text' },
+      { name: 'ip', label: 'IP', type: 'text' },
+      { name: 'time', label: '时间', type: 'text' }
+    ],
+    doc: { overview: '系统操作日志，记录后台用户的增删改查等操作，用于审计和安全追溯。', features: ['新增/编辑/删除日志记录', '操作审计'] }
+  },
+  {
+    key: 'menu-management', path: 'system/menus', name: '菜单管理', category: '系统管理',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '菜单名称', dataIndex: 'name' },
+      { title: '路径', dataIndex: 'path' },
+      { title: '图标', dataIndex: 'icon' },
+      { title: '父菜单ID', dataIndex: 'parentId' },
+      { title: '排序', dataIndex: 'sort' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '菜单名称', type: 'text', required: true },
+      { name: 'path', label: '路径', type: 'text' },
+      { name: 'icon', label: '图标', type: 'text' },
+      { name: 'parentId', label: '父菜单ID', type: 'number' },
+      { name: 'sort', label: '排序', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '后台菜单管理，配置系统菜单层级、路径、图标、排序和启停。', features: ['新增/编辑/删除菜单', '菜单层级与排序'] }
   }
 ];
 

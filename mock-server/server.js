@@ -182,10 +182,10 @@ defineModule('member/level', ['name', 'code', 'minPoints', 'discount', 'status']
   { name: '钻石会员', code: 'DIAMOND', minPoints: 20000, discount: 0.85, status: 'enabled' }
 ]);
 
-defineModule('member/list', ['name', 'phone', 'level', 'points', 'status'], [
-  { name: '张三', phone: '13800138001', level: 'GOLD', points: 6200, status: 'enabled' },
-  { name: '李四', phone: '13800138002', level: 'SILVER', points: 1500, status: 'enabled' },
-  { name: '王五', phone: '13800138003', level: 'NORMAL', points: 200, status: 'enabled' }
+defineModule('member/list', ['name', 'phone', 'gender', 'birthday', 'age', 'address', 'occupation', 'hobby', 'email', 'level', 'points', 'status'], [
+  { name: '张三', phone: '13800138001', gender: 'male', birthday: '1990-05-20', age: 34, address: '长沙市岳麓区', occupation: '金融', hobby: '健身、电影', email: 'zhangsan@example.com', level: 'GOLD', points: 6200, status: 'enabled' },
+  { name: '李四', phone: '13800138002', gender: 'female', birthday: '1992-08-15', age: 32, address: '长沙市天心区', occupation: '教师', hobby: '旅游、美食', email: 'lisi@example.com', level: 'SILVER', points: 1500, status: 'enabled' },
+  { name: '王五', phone: '13800138003', gender: 'male', birthday: '1988-12-01', age: 36, address: '长沙市开福区', occupation: 'IT', hobby: '数码、阅读', email: 'wangwu@example.com', level: 'NORMAL', points: 200, status: 'enabled' }
 ]);
 
 defineModule('member/tags', ['name', 'category', 'rule', 'count', 'status'], [
@@ -384,29 +384,202 @@ defineModule('analytics/reports', ['name', 'type', 'period', 'status'], [
   { name: '周销售报表', type: 'sales', period: 'weekly', status: 'enabled' }
 ]);
 
+// ===== 会员数字化（补充）=====
+defineModule('member/benefits', ['name', 'levels', 'type', 'value', 'status'], [
+  { name: '金卡免费停车2小时', levels: 'GOLD,DIAMOND', type: 'parking', value: '2小时', status: 'enabled' },
+  { name: '会员日双倍积分', levels: 'SILVER,GOLD,DIAMOND', type: 'points', value: '2倍', status: 'enabled' }
+]);
+
+defineModule('member/profiles', ['member', 'tags', 'consumeTag', 'brandTag', 'pointsTag', 'lastActive'], [
+  { member: '张三', tags: '高消费客户,活跃会员', consumeTag: '偏好餐饮、数码', brandTag: '星巴克、海底捞', pointsTag: '高频兑换', lastActive: '2024-06-05' },
+  { member: '李四', tags: '流失预警', consumeTag: '偏好美妆', brandTag: '九木杂物社', pointsTag: '低频兑换', lastActive: '2024-05-01' }
+]);
+
+defineModule('member/tag-relations', ['member', 'tag', 'source', 'time'], [
+  { member: '张三', tag: '高消费客户', source: 'auto', time: '2024-06-01' },
+  { member: '李四', tag: '流失预警', source: 'auto', time: '2024-06-02' }
+]);
+
+// ===== 积分中心（补充）=====
+defineModule('points/mall-orders', ['orderNo', 'member', 'goods', 'points', 'delivery', 'status'], [
+  { orderNo: 'PM20240601001', member: '张三', goods: '星巴克咖啡券', points: 500, delivery: 'self', status: 'done' },
+  { orderNo: 'PM20240601002', member: '李四', goods: '电影票2张', points: 1500, delivery: 'express', status: 'pending' }
+]);
+
+// ===== 智慧停车（补充）=====
+defineModule('parking/lots', ['name', 'project', 'totalSpaces', 'availableSpaces', 'status'], [
+  { name: '凯德壹中心停车场', project: '凯德壹中心', totalSpaces: 1800, availableSpaces: 320, status: 'enabled' },
+  { name: '碧湘楚巷停车场', project: '碧湘楚巷', totalSpaces: 400, availableSpaces: 80, status: 'enabled' }
+]);
+
+defineModule('parking/rules', ['name', 'freeMinutes', 'pricePerHour', 'capAmount', 'status'], [
+  { name: '标准计费', freeMinutes: 15, pricePerHour: 5, capAmount: 50, status: 'enabled' },
+  { name: '会员优惠计费', freeMinutes: 30, pricePerHour: 4, capAmount: 40, status: 'enabled' }
+]);
+
+// ===== 商户营销（补充）=====
+defineModule('merchant/verification', ['merchant', 'type', 'count', 'amount', 'date'], [
+  { merchant: '海底捞', type: 'coupon', count: 128, amount: 3840, date: '2024-06-01' },
+  { merchant: '星巴克', type: 'points', count: 56, amount: 2800, date: '2024-06-01' }
+]);
+
+defineModule('merchant/coupon-issue', ['merchant', 'template', 'member', 'count', 'time'], [
+  { merchant: '海底捞', template: '满200减30', member: '张三', count: 1, time: '2024-06-01 10:00' }
+]);
+
+// ===== 数据中心（补充）=====
+defineModule('analytics/overview', ['name', 'value', 'mom', 'period'], [
+  { name: '会员总数', value: 12580, mom: '+5.2%', period: '本月' },
+  { name: '今日订单', value: 326, mom: '+12.0%', period: '今日' },
+  { name: '今日销售额', value: 25800, mom: '+8.5%', period: '今日' },
+  { name: '积分发放', value: 156000, mom: '+3.1%', period: '本月' }
+]);
+
+// ===== 在线商城（补充）=====
+defineModule('shop/home-config', ['name', 'pageType', 'components', 'sort', 'status'], [
+  { name: '618商城首页', pageType: 'home', components: '{"banner":["618大促banner"],"categories":["服装","数码","美妆"],"groups":["秒杀","拼团","推荐"]}', sort: 1, status: 'enabled' }
+]);
+
+defineModule('shop/bottom-menu', ['name', 'icon', 'link', 'sort', 'status'], [
+  { name: '首页', icon: 'home', link: '/pages/home', sort: 1, status: 'enabled' },
+  { name: '分类', icon: 'category', link: '/pages/category', sort: 2, status: 'enabled' },
+  { name: '购物车', icon: 'cart', link: '/pages/cart', sort: 3, status: 'enabled' },
+  { name: '我的', icon: 'user', link: '/pages/member', sort: 4, status: 'enabled' }
+]);
+
+defineModule('shop/brands', ['name', 'logo', 'category', 'phone', 'status'], [
+  { name: '星巴克', logo: '', category: '餐饮', phone: '400-1234-5678', status: 'enabled' },
+  { name: 'Nike', logo: '', category: '运动', phone: '400-8765-4321', status: 'enabled' }
+]);
+
+defineModule('shop/returns', ['returnNo', 'orderNo', 'member', 'amount', 'status', 'time'], [
+  { returnNo: 'R20240601001', orderNo: 'O20240601001', member: '张三', amount: 99, status: 'pending', time: '2024-06-02 10:00' }
+]);
+
+// ===== 营销中心（补充）=====
+defineModule('activity/signups', ['name', 'signupTime', 'member', 'count', 'status'], [
+  { name: '亲子DIY活动', signupTime: '2024-06-01 09:00', member: '张三', count: 2, status: 'pending' }
+]);
+
+defineModule('activity/checkin', ['name', 'rewardType', 'rewardValue', 'period', 'status'], [
+  { name: '每日签到', rewardType: 'points', rewardValue: '5', period: 'daily', status: 'enabled' },
+  { name: '周末签到送券', rewardType: 'coupon', rewardValue: '停车券1小时', period: 'weekly', status: 'enabled' }
+]);
+
+defineModule('marketing/referral', ['name', 'referrerReward', 'inviteeReward', 'status'], [
+  { name: '邀请好友得积分', referrerReward: '100积分', inviteeReward: '50积分+新人券', status: 'enabled' }
+]);
+
+defineModule('marketing/new-member', ['name', 'rewards', 'validDays', 'status'], [
+  { name: '新人礼包', rewards: '停车券1小时+100积分+10元代金券', validDays: 30, status: 'enabled' }
+]);
+
+defineModule('marketing/help-coupon', ['name', 'template', 'needHelp', 'helped', 'status'], [
+  { name: '邀请3人得奶茶券', template: '奶茶免单券', needHelp: 3, helped: 2, status: 'enabled' }
+]);
+
+defineModule('marketing/word-coupon', ['name', 'word', 'template', 'claimed', 'status'], [
+  { name: '618社群口令券', word: 'HENGWEI618', template: '满100减20', claimed: 89, status: 'enabled' }
+]);
+
+defineModule('marketing/games', ['name', 'type', 'rewards', 'plays', 'status'], [
+  { name: '618大转盘', type: 'wheel', rewards: '积分/停车券/代金券', plays: 1250, status: 'enabled' }
+]);
+
+defineModule('marketing/surveys', ['title', 'participants', 'reward', 'status'], [
+  { title: '会员满意度调查', participants: 320, reward: '20积分', status: 'enabled' }
+]);
+
+defineModule('marketing/votes', ['title', 'options', 'totalVotes', 'status'], [
+  { title: '最受欢迎餐饮品牌', options: '["海底捞","费大厨","星巴克"]', totalVotes: 580, status: 'enabled' }
+]);
+
+defineModule('marketing/countdown', ['name', 'goods', 'price', 'originalPrice', 'startTime', 'endTime', 'status'], [
+  { name: '限时购-AirPods', goods: '蓝牙耳机', price: 199, originalPrice: 299, startTime: '2024-06-18 10:00', endTime: '2024-06-18 12:00', status: 'enabled' }
+]);
+
+defineModule('marketing/pre-sale', ['goods', 'deposit', 'finalPayment', 'preTime', 'deliveryTime', 'status'], [
+  { goods: '新款T恤', deposit: 20, finalPayment: 79, preTime: '2024-06-01~2024-06-10', deliveryTime: '2024-06-15', status: 'enabled' }
+]);
+
+defineModule('marketing/bargain', ['name', 'goods', 'originalPrice', 'floorPrice', 'started', 'status'], [
+  { name: '砍价免费喝奶茶', goods: '奶茶', originalPrice: 18, floorPrice: 0, started: 45, status: 'enabled' }
+]);
+
+defineModule('marketing/lucky-draw', ['name', 'prize', 'participants', 'drawTime', 'status'], [
+  { name: '众筹抽iPhone', prize: 'iPhone15', participants: 1280, drawTime: '2024-06-20 20:00', status: 'enabled' }
+]);
+
+defineModule('marketing/blind-box', ['name', 'price', 'prizes', 'opened', 'status'], [
+  { name: '618惊喜盲盒', price: 9.9, prizes: '咖啡券/代金券/积分', opened: 320, status: 'enabled' }
+]);
+
+defineModule('marketing/count-cards', ['name', 'times', 'price', 'merchants', 'status'], [
+  { name: '餐饮5次卡', times: 5, price: 199, merchants: '海底捞,费大厨', status: 'enabled' }
+]);
+
+defineModule('marketing/checkin-coupon', ['name', 'location', 'template', 'claimed', 'status'], [
+  { name: '到店打卡领券', location: '商场L1中庭', template: '满50减10', claimed: 156, status: 'enabled' }
+]);
+
+defineModule('marketing/douyin-coupon', ['name', 'douyinCode', 'reward', 'exchanged', 'status'], [
+  { name: '抖音99元双人餐', douyinCode: 'DY20240001', reward: '海底捞双人套餐', exchanged: 78, status: 'enabled' }
+]);
+
+// ===== 地产积分（补充）=====
+defineModule('property/tasks', ['name', 'category', 'points', 'limit', 'status'], [
+  { name: '发言建议', category: '建言', points: 50, limit: '20次/月/户', status: 'enabled' },
+  { name: '推荐签约', category: '推荐', points: 5000, limit: '以网签为准', status: 'enabled' }
+]);
+
+defineModule('property/activities', ['name', 'owner', 'time', 'status'], [
+  { name: '业主暖场活动', owner: '业主王先生', time: '2024-06-01 14:00', status: 'approved' }
+]);
+
+// ===== 内容管理（补充）=====
+defineModule('content/applet-decoration', ['name', 'pageKey', 'template', 'version', 'status'], [
+  { name: '会员中心页', pageKey: 'member-center', template: '{"components":["banner","user-card","menu-grid"]}', version: 'v1.0', status: 'enabled' }
+]);
+
+// ===== 系统管理（补充）=====
+defineModule('system/logs', ['operator', 'module', 'action', 'ip', 'time'], [
+  { operator: 'admin', module: '会员档案', action: '新增', ip: '192.168.1.10', time: '2024-06-01 09:00' },
+  { operator: 'li', module: '营销活动', action: '编辑', ip: '192.168.1.11', time: '2024-06-01 10:30' }
+]);
+
+defineModule('system/menus', ['name', 'path', 'icon', 'parentId', 'sort', 'status'], [
+  { name: '会员数字化', path: '/member', icon: 'user', parentId: 0, sort: 1, status: 'enabled' },
+  { name: '会员档案', path: '/crud/member-list', icon: '', parentId: 1, sort: 1, status: 'enabled' }
+]);
+
 // ============ Register CRUD routers ============
 const moduleRoutes = [
-  'member/level', 'member/list', 'member/tags',
-  'points/rules', 'points/goods', 'points/logs',
+  'member/level', 'member/list', 'member/tags', 'member/benefits', 'member/profiles', 'member/tag-relations',
+  'points/rules', 'points/goods', 'points/logs', 'points/mall-orders',
   'coupon/templates', 'coupon/batches',
-  'parking/records', 'parking/benefit',
+  'parking/records', 'parking/benefit', 'parking/lots', 'parking/rules',
   'marketing/campaigns', 'marketing/coupons', 'marketing/groupbuy', 'marketing/seckill',
+  'marketing/referral', 'marketing/new-member', 'marketing/help-coupon', 'marketing/word-coupon',
+  'marketing/games', 'marketing/surveys', 'marketing/votes', 'marketing/countdown',
+  'marketing/pre-sale', 'marketing/bargain', 'marketing/lucky-draw', 'marketing/blind-box',
+  'marketing/count-cards', 'marketing/checkin-coupon', 'marketing/douyin-coupon',
+  'activity/signups', 'activity/checkin',
   'service/orders',
   'message/templates', 'message/campaigns',
   'private-domain/groups',
   'wecom/accounts',
   'wallet/accounts', 'wallet/transactions',
-  'merchant/list',
-  'shop/goods', 'shop/orders', 'shop/categories',
-  'analytics/dashboards', 'analytics/reports',
+  'merchant/list', 'merchant/verification', 'merchant/coupon-issue',
+  'shop/goods', 'shop/orders', 'shop/categories', 'shop/home-config', 'shop/bottom-menu', 'shop/brands', 'shop/returns',
+  'analytics/dashboards', 'analytics/reports', 'analytics/overview',
   'config/shops', 'config/terminals',
-  'system/users', 'system/roles',
+  'system/users', 'system/roles', 'system/logs', 'system/menus',
   'verification/records', 'verification/staff',
   'invoice/records',
   'finance/vouchers',
-  'content/banners',
+  'content/banners', 'content/applet-decoration',
   'public-domain/ads',
-  'property/points',
+  'property/points', 'property/tasks', 'property/activities',
   'rental/items', 'rental/records'
 ];
 

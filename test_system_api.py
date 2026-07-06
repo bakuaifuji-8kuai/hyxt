@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 系统功能全面测试 - 通过前端代理验证所有模块的CRUD与数据流转
-因沙箱网络限制无法安装浏览器，采用API级测试覆盖全部29个模块的新增/编辑/删除，
+因沙箱网络限制无法安装浏览器，采用API级测试覆盖全部73个模块的新增/编辑/删除，
 并通过前端代理(8000)验证完整链路: 前端 → 代理 → mock-server。
 """
 import json
@@ -219,6 +219,41 @@ def main():
         ("租借物品","rental/items",{"name":"测试物品","deposit":10,"rent":1,"stock":5,"status":"enabled"},"name"),
         ("租借记录","rental/records",{"item":"测试物品","member":"测试","outTime":"2024-06-01","returnTime":"","status":"rented"},"item"),
         ("分析报表","analytics/reports",{"name":"测试报表","type":"member","period":"monthly","status":"enabled"},"name"),
+        ("会员权益","member/benefits",{"name":"测试权益","levels":"GOLD","type":"discount","value":"0.9","status":"enabled"},"name"),
+        ("会员画像","member/profiles",{"member":"测试会员","tags":"测试标签","consumeTag":"偏好测试","brandTag":"品牌测试","pointsTag":"积分偏好","lastActive":"2024-06-01"},"member"),
+        ("会员打标签","member/tag-relations",{"member":"测试会员","tag":"测试标签","source":"manual","time":"2024-06-01"},"member"),
+        ("积分商城订单","points/mall-orders",{"orderNo":"PMTEST001","member":"测试会员","goods":"测试积分商品","points":100,"delivery":"self","status":"pending"},"orderNo"),
+        ("停车场管理","parking/lots",{"name":"测试停车场","project":"测试项目","totalSpaces":100,"availableSpaces":80,"status":"enabled"},"name"),
+        ("停车计费规则","parking/rules",{"name":"测试计费规则","freeMinutes":15,"pricePerHour":5,"capAmount":50,"status":"enabled"},"name"),
+        ("商户核销统计","merchant/verification",{"merchant":"测试商户","type":"coupon","count":10,"amount":100,"date":"2024-06-01"},"merchant"),
+        ("商户发券","merchant/coupon-issue",{"merchant":"测试商户","template":"测试券","member":"测试会员","count":1,"time":"2024-06-01"},"merchant"),
+        ("数据总览","analytics/overview",{"name":"测试指标","value":100,"mom":"+1%","period":"今日"},"name"),
+        ("商城首页配置","shop/home-config",{"name":"测试首页","pageType":"home","components":"{}","sort":1,"status":"enabled"},"name"),
+        ("商城底部菜单","shop/bottom-menu",{"name":"测试底部菜单","icon":"home","link":"/pages/test","sort":1,"status":"enabled"},"name"),
+        ("品牌管理","shop/brands",{"name":"测试品牌","logo":"","category":"测试","phone":"400-0000","status":"enabled"},"name"),
+        ("订单退货","shop/returns",{"returnNo":"RTEST001","orderNo":"TESTORDER001","member":"测试","amount":50,"status":"pending","time":"2024-06-01"},"returnNo"),
+        ("活动报名","activity/signups",{"name":"测试活动报名","signupTime":"2024-06-01","member":"测试会员","count":1,"status":"pending"},"name"),
+        ("签到活动","activity/checkin",{"name":"测试签到","rewardType":"points","rewardValue":"5","period":"daily","status":"enabled"},"name"),
+        ("推荐有礼","marketing/referral",{"name":"测试推荐","referrerReward":"10积分","inviteeReward":"5积分","status":"enabled"},"name"),
+        ("新人礼","marketing/new-member",{"name":"测试新人礼","rewards":"10积分","validDays":30,"status":"enabled"},"name"),
+        ("助力领券","marketing/help-coupon",{"name":"测试助力","template":"测试券","needHelp":3,"helped":0,"status":"enabled"},"name"),
+        ("口令领券","marketing/word-coupon",{"name":"测试口令","word":"TEST123","template":"测试券","claimed":0,"status":"enabled"},"name"),
+        ("游戏互动","marketing/games",{"name":"测试游戏","type":"wheel","rewards":"积分","plays":0,"status":"enabled"},"name"),
+        ("调查问卷","marketing/surveys",{"title":"测试问卷","participants":0,"reward":"5积分","status":"enabled"},"title"),
+        ("投票活动","marketing/votes",{"title":"测试投票","options":"[]","totalVotes":0,"status":"enabled"},"title"),
+        ("限时购","marketing/countdown",{"name":"测试限时购","goods":"测试商品","price":50,"originalPrice":100,"startTime":"2024-06-18 10:00","endTime":"2024-06-18 12:00","status":"enabled"},"name"),
+        ("预售","marketing/pre-sale",{"goods":"测试商品","deposit":10,"finalPayment":40,"preTime":"2024-06-01~2024-06-10","deliveryTime":"2024-06-15","status":"enabled"},"goods"),
+        ("帮砍价","marketing/bargain",{"name":"测试砍价","goods":"测试商品","originalPrice":100,"floorPrice":10,"started":0,"status":"enabled"},"name"),
+        ("众筹抽奖","marketing/lucky-draw",{"name":"测试抽奖","prize":"测试奖品","participants":0,"drawTime":"2024-06-20 20:00","status":"enabled"},"name"),
+        ("盲盒活动","marketing/blind-box",{"name":"测试盲盒","price":9.9,"prizes":"积分","opened":0,"status":"enabled"},"name"),
+        ("计次卡","marketing/count-cards",{"name":"测试计次卡","times":5,"price":99,"merchants":"测试商户","status":"enabled"},"name"),
+        ("现场打卡领券","marketing/checkin-coupon",{"name":"测试打卡","location":"L1","template":"测试券","claimed":0,"status":"enabled"},"name"),
+        ("抖音兑换券","marketing/douyin-coupon",{"name":"测试抖音券","douyinCode":"DYTEST","reward":"测试奖品","exchanged":0,"status":"enabled"},"name"),
+        ("地产积分任务","property/tasks",{"name":"测试任务","category":"测试","points":50,"limit":"1次","status":"enabled"},"name"),
+        ("地产活动报名","property/activities",{"name":"测试地产活动","owner":"测试业主","time":"2024-06-01","status":"pending"},"name"),
+        ("小程序装修","content/applet-decoration",{"name":"测试页面","pageKey":"test","template":"{}","version":"v1","status":"enabled"},"name"),
+        ("操作日志","system/logs",{"operator":"admin","module":"测试","action":"新增","ip":"127.0.0.1","time":"2024-06-01"},"operator"),
+        ("菜单管理","system/menus",{"name":"测试菜单","path":"/test","icon":"","parentId":0,"sort":1,"status":"enabled"},"name"),
     ]
 
     print("\n--- 全模块CRUD测试 ---")
