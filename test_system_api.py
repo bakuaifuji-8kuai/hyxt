@@ -7,8 +7,15 @@
 import json
 import urllib.request
 import urllib.error
+import os
 
-BASE = "http://localhost:8000/api/v1"
+_base = os.environ.get("BASE_URL", "http://localhost:8000").rstrip("/")
+if "/v1" in _base:
+    BASE = _base
+elif _base.endswith(":8000") or "localhost:8000" in _base:
+    BASE = _base + "/api/v1"
+else:
+    BASE = _base + "/v1"
 results = []
 
 def log(name, ok, detail=""):

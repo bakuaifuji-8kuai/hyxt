@@ -6,9 +6,11 @@
   → 商城下单付款(销量+1,积分+1) → 到店核销券(核销记录) → 停车送积分 → 申请开票
 另起一条副线: 业主王先生(地产积分) → 租借雨伞(物品租借记录)
 """
-import json, urllib.request, urllib.error
+import json, urllib.request, urllib.error, os
 
-BASE = "http://localhost:8080/v1"
+BASE = os.environ.get("BASE_URL", "http://localhost:8080").rstrip("/")
+if not BASE.endswith("/v1") and not BASE.endswith("/api/v1"):
+    BASE = BASE + "/v1"
 created = []
 
 def req(method, path, token, body=None):
