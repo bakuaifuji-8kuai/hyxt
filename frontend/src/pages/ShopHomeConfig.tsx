@@ -100,6 +100,66 @@ export default function ShopHomeConfig() {
     setComponentModalOpen(true);
   };
 
+  // ===== 拖拽支持 =====
+  // 拖拽源（组件库）：写入 dataTransfer
+  const handleLibraryDragStart = (e: React.DragEvent<HTMLDivElement>, type: string) => {
+    e.dataTransfer.setData('text/plain', `new:${type}`);
+    e.dataTransfer.effectAllowed = 'copy';
+  };
+
+  // 拖拽源（已有组件）：拖动排序，写入 id
+  const handleComponentDragStart = (e: React.DragEvent<HTMLDivElement>, comp: ComponentItem) => {
+    e.dataTransfer.setData('text/plain', `existing:${comp.id}`);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  // 画布上的 drop：根据鼠标 Y 坐标找到插入位置
+  const handleCanvasDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const data = e.dataTransfer.getData('text/plain');
+    if (!data) return;
+    const [mode, value] = data.split(':');
+    const dropY = e.clientY;
+    let insertIndex = components.length;
+    const cardEls = e.currentTarget.querySelectorAll('[data-comp-id]');
+    for (let i = 0; i < cardEls.length; i++) {
+      const rect = cardEls[i].getBoundingClientRect();
+      if (dropY < rect.top + rect.height / 2) {
+        insertIndex = i;
+        break;
+      }
+    }
+    if (mode === 'new') {
+      const compType = componentTypes.find(t => t.type === value);
+      const newComponent: ComponentItem = {
+        id: `comp-${Date.now()}`,
+        type: value,
+        name: compType?.name || value,
+        config: {},
+        sort: insertIndex + 1,
+      };
+      const newList = [...components];
+      newList.splice(insertIndex, 0, newComponent);
+      setComponents(newList.map((c, i) => ({ ...c, sort: i + 1 })));
+      message.success(`已添加 ${newComponent.name}`);
+    } else if (mode === 'existing') {
+      const fromIndex = components.findIndex(c => c.id === value);
+      if (fromIndex < 0) return;
+      let toIndex = insertIndex;
+      if (toIndex > fromIndex) toIndex -= 1;
+      if (toIndex === fromIndex) return;
+      const newList = [...components];
+      const [moved] = newList.splice(fromIndex, 1);
+      newList.splice(toIndex, 0, moved);
+      setComponents(newList.map((c, i) => ({ ...c, sort: i + 1 })));
+    }
+  };
+
+  const handleCanvasDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
   const handleEditComponent = (comp: ComponentItem) => {
     setEditingComponent(comp);
     componentForm.setFieldsValue(comp.config);
@@ -150,6 +210,9 @@ export default function ShopHomeConfig() {
     return (
       <div
         key={comp.id}
+        data-comp-id={comp.id}
+        draggable
+        onDragStart={(e) => handleComponentDragStart(e, comp)}
         style={{
           background: bgColors[comp.type] || '#F3F4F6',
           padding: '20px',
@@ -157,7 +220,7 @@ export default function ShopHomeConfig() {
           marginBottom: '16px',
           minHeight: '100px',
           position: 'relative',
-          cursor: 'pointer',
+          cursor: 'grab',
         }}
         onClick={() => handleEditComponent(comp)}
       >
@@ -276,8 +339,12 @@ export default function ShopHomeConfig() {
         </Col>
 
         <Col span={13}>
-          <Card title="页面预览" style={{ height: 'calc(100vh - 112px)' }}>
-            <div style={{ background: '#FAFAFA', borderRadius: '8px', padding: '16px', minHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+          <Card title="页面预览（可拖动组件到此处，可拖动现有组件调整顺序）" style={{ height: 'calc(100vh - 112px)' }}>
+            <div
+              style={{ background: '#FAFAFA', borderRadius: '8px', padding: '16px', minHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}
+              onDrop={handleCanvasDrop}
+              onDragOver={handleCanvasDragOver}
+            >
               <div style={{ maxWidth: screens.sm ? '100%' : '375px', margin: '0 auto' }}>
                 <div style={{ background: 'white', borderRadius: '8px', padding: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
                   <div style={{ textAlign: 'center', marginBottom: '16px' }}>
@@ -286,9 +353,9 @@ export default function ShopHomeConfig() {
                   {components.length > 0 ? (
                     components.map(renderComponentPreview)
                   ) : (
-                    <div style={{ textAlign: 'center', padding: '40px', color: '#9CA3AF' }}>
+                    <div style={{ textAlign: 'center', padding: '40px', color: '#9CA3AF', border: '2px dashed #E5E7EB', borderRadius: '8px' }}>
                       <LayoutOutlined style={{ fontSize: '48px', marginBottom: '12px' }} />
-                      <div>暂无组件，请从右侧添加</div>
+                      <div>暂无组件，请从右侧拖入或点击添加</div>
                     </div>
                   )}
                 </div>
@@ -298,23 +365,29 @@ export default function ShopHomeConfig() {
         </Col>
 
         <Col span={6}>
-          <Card title="组件库">
+          <Card title="组件库（可拖拽到中间画布）">
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
               {componentTypes.map((comp) => (
-                <Button
+                <div
                   key={comp.type}
-                  type="default"
-                  icon={comp.icon}
+                  draggable
+                  onDragStart={(e) => handleLibraryDragStart(e, comp.type)}
                   onClick={() => handleAddComponent(comp.type)}
                   style={{
                     padding: '12px',
                     borderRadius: '8px',
-                    borderColor: comp.color,
+                    border: `1px solid ${comp.color}`,
                     color: comp.color,
+                    cursor: 'grab',
+                    textAlign: 'center',
+                    background: '#fff',
+                    userSelect: 'none',
                   }}
+                  title="按住拖动到左侧画布，也可点击直接添加"
                 >
-                  {comp.name}
-                </Button>
+                  <div style={{ fontSize: '20px', marginBottom: '4px' }}>{comp.icon}</div>
+                  <div style={{ fontSize: '12px', fontWeight: 600 }}>{comp.name}</div>
+                </div>
               ))}
             </div>
           </Card>

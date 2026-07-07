@@ -8,6 +8,13 @@ export interface FieldConfig {
   options?: { label: string; value: string }[];
   required?: boolean;
   placeholder?: string;
+  /** 从其他模块拉取下拉数据。配置后 options 失效，从 store 中读取指定 path 的列表。
+   * source: { path: 'system/projects', labelField: 'name', valueField: 'code' } */
+  source?: {
+    path: string;
+    labelField: string;
+    valueField: string;
+  };
 }
 
 export interface ColumnConfig {
@@ -1097,9 +1104,9 @@ export const MODULES: ModuleConfig[] = [
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
     doc: {
-      overview: 'Banner管理是小程序广告位的配置工具，管理首页顶部、商城首页、弹窗等位置的轮播图广告。是重要的营销展示入口，直接影响活动曝光和转化效果。',
-      features: ['支持新增、编辑、删除Banner广告', '多种展示位置：首页顶部、商城首页、弹窗', 'Banner排序管理，灵活调整展示顺序', '状态管理：显示/隐藏', 'Banner图片配置，支持跳转链接', '与小程序装修联动，配合页面整体设计'],
-      tips: ['Banner图片建议使用高清素材，尺寸符合各位置要求', '重要活动Banner建议放在靠前位置，提升曝光', '建议定期更新Banner内容，保持新鲜感和吸引力']
+      overview: 'Banner管理是小程序广告位的核心配置工具，管理首页顶部、商城首页、弹窗等位置的轮播图广告，是重要的营销展示入口，直接影响活动曝光和转化效果。内容管理整体定位为面向C端用户展示的富媒体内容中台，由运营人员维护，下游被小程序、商城、营销活动、推送消息等场景消费，上游与会员画像、营销活动、商品/商户等数据源联动，实现千人千面的内容展示。',
+      features: ['支持新增、编辑、删除Banner广告', '多种展示位置：首页顶部、商城首页、弹窗、启动页等', 'Banner排序管理，灵活调整展示顺序', '状态管理：显示/隐藏，支持定时上下架', 'Banner图片配置，支持跳转链接（商品/活动/商户/自定义H5）', '支持千人千面：根据会员标签/人群分组展示不同Banner内容', '与小程序装修联动，配合页面整体设计', '与营销活动联动，Banner可绑定优惠券/活动/秒杀/团购', '与会员画像联动，按等级/标签个性化推荐', '提供Banner点击统计和效果分析数据'],
+      tips: ['Banner图片建议使用高清素材，尺寸符合各位置要求', '重要活动Banner建议放在靠前位置，提升曝光', '建议定期更新Banner内容，保持新鲜感和吸引力', 'Banner跳转链接需配置正确，避免跳转404', '千人千面Banner需先配置人群定向规则']
     }
   },
   // ===== 公域运营 =====
@@ -1573,7 +1580,7 @@ export const MODULES: ModuleConfig[] = [
     ],
     fields: [
       { name: 'name', label: '停车场名称', type: 'text', required: true },
-      { name: 'project', label: '所属项目', type: 'text' },
+      { name: 'project', label: '所属项目', type: 'select', source: { path: 'system/projects', labelField: 'name', valueField: 'name' } },
       { name: 'totalSpaces', label: '总车位', type: 'number' },
       { name: 'availableSpaces', label: '空闲车位', type: 'number' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
@@ -2692,7 +2699,7 @@ export const MODULES: ModuleConfig[] = [
     ],
     fields: [
       { name: 'name', label: '规则名称', type: 'text', required: true },
-      { name: 'project', label: '所属项目', type: 'text' },
+      { name: 'project', label: '所属项目', type: 'select', source: { path: 'system/projects', labelField: 'name', valueField: 'name' } },
       { name: 'channel', label: '渠道', type: 'select', options: [
         { label: 'POS', value: 'pos' }, { label: '线上商城', value: 'online' }
       ] },
@@ -2755,7 +2762,7 @@ export const MODULES: ModuleConfig[] = [
     ],
     fields: [
       { name: 'name', label: '规则名称', type: 'text', required: true },
-      { name: 'project', label: '项目', type: 'text' },
+      { name: 'project', label: '项目', type: 'select', source: { path: 'system/projects', labelField: 'name', valueField: 'name' } },
       { name: 'businessType', label: '业态', type: 'text' },
       { name: 'settleRatio', label: '结算比例', type: 'number' },
       { name: 'settleDate', label: '结算日期', type: 'text' },
@@ -2786,7 +2793,7 @@ export const MODULES: ModuleConfig[] = [
     ],
     fields: [
       { name: 'billNo', label: '结算单号', type: 'text', required: true },
-      { name: 'project', label: '项目', type: 'text' },
+      { name: 'project', label: '项目', type: 'select', source: { path: 'system/projects', labelField: 'name', valueField: 'name' } },
       { name: 'merchant', label: '商户', type: 'text' },
       { name: 'period', label: '结算周期', type: 'text' },
       { name: 'totalPoints', label: '总积分', type: 'number' },
@@ -2905,7 +2912,7 @@ export const MODULES: ModuleConfig[] = [
       { name: 'type', label: '类型', type: 'select', options: [
         { label: '拍照', value: 'photo' }, { label: 'AI', value: 'ai' }, { label: '支付即积分', value: 'pay' }
       ] },
-      { name: 'project', label: '项目', type: 'text' },
+      { name: 'project', label: '项目', type: 'select', source: { path: 'system/projects', labelField: 'name', valueField: 'name' } },
       { name: 'enabled', label: '是否开启', type: 'select', options: [
         { label: '开启', value: 'yes' }, { label: '关闭', value: 'no' }
       ] },

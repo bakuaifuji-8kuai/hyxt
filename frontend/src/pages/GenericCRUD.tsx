@@ -52,6 +52,27 @@ const getStatusColor = (val: any): string => {
   return 'default';
 };
 
+/** 从指定模块路径拉取数据渲染为下拉选择。配置示例：
+ * { path: 'system/projects', labelField: 'name', valueField: 'code' } */
+const SourceSelect: React.FC<{ source: { path: string; labelField: string; valueField: string }; placeholder?: string }> = ({ source, placeholder }) => {
+  const [options, setOptions] = useState<{ label: string; value: string }[]>([]);
+  useEffect(() => {
+    let alive = true;
+    fetchListData(source.path).then((res: any) => {
+      if (!alive) return;
+      const list = res?.list || res || [];
+      setOptions(
+        list.map((item: any) => ({
+          label: String(item[source.labelField] ?? ''),
+          value: String(item[source.valueField] ?? ''),
+        })).filter((o: any) => o.label && o.value)
+      );
+    }).catch(() => {});
+    return () => { alive = false; };
+  }, [source.path, source.labelField, source.valueField]);
+  return <Select options={options} placeholder={placeholder || '请选择'} showSearch optionFilterProp="label" />;
+};
+
 /** 渲染状态 Badge */
 const renderStatusBadge = (val: any) => {
   if (val == null) return '-';
@@ -236,6 +257,9 @@ export default function GenericCRUD({ moduleKey }: { moduleKey: string }) {
       case 'number':
         return <InputNumber style={{ width: '100%' }} placeholder={field.placeholder} />;
       case 'select':
+        if (field.source) {
+          return <SourceSelect source={field.source} placeholder={field.placeholder || '请选择'} />;
+        }
         return <Select options={field.options} placeholder={field.placeholder || '请选择'} />;
       case 'textarea':
         return <Input.TextArea rows={3} placeholder={field.placeholder} />;
