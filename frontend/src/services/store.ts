@@ -261,7 +261,7 @@ initModule('shop/categories', ['name', 'parentId', 'icon', 'image', 'description
 ]);
 
 initModule('shop/home-config', ['name', 'pageType', 'components', 'sort', 'status'], [
-  { name: '首页配置', pageType: 'home', components: '{}', sort: 1, status: 'enabled' }
+  { name: '首页配置', pageType: 'home', components: '[{"id":"comp_1","type":"search","name":"搜索框","config":{"placeholder":"搜索商品","style":"round","bgColor":"#f5f5f5"}},{"id":"comp_2","type":"banner","name":"轮播图","config":{"items":[{"image":"https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=e-commerce%20promotion%20banner%20with%20sale%20discount%20modern%20design&image_size=landscape_16_9","link":"","title":"限时特惠"},{"image":"https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=beautiful%20product%20showcase%20banner%20fashion%20shopping&image_size=landscape_16_9","link":"","title":"新品上市"}],"height":160,"autoPlay":true,"interval":3,"indicatorStyle":"dot"}},{"id":"comp_3","type":"navGrid","name":"图片导航","config":{"items":[{"image":"","text":"服装","link":""},{"image":"","text":"数码","link":""},{"image":"","text":"家居","link":""},{"image":"","text":"美食","link":""},{"image":"","text":"美妆","link":""},{"image":"","text":"运动","link":""},{"image":"","text":"母婴","link":""},{"image":"","text":"更多","link":""}],"columns":4,"showText":true}},{"id":"comp_4","type":"title","name":"标题栏","config":{"title":"限时秒杀","align":"left","showMore":true,"moreText":"查看更多","color":"#333","bgColor":"#fff"}},{"id":"comp_5","type":"flashSale","name":"限时秒杀","config":{"title":"限时秒杀","subtitle":"好物限时抢","bgColor":"#fff2f0","countdown":true,"goodsCount":3}}]', sort: 1, status: 'enabled' }
 ]);
 
 initModule('shop/bottom-menu', ['name', 'icon', 'link', 'sort', 'status'], [
