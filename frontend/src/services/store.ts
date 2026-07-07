@@ -405,6 +405,124 @@ initModule('rental/records', ['item', 'member', 'outTime', 'returnTime', 'status
   { item: '雨伞', member: '张三', outTime: '2024-06-01', returnTime: '2024-06-01', status: 'returned' }
 ]);
 
+// ===== 新增模块初始化 =====
+initModule('member/points', ['member', 'points', 'historyPoints', 'expiringPoints', 'frozenPoints', 'expireDate', 'clearDate', 'totalEarned', 'totalUsed', 'status'], [
+  { member: '张三', points: 6200, historyPoints: 0, expiringPoints: 200, frozenPoints: 0, expireDate: '2025-12-31', clearDate: '2025-12-31', totalEarned: 10000, totalUsed: 3800, status: 'enabled' },
+  { member: '李四', points: 1500, historyPoints: 0, expiringPoints: 0, frozenPoints: 0, expireDate: '2025-12-31', clearDate: '2025-12-31', totalEarned: 3000, totalUsed: 1500, status: 'enabled' }
+]);
+initModule('parking/plates', ['member', 'plateNo', 'plateColor', 'vehicleType', 'bindTime', 'status'], [
+  { member: '张三', plateNo: '京A12345', plateColor: 'blue', vehicleType: 'sedan', bindTime: '2024-01-15', status: 'enabled' },
+  { member: '李四', plateNo: '沪B67890', plateColor: 'green', vehicleType: 'newEnergy', bindTime: '2024-03-20', status: 'enabled' }
+]);
+initModule('marketing/help-coupon', ['name', 'template', 'needHelp', 'helped', 'status'], [
+  { name: '助力领券活动', template: '满50减10', needHelp: 3, helped: 156, status: 'enabled' }
+]);
+initModule('marketing/word-coupon', ['name', 'word', 'template', 'claimed', 'status'], [
+  { name: '口令领券', word: '618狂欢', template: '满100减20', claimed: 89, status: 'enabled' }
+]);
+initModule('member/marketing-models', ['name', 'type', 'condition', 'audienceCount', 'status'], [
+  { name: '高价值会员模型', type: 'smart', condition: '消费总额>5000', audienceCount: 86, status: 'enabled' },
+  { name: '流失预警模型', type: 'smart', condition: '90天未消费', audienceCount: 42, status: 'enabled' }
+]);
+initModule('member/marketing-tasks', ['name', 'modelId', 'channel', 'template', 'sendTime', 'targetCount', 'sentCount', 'readCount', 'status'], [
+  { name: '618促销推送', modelId: '高价值会员模型', channel: 'sms', template: '促销模板', sendTime: '2024-06-18 10:00', targetCount: 5000, sentCount: 5000, readCount: 2100, status: 'finished' }
+]);
+initModule('points/adjust', ['member', 'type', 'points', 'reason', 'operator', 'status', 'time'], [
+  { member: '张三', type: 'add', points: 100, reason: '客服补偿', operator: 'admin', status: 'done', time: '2024-06-01' }
+]);
+initModule('points/transfer', ['fromMember', 'toMember', 'points', 'status', 'operator', 'time', 'remark'], [
+  { fromMember: '张三', toMember: '李四', points: 500, status: 'done', operator: 'admin', time: '2024-06-01', remark: '活动奖励转移' }
+]);
+initModule('points/blacklist', ['member', 'phone', 'reason', 'type', 'operator', 'status', 'addTime'], [
+  { member: '赵六', phone: '13600136006', reason: '恶意刷单', type: 'cheat', operator: 'admin', status: 'enabled', addTime: '2024-05-01' }
+]);
+initModule('points/cash-rule', ['name', 'project', 'channel', 'maxRatio', 'maxAmount', 'minAmount', 'maxTimesPerDay', 'validFrom', 'validTo', 'status'], [
+  { name: '积分抵现规则', project: '凯德壹中心', channel: 'wechat', maxRatio: 0.3, maxAmount: 50, minAmount: 1, maxTimesPerDay: 3, validFrom: '2024-01-01', validTo: '2024-12-31', status: 'enabled' }
+]);
+initModule('points/risk', ['name', 'ruleType', 'threshold', 'action', 'status'], [
+  { name: '异常积分监控', ruleType: 'frequency', threshold: 1000, action: 'freeze', status: 'enabled' }
+]);
+initModule('points/settle-rule', ['name', 'project', 'businessType', 'settleRatio', 'settleDate', 'period', 'priority', 'status'], [
+  { name: '餐饮积分结算', project: '凯德壹中心', businessType: '餐饮', settleRatio: 0.05, settleDate: '每月5日', period: 'monthly', priority: 1, status: 'enabled' }
+]);
+initModule('points/settle-bill', ['billNo', 'project', 'merchant', 'period', 'totalPoints', 'settleAmount', 'status', 'createTime'], [
+  { billNo: 'SB20240601', project: '凯德壹中心', merchant: '海底捞', period: '2024-05', totalPoints: 50000, settleAmount: 2500, status: 'pending', createTime: '2024-06-01' }
+]);
+initModule('points/photo', ['member', 'image', 'amount', 'points', 'shop', 'status', 'auditor', 'submitTime', 'auditTime'], [
+  { member: '张三', image: 'https://example.com/receipt.jpg', amount: 200, points: 200, shop: '海底捞', status: 'approved', auditor: 'admin', submitTime: '2024-06-01', auditTime: '2024-06-02' }
+]);
+initModule('points/ocr-rule', ['name', 'shopType', 'fields', 'template', 'status'], [
+  { name: '小票识别规则', shopType: '餐饮', fields: '金额,时间,商户', template: '标准模板', status: 'enabled' }
+]);
+initModule('coupon/packs', ['name', 'coupons', 'totalValue', 'sellPrice', 'pointsPrice', 'quantity', 'sold', 'validDays', 'status'], [
+  { name: '新人券包', coupons: '满50减10,停车券1小时', totalValue: 60, sellPrice: 0, pointsPrice: 0, quantity: 1000, sold: 856, validDays: 30, status: 'enabled' }
+]);
+initModule('selfpoints/config', ['name', 'type', 'project', 'enabled', 'wechatMallId', 'alipayMallId', 'status'], [
+  { name: '自助积分配置', type: 'mall', project: '凯德壹中心', enabled: 'yes', wechatMallId: 'wx123', alipayMallId: 'ali456', status: 'enabled' }
+]);
+initModule('shop/fullcut', ['name', 'rules', 'startTime', 'endTime', 'applyRange', 'status'], [
+  { name: '满减活动', rules: '满100减20;满200减50', startTime: '2024-06-18', endTime: '2024-06-20', applyRange: '全店', status: 'enabled' }
+]);
+initModule('shop/presale', ['name', 'goods', 'depositAmount', 'finalAmount', 'depositStartTime', 'finalPayTime', 'stock', 'sold', 'status'], [
+  { name: '预售活动', goods: '新款T恤', depositAmount: 20, finalAmount: 79, depositStartTime: '2024-06-01', finalPayTime: '2024-06-15', stock: 100, sold: 45, status: 'enabled' }
+]);
+initModule('shop/bargain', ['name', 'goods', 'originalPrice', 'floorPrice', 'helpCount', 'startedCount', 'startTime', 'endTime', 'status'], [
+  { name: '砍价活动', goods: '奶茶', originalPrice: 18, floorPrice: 0, helpCount: 5, startedCount: 20, startTime: '2024-06-18', endTime: '2024-06-20', status: 'enabled' }
+]);
+initModule('merchant/sales-report', ['merchant', 'reportDate', 'amount', 'orderCount', 'points', 'reporter', 'status'], [
+  { merchant: '海底捞', reportDate: '2024-06-01', amount: 5000, orderCount: 120, points: 5000, reporter: '王经理', status: 'submitted' }
+]);
+initModule('service/chats', ['member', 'memberNickname', 'questionType', 'lastMessage', 'status', 'agent', 'startTime', 'endTime', 'replyContent'], [
+  { member: '张三', memberNickname: '张三', questionType: '积分咨询', lastMessage: '我的积分怎么少了', status: 'open', agent: '客服小王', startTime: '2024-06-01 10:00', endTime: '', replyContent: '' }
+]);
+initModule('service/ai-kb', ['title', 'category', 'answer', 'similarQuestions', 'keywords', 'usedCount', 'status'], [
+  { title: '如何查询积分', category: '积分', answer: '在小程序个人中心查看积分余额', similarQuestions: '积分在哪看', keywords: '积分,查询', usedCount: 150, status: 'enabled' }
+]);
+initModule('shop/carts', ['member', 'goods', 'specs', 'quantity', 'price', 'discount', 'addTime', 'status'], [
+  { member: '张三', goods: '纯棉T恤', specs: '白色/M', quantity: 1, price: 99, discount: 0, addTime: '2024-06-01', status: 'enabled' }
+]);
+initModule('property/points-approval', ['member', 'taskType', 'taskName', 'points', 'submitTime', 'status', 'auditor', 'auditTime', 'remark'], [
+  { member: '业主王先生', taskType: '建言', taskName: '小区绿化建议', points: 50, submitTime: '2024-06-01', status: 'approved', auditor: 'admin', auditTime: '2024-06-02', remark: '建议采纳' }
+]);
+initModule('public-domain/douyin-pass', ['douyinUser', 'member', 'bindTime', 'syncStatus', 'verificationPoints', 'promotion', 'remark'], [
+  { douyinUser: 'dy123456', member: '张三', bindTime: '2024-05-01', syncStatus: 'synced', verificationPoints: 100, promotion: '抖音新会员', remark: '' }
+]);
+initModule('public-domain/xhs', ['name', 'type', 'publishTime', 'participantCount', 'registerCount', 'verificationCount', 'status', 'couponTemplate', 'remark'], [
+  { name: '小红书引流', type: 'post', publishTime: '2024-06-01', participantCount: 500, registerCount: 120, verificationCount: 80, status: 'enabled', couponTemplate: '满50减10', remark: '' }
+]);
+initModule('merchant/notifications', ['title', 'type', 'content', 'targetMerchant', 'sendTime', 'channel', 'readStatus'], [
+  { title: '系统维护通知', type: 'system', content: '今晚22点系统维护', targetMerchant: '全部门店', sendTime: '2024-06-01', channel: 'sms', readStatus: 'unread' }
+]);
+initModule('merchant/training', ['title', 'category', 'format', 'content', 'trainingTime', 'materials', 'participantCount', 'completionRate', 'status'], [
+  { title: '新系统培训', category: '系统操作', format: 'video', content: '系统操作指南', trainingTime: '2024-06-01', materials: '培训手册.pdf', participantCount: 20, completionRate: 0.85, status: 'enabled' }
+]);
+initModule('content/articles', ['title', 'category', 'coverImage', 'content', 'publishTime', 'readCount', 'status'], [
+  { title: '商场活动预告', category: '活动', coverImage: '', content: '本周六有精彩演出', publishTime: '2024-06-01', readCount: 1200, status: 'published' }
+]);
+initModule('content/posters', ['name', 'category', 'image', 'activity', 'createTime', 'usedCount', 'status'], [
+  { name: '618海报', category: '促销', image: '', activity: '618大促', createTime: '2024-06-01', usedCount: 50, status: 'enabled' }
+]);
+initModule('applet/search', ['keyword', 'type', 'target', 'weight', 'clickCount', 'status'], [
+  { keyword: '海底捞', type: 'merchant', target: '海底捞', weight: 10, clickCount: 500, status: 'enabled' }
+]);
+initModule('applet/audience', ['name', 'type', 'conditions', 'size', 'createTime', 'updateTime', 'status'], [
+  { name: '高消费人群', type: 'tag', conditions: '消费>5000', size: 86, createTime: '2024-06-01', updateTime: '2024-06-01', status: 'enabled' }
+]);
+initModule('system/projects', ['name', 'code', 'businessType', 'address', 'cooperationParty', 'contactPerson', 'contactPhone', 'adminName', 'adminAccount', 'memberCount', 'maxMembers', 'dataIsolation', 'isolationRule', 'billingMode', 'billingConfig', 'enabledModules', 'resourceQuota', 'contractPeriod', 'remark', 'status', 'createdAt'], [
+  { name: '凯德壹中心', code: 'KDYZX', businessType: 'shopping', address: '长沙市岳麓区', cooperationParty: '凯德集团', contactPerson: '李总', contactPhone: '13800138001', adminName: 'admin', adminAccount: 'admin', memberCount: 12580, maxMembers: 50000, dataIsolation: 'no', isolationRule: '按项目隔离', billingMode: 'full', billingConfig: '全功能计费', enabledModules: '全部', resourceQuota: '无限', contractPeriod: '2024-2026', remark: '', status: 'enabled', createdAt: '2024-01-01' },
+  { name: '碧湘楚巷', code: 'BXCX', businessType: 'scenic', address: '长沙市天心区', cooperationParty: '碧湘集团', contactPerson: '王总', contactPhone: '13900139002', adminName: 'admin2', adminAccount: 'admin2', memberCount: 3200, maxMembers: 30000, dataIsolation: 'no', isolationRule: '按项目隔离', billingMode: 'basic', billingConfig: '基础版计费', enabledModules: '基础模块', resourceQuota: '有限', contractPeriod: '2024-2025', remark: '', status: 'enabled', createdAt: '2024-03-01' }
+]);
+initModule('restaurant/cuisine', ['name', 'icon', 'description', 'sort', 'shopCount', 'status'], [
+  { name: '湘菜', icon: '', description: '湖南特色菜系', sort: 1, shopCount: 15, status: 'enabled' },
+  { name: '川菜', icon: '', description: '四川麻辣风味', sort: 2, shopCount: 8, status: 'enabled' }
+]);
+initModule('restaurant/dishes', ['name', 'shopName', 'cuisine', 'mainImage', 'price', 'description', 'ingredients', 'taste', 'isRecommend', 'sort', 'status'], [
+  { name: '剁椒鱼头', shopName: '湘阁里辣', cuisine: '湘菜', mainImage: '', price: 88, description: '经典湘菜', ingredients: '鱼头,剁椒', taste: 'spicy', isRecommend: 'yes', sort: 1, status: 'enabled' }
+]);
+initModule('member/merge', ['mainAccount', 'mergedAccount', 'reason', 'pointsBefore', 'pointsAfter', 'remark', 'operator', 'mergedAt', 'status'], [
+  { mainAccount: '13800138001', mergedAccount: '13800138002', reason: 'duplicate', pointsBefore: 5000, pointsAfter: 7000, remark: '重复注册合并', operator: 'admin', mergedAt: '2024-06-01', status: 'done' }
+]);
+
 export function login(username: string, password: string) {
   if ((username === 'admin' && password === 'admin') || (username === 'admin' && password === 'admin')) {
     const token = 'mock-token-' + Date.now();
