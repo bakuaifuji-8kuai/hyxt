@@ -842,6 +842,374 @@ const FLOWS: BusinessFlow[] = [
       <text x="40" y="392" font-size="11" fill="#d97706">◇ 判断节点</text>
     </svg>`
   },
+  {
+    key: 'points-mall-exchange',
+    name: '积分商城兑换流程',
+    category: 'points',
+    desc: '会员浏览积分商品，使用积分兑换，系统扣减积分并生成积分商城订单，实物发货或到店自提完成履约。',
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" font-family="-apple-system,Segoe UI,Roboto,sans-serif">
+      <defs><marker id="ar_pex" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker></defs>
+      <rect width="960" height="420" fill="#f8fafc"/>
+      <text x="480" y="36" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">积分商城兑换流程</text>
+      <rect x="30" y="70" width="140" height="66" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+      <text x="100" y="98" text-anchor="middle" font-size="14" font-weight="600" fill="#1e3a8a">浏览积分商品</text>
+      <text x="100" y="120" text-anchor="middle" font-size="11" fill="#475569">points/goods</text>
+      <rect x="220" y="70" width="140" height="66" rx="10" fill="#fff" stroke="#2563eb" stroke-width="2"/>
+      <text x="290" y="98" text-anchor="middle" font-size="14" font-weight="600" fill="#0f172a">提交兑换</text>
+      <text x="290" y="120" text-anchor="middle" font-size="11" fill="#475569">选择规格/数量</text>
+      <polygon points="500,70 600,103 500,136 400,103" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+      <text x="500" y="100" text-anchor="middle" font-size="13" font-weight="600" fill="#7c2d12">积分/库存充足?</text>
+      <text x="500" y="120" text-anchor="middle" font-size="11" fill="#7c2d12">检查余额</text>
+      <rect x="220" y="190" width="140" height="60" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2" stroke-dasharray="5,3"/>
+      <text x="290" y="216" text-anchor="middle" font-size="13" fill="#7f1d1d" font-weight="600">兑换失败</text>
+      <text x="290" y="236" text-anchor="middle" font-size="11" fill="#7f1d1d">积分不足/售罄</text>
+      <rect x="400" y="190" width="160" height="60" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+      <text x="480" y="215" text-anchor="middle" font-size="13" fill="#14532d" font-weight="600">扣减积分</text>
+      <text x="480" y="235" text-anchor="middle" font-size="11" fill="#475569">points/logs -N</text>
+      <rect x="600" y="190" width="160" height="60" rx="10" fill="#fff" stroke="#2563eb" stroke-width="2"/>
+      <text x="680" y="215" text-anchor="middle" font-size="13" fill="#0f172a" font-weight="600">生成积分订单</text>
+      <text x="680" y="235" text-anchor="middle" font-size="11" fill="#475569">points/mall-orders</text>
+      <polygon points="820,190 920,220 820,250 720,220" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+      <text x="820" y="218" text-anchor="middle" font-size="13" font-weight="600" fill="#7c2d12">提货方式</text>
+      <text x="820" y="236" text-anchor="middle" font-size="11" fill="#7c2d12">自提/邮寄?</text>
+      <rect x="600" y="290" width="160" height="60" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+      <text x="680" y="315" text-anchor="middle" font-size="13" fill="#14532d" font-weight="600">门店自提</text>
+      <text x="680" y="335" text-anchor="middle" font-size="11" fill="#475569">核销后完成</text>
+      <rect x="790" y="290" width="160" height="60" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+      <text x="870" y="315" text-anchor="middle" font-size="13" fill="#14532d" font-weight="600">快递发货</text>
+      <text x="870" y="335" text-anchor="middle" font-size="11" fill="#475569">物流签收完成</text>
+      <rect x="680" y="360" width="160" height="50" rx="10" fill="#2563eb" stroke="#1e40af" stroke-width="2"/>
+      <text x="760" y="390" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">兑换完成</text>
+      <line x1="170" y1="103" x2="215" y2="103" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_pex)"/>
+      <line x1="360" y1="103" x2="395" y2="103" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_pex)"/>
+      <line x1="500" y1="136" x2="290" y2="190" stroke="#dc2626" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#ar_pex)"/>
+      <text x="380" y="166" font-size="11" fill="#dc2626">否</text>
+      <line x1="600" y1="103" x2="475" y2="190" stroke="#16a34a" stroke-width="2" marker-end="url(#ar_pex)"/>
+      <text x="550" y="150" font-size="11" fill="#16a34a">是</text>
+      <line x1="560" y1="220" x2="595" y2="220" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_pex)"/>
+      <line x1="760" y1="220" x2="715" y2="220" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_pex)"/>
+      <line x1="820" y1="250" x2="680" y2="290" stroke="#16a34a" stroke-width="2" marker-end="url(#ar_pex)"/>
+      <text x="720" y="278" font-size="11" fill="#16a34a">自提</text>
+      <line x1="920" y1="220" x2="870" y2="290" stroke="#16a34a" stroke-width="2" marker-end="url(#ar_pex)"/>
+      <text x="910" y="278" font-size="11" fill="#16a34a">邮寄</text>
+      <line x1="680" y1="350" x2="720" y2="360" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_pex)"/>
+      <line x1="870" y1="350" x2="800" y2="360" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_pex)"/>
+      <rect x="30" y="340" width="180" height="60" fill="#fff" stroke="#cbd5e1" rx="6"/>
+      <text x="40" y="358" font-size="11" fill="#475569">— 主流程</text>
+      <text x="40" y="375" font-size="11" fill="#dc2626">- - 失败分支</text>
+      <text x="40" y="392" font-size="11" fill="#d97706">◇ 判断节点</text>
+    </svg>`
+  },
+  {
+    key: 'self-help-points',
+    name: '自助积分流程',
+    category: 'points',
+    desc: '会员上传消费小票，OCR识别消费信息，匹配积分规则计算积分，人工/AI审核后发放到账。',
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" font-family="-apple-system,Segoe UI,Roboto,sans-serif">
+      <defs><marker id="ar_shp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker></defs>
+      <rect width="960" height="420" fill="#f8fafc"/>
+      <text x="480" y="36" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">自助积分流程</text>
+      <rect x="30" y="70" width="150" height="66" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+      <text x="105" y="98" text-anchor="middle" font-size="14" font-weight="600" fill="#1e3a8a">会员上传小票</text>
+      <text x="105" y="120" text-anchor="middle" font-size="11" fill="#475569">拍照/PDF导入</text>
+      <rect x="230" y="70" width="150" height="66" rx="10" fill="#fff" stroke="#2563eb" stroke-width="2"/>
+      <text x="305" y="98" text-anchor="middle" font-size="14" font-weight="600" fill="#0f172a">OCR识别</text>
+      <text x="305" y="120" text-anchor="middle" font-size="11" fill="#475569">金额/商户/时间</text>
+      <rect x="430" y="70" width="150" height="66" rx="10" fill="#fff" stroke="#2563eb" stroke-width="2"/>
+      <text x="505" y="98" text-anchor="middle" font-size="14" font-weight="600" fill="#0f172a">匹配积分规则</text>
+      <text x="505" y="120" text-anchor="middle" font-size="11" fill="#475569">业态/门店/倍率</text>
+      <rect x="630" y="70" width="150" height="66" rx="10" fill="#fff" stroke="#2563eb" stroke-width="2"/>
+      <text x="705" y="98" text-anchor="middle" font-size="14" font-weight="600" fill="#0f172a">计算应得积分</text>
+      <text x="705" y="120" text-anchor="middle" font-size="11" fill="#475569">金额×倍率</text>
+      <polygon points="855,70 930,103 855,136 780,103" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+      <text x="855" y="100" text-anchor="middle" font-size="12" font-weight="600" fill="#7c2d12">进入审核?</text>
+      <text x="855" y="118" text-anchor="middle" font-size="11" fill="#7c2d12">命中风控/低置信</text>
+      <rect x="430" y="190" width="150" height="60" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+      <text x="505" y="215" text-anchor="middle" font-size="13" fill="#14532d" font-weight="600">AI自动审核</text>
+      <text x="505" y="235" text-anchor="middle" font-size="11" fill="#475569">高置信度通过</text>
+      <rect x="630" y="190" width="150" height="60" rx="10" fill="#fff" stroke="#2563eb" stroke-width="2"/>
+      <text x="705" y="215" text-anchor="middle" font-size="13" fill="#0f172a" font-weight="600">人工审核</text>
+      <text x="705" y="235" text-anchor="middle" font-size="11" fill="#475569">运营复核</text>
+      <polygon points="855,190 930,220 855,250 780,220" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+      <text x="855" y="218" text-anchor="middle" font-size="12" font-weight="600" fill="#7c2d12">审核通过?</text>
+      <rect x="630" y="290" width="150" height="60" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2" stroke-dasharray="5,3"/>
+      <text x="705" y="315" text-anchor="middle" font-size="13" fill="#7f1d1d" font-weight="600">审核拒绝</text>
+      <text x="705" y="335" text-anchor="middle" font-size="11" fill="#7f1d1d">通知补充材料</text>
+      <rect x="830" y="290" width="120" height="60" rx="10" fill="#2563eb" stroke="#1e40af" stroke-width="2"/>
+      <text x="890" y="325" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">积分到账</text>
+      <text x="890" y="345" text-anchor="middle" font-size="11" fill="#dbeafe">通知会员</text>
+      <line x1="180" y1="103" x2="225" y2="103" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_shp)"/>
+      <line x1="380" y1="103" x2="425" y2="103" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_shp)"/>
+      <line x1="580" y1="103" x2="625" y2="103" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_shp)"/>
+      <line x1="780" y1="103" x2="775" y2="103" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_shp)"/>
+      <line x1="855" y1="136" x2="505" y2="190" stroke="#16a34a" stroke-width="2" marker-end="url(#ar_shp)"/>
+      <text x="700" y="170" font-size="11" fill="#16a34a">自动</text>
+      <line x1="930" y1="103" x2="775" y2="190" stroke="#d97706" stroke-width="2" marker-end="url(#ar_shp)"/>
+      <text x="870" y="150" font-size="11" fill="#d97706">人工</text>
+      <line x1="580" y1="220" x2="625" y2="220" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_shp)"/>
+      <line x1="780" y1="220" x2="775" y2="220" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_shp)"/>
+      <line x1="855" y1="250" x2="705" y2="290" stroke="#dc2626" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#ar_shp)"/>
+      <text x="760" y="278" font-size="11" fill="#dc2626">否</text>
+      <line x1="930" y1="220" x2="830" y2="290" stroke="#16a34a" stroke-width="2" marker-end="url(#ar_shp)"/>
+      <text x="900" y="260" font-size="11" fill="#16a34a">是</text>
+      <rect x="30" y="340" width="180" height="60" fill="#fff" stroke="#cbd5e1" rx="6"/>
+      <text x="40" y="358" font-size="11" fill="#475569">— 主流程</text>
+      <text x="40" y="375" font-size="11" fill="#dc2626">- - 拒绝分支</text>
+      <text x="40" y="392" font-size="11" fill="#d97706">◇ 判断节点</text>
+    </svg>`
+  },
+  {
+    key: 'points-settlement',
+    name: '积分结算流程',
+    category: 'points',
+    desc: '按项目、业态、商户汇总积分发放数据，根据结算规则生成结算单，平台与商户完成积分成本清算。',
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" font-family="-apple-system,Segoe UI,Roboto,sans-serif">
+      <defs><marker id="ar_ps" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker></defs>
+      <rect width="960" height="420" fill="#f8fafc"/>
+      <text x="480" y="36" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">积分结算流程</text>
+      <rect x="30" y="70" width="150" height="66" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+      <text x="105" y="98" text-anchor="middle" font-size="14" font-weight="600" fill="#1e3a8a">汇总积分流水</text>
+      <text x="105" y="120" text-anchor="middle" font-size="11" fill="#475569">周期内所有发放</text>
+      <rect x="230" y="70" width="150" height="66" rx="10" fill="#fff" stroke="#2563eb" stroke-width="2"/>
+      <text x="305" y="98" text-anchor="middle" font-size="14" font-weight="600" fill="#0f172a">按项目/业态分组</text>
+      <text x="305" y="120" text-anchor="middle" font-size="11" fill="#475569">points/logs分类</text>
+      <rect x="430" y="70" width="150" height="66" rx="10" fill="#fff" stroke="#2563eb" stroke-width="2"/>
+      <text x="505" y="98" text-anchor="middle" font-size="14" font-weight="600" fill="#0f172a">匹配结算规则</text>
+      <text x="505" y="120" text-anchor="middle" font-size="11" fill="#475569">settle-rule优先级</text>
+      <rect x="630" y="70" width="150" height="66" rx="10" fill="#fff" stroke="#2563eb" stroke-width="2"/>
+      <text x="705" y="98" text-anchor="middle" font-size="14" font-weight="600" fill="#0f172a">计算结算金额</text>
+      <text x="705" y="120" text-anchor="middle" font-size="11" fill="#475569">积分×结算比例</text>
+      <polygon points="880,70 955,103 880,136 805,103" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+      <text x="880" y="100" text-anchor="middle" font-size="12" font-weight="600" fill="#7c2d12">金额调整?</text>
+      <rect x="630" y="190" width="150" height="60" rx="10" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5,3"/>
+      <text x="705" y="215" text-anchor="middle" font-size="13" fill="#475569" font-weight="600">人工调整</text>
+      <text x="705" y="235" text-anchor="middle" font-size="11" fill="#475569">运营复核修正</text>
+      <rect x="820" y="190" width="140" height="60" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+      <text x="890" y="215" text-anchor="middle" font-size="13" fill="#14532d" font-weight="600">生成结算单</text>
+      <text x="890" y="235" text-anchor="middle" font-size="11" fill="#475569">points/settle-bill</text>
+      <rect x="430" y="300" width="160" height="60" rx="10" fill="#fff" stroke="#2563eb" stroke-width="2"/>
+      <text x="510" y="325" text-anchor="middle" font-size="13" fill="#0f172a" font-weight="600">财务审批</text>
+      <text x="510" y="345" text-anchor="middle" font-size="11" fill="#475569">审批通过</text>
+      <rect x="630" y="300" width="160" height="60" rx="10" fill="#fff" stroke="#2563eb" stroke-width="2"/>
+      <text x="710" y="325" text-anchor="middle" font-size="13" fill="#0f172a" font-weight="600">商户确认</text>
+      <text x="710" y="345" text-anchor="middle" font-size="11" fill="#475569">在线确认/盖章</text>
+      <rect x="830" y="300" width="130" height="60" rx="10" fill="#2563eb" stroke="#1e40af" stroke-width="2"/>
+      <text x="895" y="335" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">打款结算</text>
+      <text x="895" y="355" text-anchor="middle" font-size="11" fill="#dbeafe">结算完成</text>
+      <line x1="180" y1="103" x2="225" y2="103" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_ps)"/>
+      <line x1="380" y1="103" x2="425" y2="103" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_ps)"/>
+      <line x1="580" y1="103" x2="625" y2="103" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_ps)"/>
+      <line x1="780" y1="103" x2="800" y2="103" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_ps)"/>
+      <line x1="880" y1="136" x2="705" y2="190" stroke="#d97706" stroke-width="2" marker-end="url(#ar_ps)"/>
+      <text x="760" y="170" font-size="11" fill="#d97706">是</text>
+      <line x1="955" y1="103" x2="890" y2="190" stroke="#16a34a" stroke-width="2" marker-end="url(#ar_ps)"/>
+      <text x="930" y="150" font-size="11" fill="#16a34a">否</text>
+      <line x1="760" y1="250" x2="800" y2="250" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_ps)"/>
+      <line x1="890" y1="250" x2="890" y2="295" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_ps)"/>
+      <line x1="890" y1="360" x2="710" y2="330" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_ps)"/>
+      <text x="810" y="350" font-size="11" fill="#2563eb">←</text>
+      <line x1="590" y1="330" x2="625" y2="330" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_ps)"/>
+      <line x1="790" y1="330" x2="825" y2="330" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_ps)"/>
+      <rect x="30" y="340" width="180" height="60" fill="#fff" stroke="#cbd5e1" rx="6"/>
+      <text x="40" y="358" font-size="11" fill="#475569">— 主流程</text>
+      <text x="40" y="375" font-size="11" fill="#64748b">- - 调整分支</text>
+      <text x="40" y="392" font-size="11" fill="#d97706">◇ 判断节点</text>
+    </svg>`
+  },
+  {
+    key: 'seckill-flow',
+    name: '秒杀活动流程',
+    category: 'marketing',
+    desc: '运营配置秒杀商品、库存和价格，活动开始时会员抢购，支付成功锁定库存，超时未支付自动释放。',
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" font-family="-apple-system,Segoe UI,Roboto,sans-serif">
+      <defs><marker id="ar_sk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker></defs>
+      <rect width="960" height="420" fill="#f8fafc"/>
+      <text x="480" y="36" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">秒杀活动流程</text>
+      <rect x="30" y="70" width="150" height="66" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+      <text x="105" y="98" text-anchor="middle" font-size="14" font-weight="600" fill="#1e3a8a">创建秒杀活动</text>
+      <text x="105" y="120" text-anchor="middle" font-size="11" fill="#475569">配置商品/价/库存</text>
+      <rect x="230" y="70" width="150" height="66" rx="10" fill="#fff" stroke="#2563eb" stroke-width="2"/>
+      <text x="305" y="98" text-anchor="middle" font-size="14" font-weight="600" fill="#0f172a">活动开始</text>
+      <text x="305" y="120" text-anchor="middle" font-size="11" fill="#475569">倒计时结束</text>
+      <rect x="430" y="70" width="150" height="66" rx="10" fill="#fff" stroke="#2563eb" stroke-width="2"/>
+      <text x="505" y="98" text-anchor="middle" font-size="14" font-weight="600" fill="#0f172a">会员抢购下单</text>
+      <text x="505" y="120" text-anchor="middle" font-size="11" fill="#475569">锁定库存</text>
+      <polygon points="710,70 810,103 710,136 610,103" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+      <text x="710" y="100" text-anchor="middle" font-size="13" font-weight="600" fill="#7c2d12">是否支付?</text>
+      <text x="710" y="120" text-anchor="middle" font-size="11" fill="#7c2d12">5分钟内</text>
+      <rect x="430" y="190" width="150" height="60" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2" stroke-dasharray="5,3"/>
+      <text x="505" y="215" text-anchor="middle" font-size="13" fill="#7f1d1d" font-weight="600">超时未支付</text>
+      <text x="505" y="235" text-anchor="middle" font-size="11" fill="#7f1d1d">库存自动释放</text>
+      <rect x="630" y="190" width="150" height="60" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+      <text x="705" y="215" text-anchor="middle" font-size="13" fill="#14532d" font-weight="600">支付成功</text>
+      <text x="705" y="235" text-anchor="middle" font-size="11" fill="#475569">扣减库存生成订单</text>
+      <rect x="830" y="190" width="110" height="60" rx="10" fill="#fff" stroke="#2563eb" stroke-width="2"/>
+      <text x="885" y="215" text-anchor="middle" font-size="13" fill="#0f172a" font-weight="600">发货/自提</text>
+      <text x="885" y="235" text-anchor="middle" font-size="11" fill="#475569">履约完成</text>
+      <rect x="630" y="300" width="150" height="60" rx="10" fill="#2563eb" stroke="#1e40af" stroke-width="2"/>
+      <text x="705" y="335" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">秒杀完成</text>
+      <line x1="180" y1="103" x2="225" y2="103" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_sk)"/>
+      <line x1="380" y1="103" x2="425" y2="103" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_sk)"/>
+      <line x1="580" y1="103" x2="605" y2="103" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_sk)"/>
+      <line x1="710" y1="136" x2="505" y2="190" stroke="#dc2626" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#ar_sk)"/>
+      <text x="590" y="170" font-size="11" fill="#dc2626">否</text>
+      <line x1="810" y1="103" x2="700" y2="190" stroke="#16a34a" stroke-width="2" marker-end="url(#ar_sk)"/>
+      <text x="770" y="150" font-size="11" fill="#16a34a">是</text>
+      <line x1="780" y1="220" x2="825" y2="220" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_sk)"/>
+      <line x1="705" y1="250" x2="705" y2="295" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_sk)"/>
+      <rect x="30" y="340" width="180" height="60" fill="#fff" stroke="#cbd5e1" rx="6"/>
+      <text x="40" y="358" font-size="11" fill="#475569">— 主流程</text>
+      <text x="40" y="375" font-size="11" fill="#dc2626">- - 超时释放</text>
+      <text x="40" y="392" font-size="11" fill="#d97706">◇ 判断节点</text>
+    </svg>`
+  },
+  {
+    key: 'countdown-sale-flow',
+    name: '限时购流程',
+    category: 'marketing',
+    desc: '在指定时间段内以活动价销售商品，会员在活动期内下单享受特价，活动结束后价格恢复原价。',
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" font-family="-apple-system,Segoe UI,Roboto,sans-serif">
+      <defs><marker id="ar_cd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker></defs>
+      <rect width="960" height="420" fill="#f8fafc"/>
+      <text x="480" y="36" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">限时购流程</text>
+      <rect x="30" y="70" width="150" height="66" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+      <text x="105" y="98" text-anchor="middle" font-size="14" font-weight="600" fill="#1e3a8a">配置限时购</text>
+      <text x="105" y="120" text-anchor="middle" font-size="11" fill="#475569">商品/活动价/时间</text>
+      <rect x="230" y="70" width="150" height="66" rx="10" fill="#fff" stroke="#2563eb" stroke-width="2"/>
+      <text x="305" y="98" text-anchor="middle" font-size="14" font-weight="600" fill="#0f172a">活动预热</text>
+      <text x="305" y="120" text-anchor="middle" font-size="11" fill="#475569">首页/Banner曝光</text>
+      <rect x="430" y="70" width="150" height="66" rx="10" fill="#fff" stroke="#2563eb" stroke-width="2"/>
+      <text x="505" y="98" text-anchor="middle" font-size="14" font-weight="600" fill="#0f172a">活动开始</text>
+      <text x="505" y="120" text-anchor="middle" font-size="11" fill="#475569">价格切换为活动价</text>
+      <polygon points="710,70 810,103 710,136 610,103" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+      <text x="710" y="100" text-anchor="middle" font-size="13" font-weight="600" fill="#7c2d12">活动期间?</text>
+      <text x="710" y="120" text-anchor="middle" font-size="11" fill="#7c2d12"> startTime&lt;=now&lt;=endTime </text>
+      <rect x="430" y="190" width="150" height="60" rx="10" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5,3"/>
+      <text x="505" y="215" text-anchor="middle" font-size="13" fill="#475569" font-weight="600">活动未开始/已结束</text>
+      <text x="505" y="235" text-anchor="middle" font-size="11" fill="#475569">显示原价</text>
+      <rect x="630" y="190" width="150" height="60" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+      <text x="705" y="215" text-anchor="middle" font-size="13" fill="#14532d" font-weight="600">按活动价下单</text>
+      <text x="705" y="235" text-anchor="middle" font-size="11" fill="#475569">库存正常扣减</text>
+      <rect x="630" y="300" width="150" height="60" rx="10" fill="#fff" stroke="#2563eb" stroke-width="2"/>
+      <text x="705" y="325" text-anchor="middle" font-size="13" fill="#0f172a" font-weight="600">支付发货</text>
+      <text x="705" y="345" text-anchor="middle" font-size="11" fill="#475569">标准订单履约</text>
+      <rect x="830" y="300" width="110" height="60" rx="10" fill="#2563eb" stroke="#1e40af" stroke-width="2"/>
+      <text x="885" y="335" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">限时购完成</text>
+      <line x1="180" y1="103" x2="225" y2="103" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_cd)"/>
+      <line x1="380" y1="103" x2="425" y2="103" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_cd)"/>
+      <line x1="580" y1="103" x2="605" y2="103" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_cd)"/>
+      <line x1="710" y1="136" x2="505" y2="190" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#ar_cd)"/>
+      <text x="590" y="170" font-size="11" fill="#64748b">否</text>
+      <line x1="810" y1="103" x2="700" y2="190" stroke="#16a34a" stroke-width="2" marker-end="url(#ar_cd)"/>
+      <text x="770" y="150" font-size="11" fill="#16a34a">是</text>
+      <line x1="705" y1="250" x2="705" y2="295" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_cd)"/>
+      <line x1="780" y1="330" x2="825" y2="330" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_cd)"/>
+      <rect x="30" y="340" width="180" height="60" fill="#fff" stroke="#cbd5e1" rx="6"/>
+      <text x="40" y="358" font-size="11" fill="#475569">— 主流程</text>
+      <text x="40" y="375" font-size="11" fill="#64748b">- - 非活动期</text>
+      <text x="40" y="392" font-size="11" fill="#d97706">◇ 判断节点</text>
+    </svg>`
+  },
+  {
+    key: 'pre-sale-flow',
+    name: '预售流程',
+    category: 'marketing',
+    desc: '会员在活动期内支付定金锁定商品，尾款期支付尾款后商家按预售量备货发货，未付尾款定金不退。',
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" font-family="-apple-system,Segoe UI,Roboto,sans-serif">
+      <defs><marker id="ar_pre" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker></defs>
+      <rect width="960" height="420" fill="#f8fafc"/>
+      <text x="480" y="36" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">预售流程</text>
+      <rect x="30" y="70" width="140" height="66" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+      <text x="100" y="98" text-anchor="middle" font-size="14" font-weight="600" fill="#1e3a8a">创建预售</text>
+      <text x="100" y="120" text-anchor="middle" font-size="11" fill="#475569">定金/尾款/发货时间</text>
+      <rect x="220" y="70" width="140" height="66" rx="10" fill="#fff" stroke="#2563eb" stroke-width="2"/>
+      <text x="290" y="98" text-anchor="middle" font-size="14" font-weight="600" fill="#0f172a">支付定金</text>
+      <text x="290" y="120" text-anchor="middle" font-size="11" fill="#475569">锁定库存/生成订单</text>
+      <rect x="410" y="70" width="140" height="66" rx="10" fill="#fff" stroke="#2563eb" stroke-width="2"/>
+      <text x="480" y="98" text-anchor="middle" font-size="14" font-weight="600" fill="#0f172a">进入尾款期</text>
+      <text x="480" y="120" text-anchor="middle" font-size="11" fill="#475569">消息提醒</text>
+      <polygon points="710,70 810,103 710,136 610,103" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+      <text x="710" y="100" text-anchor="middle" font-size="13" font-weight="600" fill="#7c2d12">支付尾款?</text>
+      <text x="710" y="120" text-anchor="middle" font-size="11" fill="#7c2d12">7天内</text>
+      <rect x="430" y="190" width="150" height="60" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2" stroke-dasharray="5,3"/>
+      <text x="505" y="215" text-anchor="middle" font-size="13" fill="#7f1d1d" font-weight="600">未付尾款</text>
+      <text x="505" y="235" text-anchor="middle" font-size="11" fill="#7f1d1d">定金不退/释放库存</text>
+      <rect x="630" y="190" width="150" height="60" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+      <text x="705" y="215" text-anchor="middle" font-size="13" fill="#14532d" font-weight="600">支付尾款成功</text>
+      <text x="705" y="235" text-anchor="middle" font-size="11" fill="#475569">按预售量备货</text>
+      <rect x="630" y="300" width="150" height="60" rx="10" fill="#fff" stroke="#2563eb" stroke-width="2"/>
+      <text x="705" y="325" text-anchor="middle" font-size="13" fill="#0f172a" font-weight="600">发货履约</text>
+      <text x="705" y="345" text-anchor="middle" font-size="11" fill="#475569">物流/自提</text>
+      <rect x="830" y="300" width="110" height="60" rx="10" fill="#2563eb" stroke="#1e40af" stroke-width="2"/>
+      <text x="885" y="335" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">预售完成</text>
+      <line x1="170" y1="103" x2="215" y2="103" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_pre)"/>
+      <line x1="360" y1="103" x2="405" y2="103" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_pre)"/>
+      <line x1="550" y1="103" x2="605" y2="103" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_pre)"/>
+      <line x1="710" y1="136" x2="505" y2="190" stroke="#dc2626" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#ar_pre)"/>
+      <text x="590" y="170" font-size="11" fill="#dc2626">否</text>
+      <line x1="810" y1="103" x2="700" y2="190" stroke="#16a34a" stroke-width="2" marker-end="url(#ar_pre)"/>
+      <text x="770" y="150" font-size="11" fill="#16a34a">是</text>
+      <line x1="705" y1="250" x2="705" y2="295" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_pre)"/>
+      <line x1="780" y1="330" x2="825" y2="330" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_pre)"/>
+      <rect x="30" y="340" width="180" height="60" fill="#fff" stroke="#cbd5e1" rx="6"/>
+      <text x="40" y="358" font-size="11" fill="#475569">— 主流程</text>
+      <text x="40" y="375" font-size="11" fill="#dc2626">- - 违约分支</text>
+      <text x="40" y="392" font-size="11" fill="#d97706">◇ 判断节点</text>
+    </svg>`
+  },
+  {
+    key: 'review-audit-flow',
+    name: '商品评价审核流程',
+    category: 'mall',
+    desc: '会员提交商品评价后，系统按敏感词和规则自动审核，异常评价进入人工复核，审核通过后展示在商品详情。',
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" font-family="-apple-system,Segoe UI,Roboto,sans-serif">
+      <defs><marker id="ar_rv" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker></defs>
+      <rect width="960" height="420" fill="#f8fafc"/>
+      <text x="480" y="36" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">商品评价审核流程</text>
+      <rect x="30" y="70" width="140" height="66" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+      <text x="100" y="98" text-anchor="middle" font-size="14" font-weight="600" fill="#1e3a8a">提交评价</text>
+      <text x="100" y="120" text-anchor="middle" font-size="11" fill="#475569">评分/文字/图片</text>
+      <rect x="220" y="70" width="140" height="66" rx="10" fill="#fff" stroke="#2563eb" stroke-width="2"/>
+      <text x="290" y="98" text-anchor="middle" font-size="14" font-weight="600" fill="#0f172a">系统预审</text>
+      <text x="290" y="120" text-anchor="middle" font-size="11" fill="#475569">敏感词/图片合规</text>
+      <polygon points="510,70 610,103 510,136 410,103" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+      <text x="510" y="100" text-anchor="middle" font-size="13" font-weight="600" fill="#7c2d12">命中敏感?</text>
+      <text x="510" y="120" text-anchor="middle" font-size="11" fill="#7c2d12">风险内容</text>
+      <rect x="220" y="190" width="140" height="60" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+      <text x="290" y="215" text-anchor="middle" font-size="13" fill="#14532d" font-weight="600">自动通过</text>
+      <text x="290" y="235" text-anchor="middle" font-size="11" fill="#475569">直接展示</text>
+      <rect x="410" y="190" width="160" height="60" rx="10" fill="#fff" stroke="#2563eb" stroke-width="2"/>
+      <text x="490" y="215" text-anchor="middle" font-size="13" fill="#0f172a" font-weight="600">人工复核</text>
+      <text x="490" y="235" text-anchor="middle" font-size="11" fill="#475569">运营审核</text>
+      <polygon points="710,190 810,220 710,250 610,220" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+      <text x="710" y="218" text-anchor="middle" font-size="13" font-weight="600" fill="#7c2d12">人工通过?</text>
+      <rect x="410" y="290" width="160" height="60" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2" stroke-dasharray="5,3"/>
+      <text x="490" y="315" text-anchor="middle" font-size="13" fill="#7f1d1d" font-weight="600">隐藏/驳回</text>
+      <text x="490" y="335" text-anchor="middle" font-size="11" fill="#7f1d1d">通知会员原因</text>
+      <rect x="610" y="290" width="160" height="60" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+      <text x="690" y="315" text-anchor="middle" font-size="13" fill="#14532d" font-weight="600">展示评价</text>
+      <text x="690" y="335" text-anchor="middle" font-size="11" fill="#475569">商品详情可见</text>
+      <rect x="610" y="360" width="160" height="50" rx="10" fill="#2563eb" stroke="#1e40af" stroke-width="2"/>
+      <text x="690" y="390" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">评价流程完成</text>
+      <line x1="170" y1="103" x2="215" y2="103" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_rv)"/>
+      <line x1="360" y1="103" x2="405" y2="103" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_rv)"/>
+      <line x1="510" y1="136" x2="290" y2="190" stroke="#16a34a" stroke-width="2" marker-end="url(#ar_rv)"/>
+      <text x="380" y="166" font-size="11" fill="#16a34a">否</text>
+      <line x1="610" y1="103" x2="485" y2="190" stroke="#d97706" stroke-width="2" marker-end="url(#ar_rv)"/>
+      <text x="570" y="150" font-size="11" fill="#d97706">是</text>
+      <line x1="360" y1="220" x2="405" y2="220" stroke="#16a34a" stroke-width="2" marker-end="url(#ar_rv)"/>
+      <line x1="570" y1="220" x2="605" y2="220" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_rv)"/>
+      <line x1="710" y1="250" x2="490" y2="290" stroke="#dc2626" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#ar_rv)"/>
+      <text x="590" y="278" font-size="11" fill="#dc2626">否</text>
+      <line x1="810" y1="220" x2="690" y2="290" stroke="#16a34a" stroke-width="2" marker-end="url(#ar_rv)"/>
+      <text x="760" y="260" font-size="11" fill="#16a34a">是</text>
+      <line x1="690" y1="350" x2="690" y2="360" stroke="#2563eb" stroke-width="2" marker-end="url(#ar_rv)"/>
+      <rect x="30" y="340" width="180" height="60" fill="#fff" stroke="#cbd5e1" rx="6"/>
+      <text x="40" y="358" font-size="11" fill="#475569">— 主流程</text>
+      <text x="40" y="375" font-size="11" fill="#dc2626">- - 隐藏分支</text>
+      <text x="40" y="392" font-size="11" fill="#d97706">◇ 判断节点</text>
+    </svg>`
+  },
 ];
 
 export default function BusinessFlow() {
@@ -852,7 +1220,7 @@ export default function BusinessFlow() {
   const moduleStub = {
     key: 'business-flow', path: 'business/flow', name: '业务流程', category: '系统',
     columns: [], fields: [],
-    doc: { overview: '业务流程图展示页，左侧分类导航切换查看各核心业务的完整流转过程。', features: ['16个核心业务流程', '可视化流程节点', '分类导航快速定位', '说明各环节联动关系'] }
+    doc: { overview: '业务流程图展示页，左侧分类导航切换查看各核心业务的完整流转过程。', features: ['24个核心业务流程', '可视化流程节点', '分类导航快速定位', '说明各环节联动关系'] }
   };
 
   const filteredFlows = activeCategory === 'all'
