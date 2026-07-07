@@ -1,0 +1,182 @@
+[
+  {
+    "module": "会员标签",
+    "moduleKey": "member-tags",
+    "modulePath": "member/tags",
+    "field": "rule",
+    "fieldType": "text",
+    "problem": "应改为关联下拉",
+    "targetPath": "points/rules",
+    "line": 167
+  },
+  {
+    "module": "停车记录",
+    "moduleKey": "parking-records",
+    "modulePath": "parking/records",
+    "field": "plate",
+    "fieldType": "text",
+    "problem": "应改为关联下拉",
+    "targetPath": "parking/lots",
+    "line": 371
+  },
+  {
+    "module": "企微账号",
+    "moduleKey": "wecom-accounts",
+    "modulePath": "wecom/accounts",
+    "field": "department",
+    "fieldType": "text",
+    "problem": "应改为关联下拉",
+    "targetPath": "system/departments",
+    "line": 656
+  },
+  {
+    "module": "商城商品",
+    "moduleKey": "shop-goods",
+    "modulePath": "shop/goods",
+    "field": "tags",
+    "fieldType": "text",
+    "problem": "应改为关联下拉",
+    "targetPath": "member/tags",
+    "line": 787
+  },
+  {
+    "module": "商城订单",
+    "moduleKey": "shop-orders",
+    "modulePath": "shop/orders",
+    "field": "tags",
+    "fieldType": "text",
+    "problem": "应改为关联下拉",
+    "targetPath": "member/tags",
+    "line": 847
+  },
+  {
+    "module": "会员画像",
+    "moduleKey": "member-profiles",
+    "modulePath": "member/profiles",
+    "field": "tags",
+    "fieldType": "textarea",
+    "problem": "应改为关联下拉",
+    "targetPath": "member/tags",
+    "line": 1304
+  },
+  {
+    "module": "商户核销统计",
+    "moduleKey": "merchant-verification",
+    "modulePath": "merchant/verification",
+    "field": "merchant",
+    "fieldType": "text",
+    "problem": "应改为关联下拉",
+    "targetPath": "system/merchants",
+    "line": 1671
+  },
+  {
+    "module": "商户发券",
+    "moduleKey": "merchant-coupon-issue",
+    "modulePath": "merchant/coupon-issue",
+    "field": "merchant",
+    "fieldType": "text",
+    "problem": "应改为关联下拉",
+    "targetPath": "system/merchants",
+    "line": 1696
+  },
+  {
+    "module": "新人礼",
+    "moduleKey": "new-member-gifts",
+    "modulePath": "marketing/new-member",
+    "field": "rewards",
+    "fieldType": "text",
+    "problem": "应改为关联下拉",
+    "targetPath": "marketing/prizes",
+    "line": 2098
+  },
+  {
+    "module": "游戏互动",
+    "moduleKey": "games",
+    "modulePath": "marketing/games",
+    "field": "rewards",
+    "fieldType": "text",
+    "problem": "应改为关联下拉",
+    "targetPath": "marketing/prizes",
+    "line": 2169
+  },
+  {
+    "module": "调查问卷",
+    "moduleKey": "surveys",
+    "modulePath": "marketing/surveys",
+    "field": "reward",
+    "fieldType": "text",
+    "problem": "应改为关联下拉",
+    "targetPath": "marketing/prizes",
+    "line": 2191
+  },
+  {
+    "module": "众筹抽奖",
+    "moduleKey": "lucky-draws",
+    "modulePath": "marketing/lucky-draw",
+    "field": "prize",
+    "fieldType": "text",
+    "problem": "应改为关联下拉",
+    "targetPath": "marketing/prizes",
+    "line": 2310
+  },
+  {
+    "module": "盲盒活动",
+    "moduleKey": "blind-boxes",
+    "modulePath": "marketing/blind-box",
+    "field": "prizes",
+    "fieldType": "text",
+    "problem": "应改为关联下拉",
+    "targetPath": "marketing/prizes",
+    "line": 2334
+  },
+  {
+    "module": "计次卡",
+    "moduleKey": "count-cards",
+    "modulePath": "marketing/count-cards",
+    "field": "merchants",
+    "fieldType": "text",
+    "problem": "应改为关联下拉",
+    "targetPath": "system/merchants",
+    "line": 2358
+  },
+  {
+    "module": "抖音兑换券",
+    "moduleKey": "douyin-coupons",
+    "modulePath": "marketing/douyin-coupon",
+    "field": "reward",
+    "fieldType": "text",
+    "problem": "应改为关联下拉",
+    "targetPath": "marketing/prizes",
+    "line": 2403
+  },
+  {
+    "module": "积分结算单",
+    "moduleKey": "points-settle-bill",
+    "modulePath": "points/settle-bill",
+    "field": "merchant",
+    "fieldType": "text",
+    "problem": "应改为关联下拉",
+    "targetPath": "system/merchants",
+    "line": 2798
+  },
+  {
+    "module": "销售上报",
+    "moduleKey": "merchant-sales-report",
+    "modulePath": "merchant/sales-report",
+    "field": "merchant",
+    "fieldType": "text",
+    "problem": "应改为关联下拉",
+    "targetPath": "system/merchants",
+    "line": 3032
+  },
+  {
+    "module": "小红书运营",
+    "moduleKey": "xiaohongshu-operations",
+    "modulePath": "public-domain/xhs",
+    "field": "couponTemplate",
+    "fieldType": "text",
+    "problem": "应改为关联下拉",
+    "targetPath": "coupon/templates",
+    "line": 3238
+  }
+]
