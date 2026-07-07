@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Button, Table, Modal, Form, Input, InputNumber, Select, Space, Popconfirm, message,
-  Card, Row, Col, Statistic, Badge, Drawer, Descriptions, Image, Upload, Empty, Tag
+  Card, Row, Col, Statistic, Badge, Drawer, Descriptions, Image, Upload, Empty, Tag,
+  DatePicker
 } from 'antd';
 import {
   PlusOutlined, EditOutlined, DeleteOutlined, ReloadOutlined,
@@ -18,7 +19,11 @@ import dayjs from 'dayjs';
 
 /** 判断字段名是否为图片字段 */
 const isImageField = (name: string): boolean =>
-  /image|img|logo|avatar|icon|photo|banner/i.test(name);
+  /image|img|logo|avatar|icon|photo|banner|cover|storePhotos|detailImages/i.test(name);
+
+/** 判断字段名是否为颜色字段 */
+const isColorField = (name: string): boolean =>
+  /color/i.test(name);
 
 /** 获取状态显示文本 */
 const getStatusLabel = (val: any): string => {
@@ -71,6 +76,117 @@ const SourceSelect: React.FC<{ source: { path: string; labelField: string; value
     return () => { alive = false; };
   }, [source.path, source.labelField, source.valueField]);
   return <Select options={options} placeholder={placeholder || '请选择'} showSearch optionFilterProp="label" />;
+};
+
+/** 条件构建器：用于营销模型等筛选条件 */
+const ConditionBuilder: React.FC<{ value?: string; onChange?: (val: string) => void }> = ({ value, onChange }) => {
+  const [conditions, setConditions] = useState<{ field: string; operator: string; value: string }[]>([]);
+
+  useEffect(() => {
+    try {
+      const parsed = JSON.parse(value || '[]');
+      if (Array.isArray(parsed)) setConditions(parsed);
+      else setConditions([]);
+    } catch {
+      setConditions([]);
+    }
+  }, [value]);
+
+  const triggerChange = (next: { field: string; operator: string; value: string }[]) => {
+    setConditions(next);
+    onChange?.(JSON.stringify(next));
+  };
+
+  const fields = [
+    { label: '会员等级', value: 'level' },
+    { label: '消费金额', value: 'totalSpent' },
+    { label: '注册时间', value: 'registerTime' },
+    { label: '最近消费', value: 'lastConsume' },
+    { label: '积分余额', value: 'points' },
+    { label: '标签', value: 'tags' },
+    { label: '性别', value: 'gender' },
+    { label: '年龄', value: 'age' },
+    { label: '来源渠道', value: 'source' },
+    { label: '成长值', value: 'growth' },
+  ];
+
+  const operators = [
+    { label: '等于', value: 'eq' },
+    { label: '不等于', value: 'ne' },
+    { label: '大于', value: 'gt' },
+    { label: '大于等于', value: 'gte' },
+    { label: '小于', value: 'lt' },
+    { label: '小于等于', value: 'lte' },
+    { label: '包含', value: 'contains' },
+    { label: '不包含', value: 'notContains' },
+    { label: '为空', value: 'empty' },
+    { label: '不为空', value: 'notEmpty' },
+  ];
+
+  return (
+    <div style={{ border: '1px solid #d9d9d9', borderRadius: 6, padding: 12, background: '#fafafa' }}>
+      {conditions.map((c, idx) => (
+        <Row key={idx} gutter={8} style={{ marginBottom: 8 }} align="middle">
+          <Col span={7}>
+            <Select
+              placeholder="选择字段"
+              options={fields}
+              value={c.field || undefined}
+              onChange={(v) => {
+                const next = [...conditions];
+                next[idx] = { ...next[idx], field: v };
+                triggerChange(next);
+              }}
+              style={{ width: '100%' }}
+            />
+          </Col>
+          <Col span={6}>
+            <Select
+              placeholder="运算符"
+              options={operators}
+              value={c.operator || undefined}
+              onChange={(v) => {
+                const next = [...conditions];
+                next[idx] = { ...next[idx], operator: v };
+                triggerChange(next);
+              }}
+              style={{ width: '100%' }}
+            />
+          </Col>
+          <Col span={8}>
+            {!['empty', 'notEmpty'].includes(c.operator) && (
+              <Input
+                placeholder="输入值"
+                value={c.value}
+                onChange={(e) => {
+                  const next = [...conditions];
+                  next[idx] = { ...next[idx], value: e.target.value };
+                  triggerChange(next);
+                }}
+              />
+            )}
+          </Col>
+          <Col span={3}>
+            <Button
+              danger
+              size="small"
+              onClick={() => triggerChange(conditions.filter((_, i) => i !== idx))}
+            >
+              删除
+            </Button>
+          </Col>
+        </Row>
+      ))}
+      <Button
+        type="dashed"
+        size="small"
+        onClick={() => triggerChange([...conditions, { field: '', operator: 'eq', value: '' }])}
+        style={{ width: '100%' }}
+      >
+        + 添加条件
+      </Button>
+    </div>
+  );
 };
 
 /** 渲染状态 Badge */
@@ -166,7 +282,7 @@ export default function GenericCRUD({ moduleKey }: { moduleKey: string }) {
 
   const handleEdit = (record: any) => {
     setEditId(record.id);
-    // 对图片字段，转换为 fileList 格式
+    // 对图片字段，转换为 fileList 格式；对日期字段，转换为 dayjs
     const formValues: Record<string, any> = { ...record };
     module.fields.forEach((field) => {
       if (isImageField(field.name) && record[field.name]) {
@@ -176,6 +292,9 @@ export default function GenericCRUD({ moduleKey }: { moduleKey: string }) {
           status: 'done',
           url: record[field.name],
         }];
+      }
+      if (field.type === 'date' && record[field.name]) {
+        formValues[field.name] = dayjs(record[field.name]);
       }
     });
     form.setFieldsValue(formValues);
@@ -195,7 +314,7 @@ export default function GenericCRUD({ moduleKey }: { moduleKey: string }) {
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
-      // 处理图片字段的 Upload fileList -> 提取 url
+      // 处理图片字段的 Upload fileList -> 提取 url；日期字段 dayjs -> 字符串
       module.fields.forEach((field) => {
         if (isImageField(field.name) && Array.isArray(values[field.name])) {
           const fileList = values[field.name];
@@ -204,6 +323,10 @@ export default function GenericCRUD({ moduleKey }: { moduleKey: string }) {
           } else {
             values[field.name] = '';
           }
+        }
+        if (field.type === 'date' && values[field.name]) {
+          const d = values[field.name];
+          values[field.name] = dayjs.isDayjs(d) ? d.format(field.name.includes('Time') ? 'YYYY-MM-DD HH:mm:ss' : 'YYYY-MM-DD') : d;
         }
       });
       if (editId != null) {
@@ -253,6 +376,15 @@ export default function GenericCRUD({ moduleKey }: { moduleKey: string }) {
         </Upload.Dragger>
       );
     }
+    if (isColorField(field.name)) {
+      return (
+        <Input
+          type="color"
+          style={{ width: 60, height: 32, padding: 2, cursor: 'pointer' }}
+          placeholder={field.placeholder}
+        />
+      );
+    }
     switch (field.type) {
       case 'number':
         return <InputNumber style={{ width: '100%' }} placeholder={field.placeholder} />;
@@ -266,7 +398,9 @@ export default function GenericCRUD({ moduleKey }: { moduleKey: string }) {
       case 'switch':
         return <Select options={[{ label: '是', value: true }, { label: '否', value: false }]} />;
       case 'date':
-        return <Input placeholder={field.placeholder || `请输入${field.label}`} />;
+        return <DatePicker style={{ width: '100%' }} placeholder={field.placeholder || `请选择${field.label}`} showTime={field.name.includes('Time')} />;
+      case 'conditionBuilder':
+        return <ConditionBuilder />;
       default:
         return <Input placeholder={field.placeholder || `请输入${field.label}`} />;
     }

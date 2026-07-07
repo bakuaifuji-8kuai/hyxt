@@ -508,6 +508,16 @@ initModule('applet/search', ['keyword', 'type', 'target', 'weight', 'clickCount'
 initModule('applet/audience', ['name', 'type', 'conditions', 'size', 'createTime', 'updateTime', 'status'], [
   { name: '高消费人群', type: 'tag', conditions: '消费>5000', size: 86, createTime: '2024-06-01', updateTime: '2024-06-01', status: 'enabled' }
 ]);
+initModule('system/staff', ['name', 'phone', 'role', 'shop', 'status'], [
+  { name: '客服小王', phone: '13800138010', role: '客服', shop: '总店', status: 'enabled' },
+  { name: '运营小李', phone: '13800138011', role: '运营', shop: '总店', status: 'enabled' },
+  { name: 'admin', phone: '13800138012', role: '管理员', shop: '总店', status: 'enabled' }
+]);
+initModule('services/items', ['name', 'price', 'duration', 'shop', 'status'], [
+  { name: '面部护理', price: 298, duration: 60, shop: '总店', status: 'enabled' },
+  { name: '按摩理疗', price: 188, duration: 45, shop: '总店', status: 'enabled' },
+  { name: '健身私教', price: 500, duration: 60, shop: '总店', status: 'enabled' }
+]);
 initModule('system/projects', ['name', 'code', 'businessType', 'address', 'cooperationParty', 'contactPerson', 'contactPhone', 'adminName', 'adminAccount', 'memberCount', 'maxMembers', 'dataIsolation', 'isolationRule', 'billingMode', 'billingConfig', 'enabledModules', 'resourceQuota', 'contractPeriod', 'remark', 'status', 'createdAt'], [
   { name: '凯德壹中心', code: 'KDYZX', businessType: 'shopping', address: '长沙市岳麓区', cooperationParty: '凯德集团', contactPerson: '李总', contactPhone: '13800138001', adminName: 'admin', adminAccount: 'admin', memberCount: 12580, maxMembers: 50000, dataIsolation: 'no', isolationRule: '按项目隔离', billingMode: 'full', billingConfig: '全功能计费', enabledModules: '全部', resourceQuota: '无限', contractPeriod: '2024-2026', remark: '', status: 'enabled', createdAt: '2024-01-01' },
   { name: '碧湘楚巷', code: 'BXCX', businessType: 'scenic', address: '长沙市天心区', cooperationParty: '碧湘集团', contactPerson: '王总', contactPhone: '13900139002', adminName: 'admin2', adminAccount: 'admin2', memberCount: 3200, maxMembers: 30000, dataIsolation: 'no', isolationRule: '按项目隔离', billingMode: 'basic', billingConfig: '基础版计费', enabledModules: '基础模块', resourceQuota: '有限', contractPeriod: '2024-2025', remark: '', status: 'enabled', createdAt: '2024-03-01' }

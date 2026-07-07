@@ -4,7 +4,7 @@
 export interface FieldConfig {
   name: string;
   label: string;
-  type?: 'text' | 'number' | 'select' | 'textarea' | 'switch' | 'date';
+  type?: 'text' | 'number' | 'select' | 'textarea' | 'switch' | 'date' | 'conditionBuilder';
   options?: { label: string; value: string }[];
   required?: boolean;
   placeholder?: string;
@@ -67,7 +67,7 @@ export const MODULES: ModuleConfig[] = [
         { label: '积分', value: 'points' }, { label: '消费金额', value: 'spent' }, { label: '成长值', value: 'growth' }
       ] },
       { name: 'minPoints', label: '升级所需值', type: 'number' },
-      { name: 'keepCondition', label: '保级要求', type: 'text' },
+      { name: 'keepCondition', label: '保级要求', type: 'select', options: [{ label: '无要求', value: 'none' }, { label: '积分保级', value: 'points' }, { label: '消费保级', value: 'spent' }] },
       { name: 'downgradeRule', label: '降级规则', type: 'select', options: [
         { label: '不降级', value: 'none' }, { label: '自动降级', value: 'auto' }, { label: '手动降级', value: 'manual' }
       ] },
@@ -112,7 +112,7 @@ export const MODULES: ModuleConfig[] = [
       { name: 'gender', label: '性别', type: 'select', options: [
         { label: '男', value: 'male' }, { label: '女', value: 'female' }, { label: '保密', value: 'unknown' }
       ] },
-      { name: 'birthday', label: '生日', type: 'text' },
+      { name: 'birthday', label: '生日', type: 'date' },
       { name: 'age', label: '年龄', type: 'number' },
       { name: 'address', label: '家庭住址', type: 'text' },
       { name: 'occupation', label: '职业', type: 'text' },
@@ -131,9 +131,9 @@ export const MODULES: ModuleConfig[] = [
       { name: 'source', label: '注册来源', type: 'select', options: [
         { label: '小程序', value: 'miniapp' }, { label: '微信', value: 'wxapp' }, { label: '门店', value: 'shop' }, { label: '活动', value: 'activity' }
       ] },
-      { name: 'registerTime', label: '注册时间', type: 'text' },
-      { name: 'lastLogin', label: '最近登录', type: 'text' },
-      { name: 'lastConsume', label: '最近消费', type: 'text' },
+      { name: 'registerTime', label: '注册时间', type: 'date' },
+      { name: 'lastLogin', label: '最近登录', type: 'date' },
+      { name: 'lastConsume', label: '最近消费', type: 'date' },
       { name: 'remark', label: '备注', type: 'textarea' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
@@ -164,10 +164,10 @@ export const MODULES: ModuleConfig[] = [
         { label: '消费', value: '消费' }, { label: '活跃', value: '活跃' }, { label: '属性', value: '属性' }
       ] },
       { name: 'rule', label: '规则', type: 'text' },
-      { name: 'condition', label: '触发条件', type: 'textarea' },
+      { name: 'condition', label: '触发条件', type: 'conditionBuilder' },
       { name: 'color', label: '标签颜色', type: 'text' },
       { name: 'count', label: '覆盖人数', type: 'number' },
-      { name: 'updatedAt', label: '更新时间', type: 'text' },
+      { name: 'updatedAt', label: '更新时间', type: 'date' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
     doc: {
@@ -198,9 +198,9 @@ export const MODULES: ModuleConfig[] = [
       { name: 'pointsRatio', label: '积分比例(积分/元)', type: 'number', placeholder: '如0.1表示每10元送1积分' },
       { name: 'maxPointsPerOrder', label: '单笔封顶(积分)', type: 'number', placeholder: '每笔订单最多送多少积分' },
       { name: 'points', label: '固定积分值', type: 'number', placeholder: '签到/生日等固定积分规则使用' },
-      { name: 'condition', label: '条件说明', type: 'textarea' },
-      { name: 'validFrom', label: '生效日期', type: 'text' },
-      { name: 'validTo', label: '截止日期', type: 'text' },
+      { name: 'condition', label: '条件说明', type: 'conditionBuilder' },
+      { name: 'validFrom', label: '生效日期', type: 'date' },
+      { name: 'validTo', label: '截止日期', type: 'date' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
     doc: {
@@ -227,7 +227,7 @@ export const MODULES: ModuleConfig[] = [
       { name: 'name', label: '商品名称', type: 'text', required: true },
       { name: 'mainImage', label: '商品主图', type: 'text' },
       { name: 'detailImages', label: '商品详情图', type: 'textarea' },
-      { name: 'category', label: '商品分类', type: 'text' },
+      { name: 'category', label: '商品分类', type: 'select', source: { path: 'shop/categories', labelField: 'name', valueField: 'name' } },
       { name: 'goodsType', label: '商品类型', type: 'select', options: [
         { label: '实物商品', value: 'physical' }, { label: '虚拟商品', value: 'virtual' },
         { label: '优惠券', value: 'coupon' }, { label: '服务权益', value: 'service' }
@@ -274,7 +274,7 @@ export const MODULES: ModuleConfig[] = [
       { title: '备注', dataIndex: 'remark' }
     ],
     fields: [
-      { name: 'member', label: '会员', type: 'text', required: true },
+      { name: 'member', label: '会员', type: 'select', required: true, source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
       { name: 'bizType', label: '业务类型', type: 'select', options: [
         { label: '消费奖励', value: 'consume' }, { label: '签到奖励', value: 'signin' }, { label: '生日积分', value: 'birthday' },
         { label: '积分兑换', value: 'exchange' }, { label: '积分充值', value: 'recharge' }, { label: '积分扣减', value: 'deduct' },
@@ -284,16 +284,16 @@ export const MODULES: ModuleConfig[] = [
       { name: 'points', label: '积分变动', type: 'number' },
       { name: 'beforeBalance', label: '变动前余额', type: 'number' },
       { name: 'balance', label: '变动后余额', type: 'number' },
-      { name: 'expireDate', label: '有效期至', type: 'text' },
+      { name: 'expireDate', label: '有效期至', type: 'date' },
       { name: 'isHistory', label: '是否历史积分', type: 'select', options: [
         { label: '是', value: 'yes' }, { label: '否', value: 'no' }
       ] },
       { name: 'bizNo', label: '关联业务单号', type: 'text' },
-      { name: 'operator', label: '操作人', type: 'text' },
+      { name: 'operator', label: '操作人', type: 'select', source: { path: 'system/staff', labelField: 'name', valueField: 'name' } },
       { name: 'source', label: '积分来源', type: 'select', options: [
         { label: '系统发放', value: 'system' }, { label: '人工充值', value: 'manual' }, { label: '消费返积', value: 'consume' }, { label: '活动赠送', value: 'activity' }
       ] },
-      { name: 'createdAt', label: '时间', type: 'text' },
+      { name: 'createdAt', label: '时间', type: 'date' },
       { name: 'remark', label: '备注', type: 'textarea' }
     ],
     doc: {
@@ -342,7 +342,7 @@ export const MODULES: ModuleConfig[] = [
     ],
     fields: [
       { name: 'name', label: '批次名称', type: 'text', required: true },
-      { name: 'template', label: '券模板', type: 'text' },
+      { name: 'template', label: '券模板', type: 'select', source: { path: 'coupon/templates', labelField: 'name', valueField: 'name' } },
       { name: 'count', label: '发行量', type: 'number' },
       { name: 'claimed', label: '已领取', type: 'number' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
@@ -368,9 +368,9 @@ export const MODULES: ModuleConfig[] = [
     ],
     fields: [
       { name: 'plate', label: '车牌号', type: 'text', required: true },
-      { name: 'member', label: '会员', type: 'text' },
-      { name: 'inTime', label: '入场时间', type: 'text' },
-      { name: 'outTime', label: '出场时间', type: 'text' },
+      { name: 'member', label: '会员', type: 'select', source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
+      { name: 'inTime', label: '入场时间', type: 'date' },
+      { name: 'outTime', label: '出场时间', type: 'date' },
       { name: 'duration', label: '时长(分钟)', type: 'number' },
       { name: 'fee', label: '费用', type: 'number' },
       { name: 'points', label: '送积分', type: 'number' }
@@ -434,14 +434,14 @@ export const MODULES: ModuleConfig[] = [
       ] },
       { name: 'description', label: '活动描述', type: 'textarea' },
       { name: 'rules', label: '活动规则', type: 'textarea' },
-      { name: 'startTime', label: '开始时间', type: 'text' },
-      { name: 'endTime', label: '结束时间', type: 'text' },
+      { name: 'startTime', label: '开始时间', type: 'date' },
+      { name: 'endTime', label: '结束时间', type: 'date' },
       { name: 'budget', label: '预算(元)', type: 'number' },
-      { name: 'targetGroup', label: '参与人群', type: 'text' },
-      { name: 'targetTags', label: '目标标签', type: 'text' },
+      { name: 'targetGroup', label: '参与人群', type: 'select', options: [{ label: '全部会员', value: 'all' }, { label: '新会员', value: 'new' }, { label: '老会员', value: 'old' }, { label: '高价值会员', value: 'vip' }] },
+      { name: 'targetTags', label: '目标标签', type: 'select', source: { path: 'member/tags', labelField: 'name', valueField: 'name' } },
       { name: 'threshold', label: '参与门槛', type: 'textarea' },
-      { name: 'couponTemplates', label: '关联券模板', type: 'textarea' },
-      { name: 'relatedGoods', label: '关联商品', type: 'textarea' },
+      { name: 'couponTemplates', label: '关联券模板', type: 'select', source: { path: 'coupon/templates', labelField: 'name', valueField: 'name' } },
+      { name: 'relatedGoods', label: '关联商品', type: 'select', source: { path: 'shop/goods', labelField: 'name', valueField: 'name' } },
       { name: 'maxParticipants', label: '最大参与人数', type: 'number' },
       { name: 'status', label: '状态', type: 'select', options: [
         { label: '进行中', value: 'enabled' }, { label: '已停用', value: 'disabled' }, { label: '待开始', value: 'pending' }
@@ -465,8 +465,8 @@ export const MODULES: ModuleConfig[] = [
     ],
     fields: [
       { name: 'name', label: '名称', type: 'text', required: true },
-      { name: 'campaign', label: '所属活动', type: 'text' },
-      { name: 'template', label: '券模板', type: 'text' },
+      { name: 'campaign', label: '所属活动', type: 'select', source: { path: 'marketing/campaigns', labelField: 'name', valueField: 'name' } },
+      { name: 'template', label: '券模板', type: 'select', source: { path: 'coupon/templates', labelField: 'name', valueField: 'name' } },
       { name: 'count', label: '发行量', type: 'number' },
       { name: 'claimed', label: '已领取', type: 'number' }
     ],
@@ -519,7 +519,7 @@ export const MODULES: ModuleConfig[] = [
       { name: 'originalPrice', label: '原价', type: 'number' },
       { name: 'stock', label: '库存', type: 'number' },
       { name: 'sold', label: '已售', type: 'number' },
-      { name: 'startTime', label: '开始时间', type: 'text' },
+      { name: 'startTime', label: '开始时间', type: 'date' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
     doc: {
@@ -542,13 +542,13 @@ export const MODULES: ModuleConfig[] = [
     ],
     fields: [
       { name: 'orderNo', label: '订单号', type: 'text', required: true },
-      { name: 'member', label: '会员', type: 'text' },
-      { name: 'service', label: '服务项目', type: 'text' },
+      { name: 'member', label: '会员', type: 'select', source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
+      { name: 'service', label: '服务项目', type: 'select', source: { path: 'services/items', labelField: 'name', valueField: 'name' } },
       { name: 'amount', label: '金额', type: 'number' },
       { name: 'status', label: '状态', type: 'select', options: [
         { label: '待处理', value: 'pending' }, { label: '处理中', value: 'processing' }, { label: '已完成', value: 'finished' }
       ] },
-      { name: 'time', label: '时间', type: 'text' }
+      { name: 'time', label: '时间', type: 'date' }
     ],
     doc: {
       overview: '服务订单是服务中心的订单管理模块，记录会员购买的各种增值服务订单，跟踪服务进度和状态流转。是服务类商品从购买到完成的全流程管理工具。',
@@ -598,7 +598,7 @@ export const MODULES: ModuleConfig[] = [
     ],
     fields: [
       { name: 'name', label: '任务名称', type: 'text', required: true },
-      { name: 'template', label: '消息模板', type: 'text' },
+      { name: 'template', label: '消息模板', type: 'select', source: { path: 'coupon/templates', labelField: 'name', valueField: 'name' } },
       { name: 'channel', label: '渠道', type: 'select', options: [
         { label: '短信', value: 'sms' }, { label: '微信', value: 'wechat' }
       ] },
@@ -672,7 +672,7 @@ export const MODULES: ModuleConfig[] = [
       { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
     ],
     fields: [
-      { name: 'member', label: '会员', type: 'text', required: true },
+      { name: 'member', label: '会员', type: 'select', required: true, source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
       { name: 'balance', label: '余额', type: 'number' },
       { name: 'points', label: '积分', type: 'number' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
@@ -695,14 +695,14 @@ export const MODULES: ModuleConfig[] = [
       { title: '时间', dataIndex: 'time' }
     ],
     fields: [
-      { name: 'member', label: '会员', type: 'text', required: true },
+      { name: 'member', label: '会员', type: 'select', required: true, source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
       { name: 'type', label: '类型', type: 'select', options: [
         { label: '充值', value: 'recharge' }, { label: '消费', value: 'consume' }, { label: '退款', value: 'refund' }
       ] },
       { name: 'amount', label: '金额(正为入账)', type: 'number' },
       { name: 'balance', label: '余额', type: 'number' },
       { name: 'remark', label: '备注', type: 'text' },
-      { name: 'time', label: '时间', type: 'text' }
+      { name: 'time', label: '时间', type: 'date' }
     ],
     doc: {
       overview: '钱包流水是电子钱包的交易记录工具，记录会员的充值、消费、退款等所有资金变动明细。完整的流水记录是财务核对和会员查询的重要依据。',
@@ -730,9 +730,9 @@ export const MODULES: ModuleConfig[] = [
       { name: 'category', label: '业态', type: 'select', options: [
         { label: '餐饮', value: '餐饮' }, { label: '零售', value: '零售' }, { label: '服务', value: '服务' }, { label: '娱乐', value: '娱乐' }, { label: '教育', value: '教育' }
       ] },
-      { name: 'floor', label: '所在楼层', type: 'text' },
+      { name: 'floor', label: '所在楼层', type: 'select', options: [{ label: 'B1', value: 'B1' }, { label: 'B2', value: 'B2' }, { label: 'F1', value: 'F1' }, { label: 'F2', value: 'F2' }, { label: 'F3', value: 'F3' }, { label: 'F4', value: 'F4' }, { label: 'F5', value: 'F5' }] },
       { name: 'location', label: '店铺位置', type: 'text' },
-      { name: 'cuisine', label: '餐饮菜系', type: 'text' },
+      { name: 'cuisine', label: '餐饮菜系', type: 'select', source: { path: 'restaurant/cuisine', labelField: 'name', valueField: 'name' } },
       { name: 'logo', label: '商户Logo', type: 'text' },
       { name: 'storePhotos', label: '门店照片', type: 'textarea' },
       { name: 'brandStory', label: '品牌故事', type: 'textarea' },
@@ -743,7 +743,7 @@ export const MODULES: ModuleConfig[] = [
       { name: 'parkingQuota', label: '停车券月发放额度', type: 'number' },
       { name: 'parkingUsed', label: '已使用停车券额度', type: 'number' },
       { name: 'storePromotion', label: '门店优惠活动', type: 'textarea' },
-      { name: 'promotionExpiry', label: '优惠活动有效期', type: 'text' },
+      { name: 'promotionExpiry', label: '优惠活动有效期', type: 'date' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
     doc: {
@@ -775,7 +775,7 @@ export const MODULES: ModuleConfig[] = [
       { name: 'subtitle', label: '副标题', type: 'text' },
       { name: 'mainImage', label: '主图', type: 'text' },
       { name: 'detailImages', label: '详情图', type: 'textarea' },
-      { name: 'category', label: '分类', type: 'text' },
+      { name: 'category', label: '分类', type: 'select', source: { path: 'shop/categories', labelField: 'name', valueField: 'name' } },
       { name: 'specs', label: '商品规格', type: 'textarea', placeholder: '颜色:红色,蓝色;尺寸:S,M,L' },
       { name: 'skuInfo', label: 'SKU信息', type: 'textarea' },
       { name: 'price', label: '价格', type: 'number' },
@@ -824,8 +824,8 @@ export const MODULES: ModuleConfig[] = [
     ],
     fields: [
       { name: 'orderNo', label: '订单号', type: 'text', required: true },
-      { name: 'member', label: '会员', type: 'text' },
-      { name: 'goods', label: '商品', type: 'text' },
+      { name: 'member', label: '会员', type: 'select', source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
+      { name: 'goods', label: '商品', type: 'select', source: { path: 'shop/goods', labelField: 'name', valueField: 'name' } },
       { name: 'quantity', label: '商品总数', type: 'number' },
       { name: 'items', label: '商品明细', type: 'textarea' },
       { name: 'amount', label: '金额', type: 'number' },
@@ -834,14 +834,14 @@ export const MODULES: ModuleConfig[] = [
       { name: 'receiverName', label: '收货人', type: 'text' },
       { name: 'receiverPhone', label: '收货电话', type: 'text' },
       { name: 'receiverAddress', label: '收货地址', type: 'text' },
-      { name: 'logisticsCompany', label: '物流公司', type: 'text' },
+      { name: 'logisticsCompany', label: '物流公司', type: 'select', options: [{ label: '顺丰', value: 'sf' }, { label: '中通', value: 'zto' }, { label: '圆通', value: 'yto' }, { label: '韵达', value: 'yd' }, { label: '申通', value: 'sto' }, { label: 'EMS', value: 'ems' }] },
       { name: 'logisticsNo', label: '物流单号', type: 'text' },
       { name: 'payMethod', label: '支付方式', type: 'select', options: [
         { label: '微信', value: 'wechat' }, { label: '支付宝', value: 'alipay' }, { label: '余额', value: 'balance' }, { label: '积分', value: 'points' }
       ] },
-      { name: 'payTime', label: '支付时间', type: 'text' },
-      { name: 'shipTime', label: '发货时间', type: 'text' },
-      { name: 'doneTime', label: '完成时间', type: 'text' },
+      { name: 'payTime', label: '支付时间', type: 'date' },
+      { name: 'shipTime', label: '发货时间', type: 'date' },
+      { name: 'doneTime', label: '完成时间', type: 'date' },
       { name: 'remark', label: '订单备注', type: 'textarea' },
       { name: 'tags', label: '订单标签', type: 'text' },
       { name: 'source', label: '来源', type: 'select', options: [
@@ -853,7 +853,7 @@ export const MODULES: ModuleConfig[] = [
       { name: 'status', label: '订单状态', type: 'select', options: [
         { label: '待付款', value: 'pending' }, { label: '已付款', value: 'paid' }, { label: '已发货', value: 'shipped' }, { label: '已完成', value: 'done' }, { label: '已取消', value: 'cancelled' }
       ] },
-      { name: 'time', label: '下单时间', type: 'text' }
+      { name: 'time', label: '下单时间', type: 'date' }
     ],
     doc: {
       overview: '商城订单是在线商城的核心交易模块，记录和管理会员在商城购买商品的所有订单信息，贯穿从下单、支付、发货到完成的完整交易流程。系统支持多种支付方式、配送方式和订单状态流转，为会员提供顺畅的购物体验，同时为运营团队提供全面的订单管理能力。商城订单与商品管理、会员档案、支付系统、物流系统、售后管理等模块深度联动，形成完整的电商交易闭环，是衡量商城运营效果和销售业绩的核心数据来源。',
@@ -876,7 +876,7 @@ export const MODULES: ModuleConfig[] = [
     ],
     fields: [
       { name: 'name', label: '分类名称', type: 'text', required: true },
-      { name: 'parentId', label: '父分类ID', type: 'number' },
+      { name: 'parentId', label: '父分类ID', type: 'number', source: { path: 'shop/categories', labelField: 'name', valueField: 'id' } },
       { name: 'icon', label: '分类图标', type: 'text' },
       { name: 'image', label: '分类图片', type: 'text' },
       { name: 'description', label: '分类描述', type: 'textarea' },
@@ -925,7 +925,7 @@ export const MODULES: ModuleConfig[] = [
     ],
     fields: [
       { name: 'name', label: '终端名称', type: 'text', required: true },
-      { name: 'shop', label: '所属门店', type: 'text' },
+      { name: 'shop', label: '所属门店', type: 'select', source: { path: 'config/shops', labelField: 'name', valueField: 'name' } },
       { name: 'type', label: '类型', type: 'select', options: [
         { label: '收银机', value: 'cashier' }, { label: '自助机', value: 'kiosk' }, { label: '平板', value: 'pad' }
       ] },
@@ -996,13 +996,13 @@ export const MODULES: ModuleConfig[] = [
     ],
     fields: [
       { name: 'code', label: '核销码', type: 'text', required: true },
-      { name: 'member', label: '会员', type: 'text' },
+      { name: 'member', label: '会员', type: 'select', source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
       { name: 'target', label: '券/商品', type: 'text' },
-      { name: 'shop', label: '核销门店', type: 'text' },
+      { name: 'shop', label: '核销门店', type: 'select', source: { path: 'config/shops', labelField: 'name', valueField: 'name' } },
       { name: 'status', label: '状态', type: 'select', options: [
         { label: '未核销', value: 'unused' }, { label: '已核销', value: 'verified' }, { label: '已退', value: 'refunded' }
       ] },
-      { name: 'time', label: '核销时间', type: 'text' }
+      { name: 'time', label: '核销时间', type: 'date' }
     ],
     doc: {
       overview: '核销记录是线上权益到店使用的核心验证数据模块，完整记录所有券、积分商品、活动权益等的核销过程，确保交易真实可追溯。系统支持多种核销类型，包括优惠券核销、积分商品核销、商城订单核销、活动报名核销等，覆盖平台主要的线下使用场景。核销记录与礼券中心、积分商城、商城订单、商户管理等模块深度联动，会员到店出示核销码后，商户扫码验证完成核销，系统自动更新权益状态并记录核销信息，是连接线上营销和线下消费的关键枢纽。',
@@ -1021,7 +1021,7 @@ export const MODULES: ModuleConfig[] = [
     ],
     fields: [
       { name: 'name', label: '姓名', type: 'text', required: true },
-      { name: 'shop', label: '所属门店', type: 'text' },
+      { name: 'shop', label: '所属门店', type: 'select', source: { path: 'config/shops', labelField: 'name', valueField: 'name' } },
       { name: 'count', label: '核销次数', type: 'number' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
@@ -1044,7 +1044,7 @@ export const MODULES: ModuleConfig[] = [
     ],
     fields: [
       { name: 'title', label: '发票抬头', type: 'text', required: true },
-      { name: 'member', label: '会员', type: 'text' },
+      { name: 'member', label: '会员', type: 'select', source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
       { name: 'amount', label: '金额', type: 'number' },
       { name: 'type', label: '类型', type: 'select', options: [
         { label: '普票', value: 'normal' }, { label: '专票', value: 'special' }, { label: '电子发票', value: 'electronic' }
@@ -1077,7 +1077,7 @@ export const MODULES: ModuleConfig[] = [
       { name: 'income', label: '收入', type: 'number' },
       { name: 'expense', label: '支出', type: 'number' },
       { name: 'summary', label: '摘要', type: 'text' },
-      { name: 'time', label: '时间', type: 'text' }
+      { name: 'time', label: '时间', type: 'date' }
     ],
     doc: {
       overview: '财务凭证是平台收支的账务记录工具，记录平台所有收入和支出的凭证信息。是财务核算和审计的重要依据，确保平台资金账目清晰可查。',
@@ -1193,9 +1193,9 @@ export const MODULES: ModuleConfig[] = [
     ],
     fields: [
       { name: 'item', label: '物品', type: 'text', required: true },
-      { name: 'member', label: '会员', type: 'text' },
-      { name: 'outTime', label: '借出时间', type: 'text' },
-      { name: 'returnTime', label: '归还时间', type: 'text' },
+      { name: 'member', label: '会员', type: 'select', source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
+      { name: 'outTime', label: '借出时间', type: 'date' },
+      { name: 'returnTime', label: '归还时间', type: 'date' },
       { name: 'status', label: '状态', type: 'select', options: [
         { label: '已借出', value: 'rented' }, { label: '已归还', value: 'returned' }, { label: '逾期', value: 'overdue' }
       ] }
@@ -1299,7 +1299,7 @@ export const MODULES: ModuleConfig[] = [
       { title: '画像更新时间', dataIndex: 'updatedAt' }
     ],
     fields: [
-      { name: 'member', label: '会员', type: 'text', required: true },
+      { name: 'member', label: '会员', type: 'select', required: true, source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
       { name: 'tags', label: '动态标签', type: 'textarea' },
       { name: 'consumeTag', label: '消费喜好', type: 'textarea' },
       { name: 'brandTag', label: '品牌喜好', type: 'textarea' },
@@ -1307,7 +1307,7 @@ export const MODULES: ModuleConfig[] = [
       { name: 'redeemTag', label: '兑礼偏好', type: 'textarea' },
       { name: 'onlineTag', label: '线上互动', type: 'textarea' },
       { name: 'lastActive', label: '最近活跃', type: 'text' },
-      { name: 'updatedAt', label: '画像更新时间', type: 'text' }
+      { name: 'updatedAt', label: '画像更新时间', type: 'date' }
     ],
     doc: {
       overview: '会员画像是基于会员全量行为数据构建的360度用户画像，通过多维度标签体系立体呈现每个会员的特征和偏好，是实现精准营销和个性化服务的数据基础。系统整合消费喜好、品牌喜好、积分偏好、兑礼偏好、线上互动、动态标签等多个维度数据，自动生成和更新会员画像。会员画像与会员标签、会员档案、营销活动、推送任务等模块深度联动，为人群定向、商品推荐、精准触达提供数据支撑，帮助运营团队从千人一面升级为千人千面的精细化运营，显著提升营销转化率和会员满意度。',
@@ -1325,12 +1325,12 @@ export const MODULES: ModuleConfig[] = [
       { title: '时间', dataIndex: 'time' }
     ],
     fields: [
-      { name: 'member', label: '会员', type: 'text', required: true },
+      { name: 'member', label: '会员', type: 'select', required: true, source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
       { name: 'tag', label: '标签', type: 'text', required: true },
       { name: 'source', label: '打标方式', type: 'select', options: [
         { label: '手动', value: 'manual' }, { label: '自动', value: 'auto' }
       ] },
-      { name: 'time', label: '时间', type: 'text' }
+      { name: 'time', label: '时间', type: 'date' }
     ],
     doc: {
       overview: '会员打标签是会员与标签关联关系的管理模块，支持手动打标和规则自动打标两种方式，是标签体系落地执行的关键环节。运营人员可手动为指定会员打上标签，也可通过自动标签规则系统自动计算并关联。',
@@ -1381,7 +1381,7 @@ export const MODULES: ModuleConfig[] = [
     ],
     fields: [
       { name: 'cardNo', label: '卡号', type: 'text', required: true },
-      { name: 'member', label: '会员', type: 'text', required: true },
+      { name: 'member', label: '会员', type: 'select', required: true, source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
       { name: 'cardType', label: '卡类型', type: 'select', options: [
         { label: '实体卡', value: 'entity' }, { label: '电子卡', value: 'electronic' }, { label: '虚拟卡', value: 'virtual' }
       ] },
@@ -1391,8 +1391,8 @@ export const MODULES: ModuleConfig[] = [
       { name: 'status', label: '状态', type: 'select', options: [
         { label: '正常', value: 'normal' }, { label: '锁定', value: 'locked' }, { label: '挂失', value: 'loss' }
       ] },
-      { name: 'issueTime', label: '发卡时间', type: 'text' },
-      { name: 'validUntil', label: '有效期', type: 'text' }
+      { name: 'issueTime', label: '发卡时间', type: 'date' },
+      { name: 'validUntil', label: '有效期', type: 'date' }
     ],
     doc: {
       overview: '会员卡管理是会员身份凭证的管理模块，支持实体卡、电子卡、虚拟卡三种卡类型，管理会员卡的发放、余额、状态等全生命周期。会员卡是会员享受权益和服务的身份标识，关联储值、积分等核心资产。',
@@ -1412,7 +1412,7 @@ export const MODULES: ModuleConfig[] = [
       { title: '有效期', dataIndex: 'validUntil' }
     ],
     fields: [
-      { name: 'member', label: '会员', type: 'text', required: true },
+      { name: 'member', label: '会员', type: 'select', required: true, source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
       { name: 'currentValue', label: '当前成长值', type: 'number' },
       { name: 'level', label: '等级', type: 'select', options: [
         { label: '普通会员', value: 'NORMAL' }, { label: '银卡会员', value: 'SILVER' },
@@ -1420,7 +1420,7 @@ export const MODULES: ModuleConfig[] = [
       ] },
       { name: 'taskGrowth', label: '任务成长', type: 'number' },
       { name: 'spendGrowth', label: '消费成长', type: 'number' },
-      { name: 'validUntil', label: '有效期', type: 'text' }
+      { name: 'validUntil', label: '有效期', type: 'date' }
     ],
     doc: {
       overview: '会员成长值是衡量会员活跃度和贡献度的核心指标，通过消费、任务等行为获取成长值，达到门槛即可升级会员等级。成长值体系是激励会员持续活跃、提升会员忠诚度的重要机制。',
@@ -1444,13 +1444,13 @@ export const MODULES: ModuleConfig[] = [
       { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '正常' : '冻结') }
     ],
     fields: [
-      { name: 'member', label: '会员', type: 'text', required: true },
+      { name: 'member', label: '会员', type: 'select', required: true, source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
       { name: 'points', label: '可用积分', type: 'number' },
       { name: 'historyPoints', label: '历史积分', type: 'number' },
       { name: 'expiringPoints', label: '即将过期积分', type: 'number' },
       { name: 'frozenPoints', label: '冻结积分', type: 'number' },
-      { name: 'expireDate', label: '积分有效期至', type: 'text' },
-      { name: 'clearDate', label: '年度清零日期', type: 'text' },
+      { name: 'expireDate', label: '积分有效期至', type: 'date' },
+      { name: 'clearDate', label: '年度清零日期', type: 'date' },
       { name: 'totalEarned', label: '累计获取积分', type: 'number' },
       { name: 'totalUsed', label: '累计消耗积分', type: 'number' },
       { name: 'status', label: '状态', type: 'select', options: [
@@ -1477,7 +1477,7 @@ export const MODULES: ModuleConfig[] = [
       { title: '总价值', dataIndex: 'totalValue' }
     ],
     fields: [
-      { name: 'member', label: '会员', type: 'text', required: true },
+      { name: 'member', label: '会员', type: 'select', required: true, source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
       { name: 'balance', label: '储值余额', type: 'number' },
       { name: 'points', label: '可用积分', type: 'number' },
       { name: 'historyPoints', label: '历史积分', type: 'number' },
@@ -1507,7 +1507,7 @@ export const MODULES: ModuleConfig[] = [
     fields: [
       { name: 'referrer', label: '推荐人', type: 'text', required: true },
       { name: 'invitee', label: '被推荐人', type: 'text', required: true },
-      { name: 'time', label: '推荐时间', type: 'text' },
+      { name: 'time', label: '推荐时间', type: 'date' },
       { name: 'channel', label: '推荐渠道', type: 'select', options: [
         { label: '分享', value: 'share' }, { label: '二维码', value: 'qr' }, { label: '链接', value: 'link' }
       ] },
@@ -1542,8 +1542,8 @@ export const MODULES: ModuleConfig[] = [
     ],
     fields: [
       { name: 'orderNo', label: '订单号', type: 'text', required: true },
-      { name: 'member', label: '会员', type: 'text', required: true },
-      { name: 'goods', label: '商品', type: 'text' },
+      { name: 'member', label: '会员', type: 'select', required: true, source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
+      { name: 'goods', label: '商品', type: 'select', source: { path: 'shop/goods', labelField: 'name', valueField: 'name' } },
       { name: 'points', label: '消耗积分', type: 'number' },
       { name: 'delivery', label: '提货方式', type: 'select', options: [
         { label: '自提', value: 'self' }, { label: '邮寄', value: 'express' }, { label: '自动到账', value: 'auto' }
@@ -1551,11 +1551,11 @@ export const MODULES: ModuleConfig[] = [
       { name: 'receiverName', label: '收货人', type: 'text' },
       { name: 'receiverPhone', label: '收货电话', type: 'text' },
       { name: 'receiverAddress', label: '收货地址', type: 'text' },
-      { name: 'logisticsCompany', label: '物流公司', type: 'text' },
+      { name: 'logisticsCompany', label: '物流公司', type: 'select', options: [{ label: '顺丰', value: 'sf' }, { label: '中通', value: 'zto' }, { label: '圆通', value: 'yto' }, { label: '韵达', value: 'yd' }, { label: '申通', value: 'sto' }, { label: 'EMS', value: 'ems' }] },
       { name: 'logisticsNo', label: '物流单号', type: 'text' },
       { name: 'verifyCode', label: '核销码', type: 'text' },
-      { name: 'createdAt', label: '下单时间', type: 'text' },
-      { name: 'doneTime', label: '完成时间', type: 'text' },
+      { name: 'createdAt', label: '下单时间', type: 'date' },
+      { name: 'doneTime', label: '完成时间', type: 'date' },
       { name: 'cancelReason', label: '取消原因', type: 'textarea' },
       { name: 'status', label: '状态', type: 'select', options: [
         { label: '待发货', value: 'pending' }, { label: '已发货', value: 'shipped' }, { label: '已完成', value: 'done' }, { label: '已取消', value: 'cancelled' }
@@ -1636,7 +1636,7 @@ export const MODULES: ModuleConfig[] = [
       { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '正常' : '解绑') }
     ],
     fields: [
-      { name: 'member', label: '会员', type: 'text', required: true },
+      { name: 'member', label: '会员', type: 'select', required: true, source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
       { name: 'plateNo', label: '车牌号', type: 'text', required: true },
       { name: 'plateColor', label: '车牌颜色', type: 'select', options: [
         { label: '蓝牌', value: 'blue' }, { label: '黄牌', value: 'yellow' }, { label: '绿牌', value: 'green' }, { label: '白牌', value: 'white' }
@@ -1644,7 +1644,7 @@ export const MODULES: ModuleConfig[] = [
       { name: 'vehicleType', label: '车辆类型', type: 'select', options: [
         { label: '轿车', value: 'sedan' }, { label: 'SUV', value: 'suv' }, { label: '面包车', value: 'van' }, { label: '新能源', value: 'newEnergy' }
       ] },
-      { name: 'bindTime', label: '绑定时间', type: 'text' },
+      { name: 'bindTime', label: '绑定时间', type: 'date' },
       { name: 'status', label: '状态', type: 'select', options: [
         { label: '正常', value: 'enabled' }, { label: '解绑', value: 'disabled' }
       ] }
@@ -1693,10 +1693,10 @@ export const MODULES: ModuleConfig[] = [
     ],
     fields: [
       { name: 'merchant', label: '商户', type: 'text', required: true },
-      { name: 'template', label: '券模板', type: 'text' },
-      { name: 'member', label: '发放会员', type: 'text' },
+      { name: 'template', label: '券模板', type: 'select', source: { path: 'coupon/templates', labelField: 'name', valueField: 'name' } },
+      { name: 'member', label: '发放会员', type: 'select', source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
       { name: 'count', label: '数量', type: 'number' },
-      { name: 'time', label: '时间', type: 'text' }
+      { name: 'time', label: '时间', type: 'date' }
     ],
     doc: {
       overview: '商户发券是商户端优惠券发放的管理工具，商户可在商户助手小程序上向会员发放优惠券或停车券。是商户自主营销和会员维护的重要手段。',
@@ -1766,7 +1766,7 @@ export const MODULES: ModuleConfig[] = [
     fields: [
       { name: 'name', label: '品牌名称', type: 'text', required: true },
       { name: 'logo', label: 'LOGO地址', type: 'text' },
-      { name: 'category', label: '分类', type: 'text' },
+      { name: 'category', label: '分类', type: 'select', source: { path: 'shop/categories', labelField: 'name', valueField: 'name' } },
       { name: 'phone', label: '联系电话', type: 'text' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
@@ -1790,12 +1790,12 @@ export const MODULES: ModuleConfig[] = [
     fields: [
       { name: 'returnNo', label: '退货单号', type: 'text', required: true },
       { name: 'orderNo', label: '原订单号', type: 'text', required: true },
-      { name: 'member', label: '会员', type: 'text' },
+      { name: 'member', label: '会员', type: 'select', source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
       { name: 'amount', label: '退款金额', type: 'number' },
       { name: 'status', label: '状态', type: 'select', options: [
         { label: '待审核', value: 'pending' }, { label: '已通过', value: 'approved' }, { label: '已拒绝', value: 'rejected' }, { label: '已退款', value: 'refunded' }
       ] },
-      { name: 'time', label: '申请时间', type: 'text' }
+      { name: 'time', label: '申请时间', type: 'date' }
     ],
     doc: {
       overview: '订单退货是商城退货退款的管理工具，处理会员的退货申请，审核通过后原路退回货款。是售后体系的重要组成部分，直接影响会员购物体验和满意度。',
@@ -1837,8 +1837,8 @@ export const MODULES: ModuleConfig[] = [
       { title: '状态', dataIndex: 'status', render: (v) => ({ pending: '待审核', published: '已发布', hidden: '已隐藏' }[v] || v) }
     ],
     fields: [
-      { name: 'goods', label: '商品', type: 'text', required: true },
-      { name: 'member', label: '会员', type: 'text' },
+      { name: 'goods', label: '商品', type: 'select', required: true, source: { path: 'shop/goods', labelField: 'name', valueField: 'name' } },
+      { name: 'member', label: '会员', type: 'select', source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
       { name: 'score', label: '评分(1-5)', type: 'number' },
       { name: 'content', label: '评价内容', type: 'textarea' },
       { name: 'images', label: '评价图片', type: 'text' },
@@ -1905,7 +1905,7 @@ export const MODULES: ModuleConfig[] = [
       { title: '标签', dataIndex: 'label' }
     ],
     fields: [
-      { name: 'member', label: '会员', type: 'text', required: true },
+      { name: 'member', label: '会员', type: 'select', required: true, source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
       { name: 'receiver', label: '收货人', type: 'text', required: true },
       { name: 'phone', label: '电话', type: 'text' },
       { name: 'province', label: '省份', type: 'text' },
@@ -1988,8 +1988,8 @@ export const MODULES: ModuleConfig[] = [
     fields: [
       { name: 'aftersaleNo', label: '售后单号', type: 'text', required: true },
       { name: 'orderNo', label: '订单号', type: 'text', required: true },
-      { name: 'member', label: '会员', type: 'text' },
-      { name: 'goods', label: '商品', type: 'text' },
+      { name: 'member', label: '会员', type: 'select', source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
+      { name: 'goods', label: '商品', type: 'select', source: { path: 'shop/goods', labelField: 'name', valueField: 'name' } },
       { name: 'type', label: '类型', type: 'select', options: [
         { label: '仅退款', value: 'refund' }, { label: '退货退款', value: 'return' }, { label: '换货', value: 'exchange' }
       ] },
@@ -1998,9 +1998,9 @@ export const MODULES: ModuleConfig[] = [
       { name: 'status', label: '状态', type: 'select', options: [
         { label: '申请中', value: 'applying' }, { label: '已通过', value: 'approved' }, { label: '已拒绝', value: 'rejected' }, { label: '已退款', value: 'refunded' }
       ] },
-      { name: 'applyTime', label: '申请时间', type: 'text' },
-      { name: 'processTime', label: '处理时间', type: 'text' },
-      { name: 'handler', label: '处理人', type: 'text' },
+      { name: 'applyTime', label: '申请时间', type: 'date' },
+      { name: 'processTime', label: '处理时间', type: 'date' },
+      { name: 'handler', label: '处理人', type: 'select', source: { path: 'system/staff', labelField: 'name', valueField: 'name' } },
       { name: 'processRemark', label: '处理备注', type: 'textarea' }
     ],
     doc: {
@@ -2022,8 +2022,8 @@ export const MODULES: ModuleConfig[] = [
     ],
     fields: [
       { name: 'name', label: '活动名称', type: 'text', required: true },
-      { name: 'signupTime', label: '报名时间', type: 'text' },
-      { name: 'member', label: '会员', type: 'text' },
+      { name: 'signupTime', label: '报名时间', type: 'date' },
+      { name: 'member', label: '会员', type: 'select', source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
       { name: 'count', label: '人数', type: 'number' },
       { name: 'status', label: '状态', type: 'select', options: [
         { label: '待签到', value: 'pending' }, { label: '已签到', value: 'checked' }, { label: '已取消', value: 'cancelled' }
@@ -2116,7 +2116,7 @@ export const MODULES: ModuleConfig[] = [
     ],
     fields: [
       { name: 'name', label: '活动名称', type: 'text', required: true },
-      { name: 'template', label: '券模板', type: 'text' },
+      { name: 'template', label: '券模板', type: 'select', source: { path: 'coupon/templates', labelField: 'name', valueField: 'name' } },
       { name: 'needHelp', label: '所需助力人数', type: 'number' },
       { name: 'helped', label: '已助力', type: 'number' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
@@ -2140,7 +2140,7 @@ export const MODULES: ModuleConfig[] = [
     fields: [
       { name: 'name', label: '活动名称', type: 'text', required: true },
       { name: 'word', label: '口令', type: 'text', required: true },
-      { name: 'template', label: '券模板', type: 'text' },
+      { name: 'template', label: '券模板', type: 'select', source: { path: 'coupon/templates', labelField: 'name', valueField: 'name' } },
       { name: 'claimed', label: '已领取', type: 'number' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
@@ -2231,11 +2231,11 @@ export const MODULES: ModuleConfig[] = [
     ],
     fields: [
       { name: 'name', label: '活动名称', type: 'text', required: true },
-      { name: 'goods', label: '商品', type: 'text' },
+      { name: 'goods', label: '商品', type: 'select', source: { path: 'shop/goods', labelField: 'name', valueField: 'name' } },
       { name: 'price', label: '活动价', type: 'number' },
       { name: 'originalPrice', label: '原价', type: 'number' },
-      { name: 'startTime', label: '开始时间', type: 'text' },
-      { name: 'endTime', label: '结束时间', type: 'text' },
+      { name: 'startTime', label: '开始时间', type: 'date' },
+      { name: 'endTime', label: '结束时间', type: 'date' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
     doc: {
@@ -2256,11 +2256,11 @@ export const MODULES: ModuleConfig[] = [
       { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
     ],
     fields: [
-      { name: 'goods', label: '商品', type: 'text', required: true },
+      { name: 'goods', label: '商品', type: 'select', required: true, source: { path: 'shop/goods', labelField: 'name', valueField: 'name' } },
       { name: 'deposit', label: '定金', type: 'number' },
       { name: 'finalPayment', label: '尾款', type: 'number' },
-      { name: 'preTime', label: '预售时间', type: 'text' },
-      { name: 'deliveryTime', label: '发货时间', type: 'text' },
+      { name: 'preTime', label: '预售时间', type: 'date' },
+      { name: 'deliveryTime', label: '发货时间', type: 'date' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
     doc: {
@@ -2282,7 +2282,7 @@ export const MODULES: ModuleConfig[] = [
     ],
     fields: [
       { name: 'name', label: '活动名称', type: 'text', required: true },
-      { name: 'goods', label: '商品', type: 'text' },
+      { name: 'goods', label: '商品', type: 'select', source: { path: 'shop/goods', labelField: 'name', valueField: 'name' } },
       { name: 'originalPrice', label: '原价', type: 'number' },
       { name: 'floorPrice', label: '底价', type: 'number' },
       { name: 'started', label: '已发起', type: 'number' },
@@ -2308,7 +2308,7 @@ export const MODULES: ModuleConfig[] = [
       { name: 'name', label: '活动名称', type: 'text', required: true },
       { name: 'prize', label: '奖品', type: 'text' },
       { name: 'participants', label: '参与人数', type: 'number' },
-      { name: 'drawTime', label: '开奖时间', type: 'text' },
+      { name: 'drawTime', label: '开奖时间', type: 'date' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
     doc: {
@@ -2376,7 +2376,7 @@ export const MODULES: ModuleConfig[] = [
     fields: [
       { name: 'name', label: '活动名称', type: 'text', required: true },
       { name: 'location', label: '打卡位置', type: 'text' },
-      { name: 'template', label: '券模板', type: 'text' },
+      { name: 'template', label: '券模板', type: 'select', source: { path: 'coupon/templates', labelField: 'name', valueField: 'name' } },
       { name: 'claimed', label: '已领取', type: 'number' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
@@ -2422,7 +2422,7 @@ export const MODULES: ModuleConfig[] = [
     ],
     fields: [
       { name: 'name', label: '任务名称', type: 'text', required: true },
-      { name: 'category', label: '分类', type: 'text' },
+      { name: 'category', label: '分类', type: 'select', source: { path: 'shop/categories', labelField: 'name', valueField: 'name' } },
       { name: 'points', label: '积分', type: 'number' },
       { name: 'limit', label: '限制', type: 'text' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
@@ -2445,7 +2445,7 @@ export const MODULES: ModuleConfig[] = [
     fields: [
       { name: 'name', label: '活动名称', type: 'text', required: true },
       { name: 'owner', label: '业主', type: 'text' },
-      { name: 'time', label: '报名时间', type: 'text' },
+      { name: 'time', label: '报名时间', type: 'date' },
       { name: 'status', label: '状态', type: 'select', options: [
         { label: '待审核', value: 'pending' }, { label: '已通过', value: 'approved' }, { label: '已打卡', value: 'checked' }
       ] }
@@ -2470,7 +2470,7 @@ export const MODULES: ModuleConfig[] = [
     fields: [
       { name: 'name', label: '页面名称', type: 'text', required: true },
       { name: 'pageKey', label: '页面标识', type: 'text' },
-      { name: 'template', label: '模板配置(JSON)', type: 'textarea' },
+      { name: 'template', label: '模板配置(JSON)', type: 'select', source: { path: 'coupon/templates', labelField: 'name', valueField: 'name' } },
       { name: 'version', label: '版本', type: 'text' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
@@ -2492,11 +2492,11 @@ export const MODULES: ModuleConfig[] = [
       { title: '时间', dataIndex: 'time' }
     ],
     fields: [
-      { name: 'operator', label: '操作人', type: 'text', required: true },
+      { name: 'operator', label: '操作人', type: 'select', required: true, source: { path: 'system/staff', labelField: 'name', valueField: 'name' } },
       { name: 'module', label: '模块', type: 'text' },
       { name: 'action', label: '操作类型', type: 'text' },
       { name: 'ip', label: 'IP', type: 'text' },
-      { name: 'time', label: '时间', type: 'text' }
+      { name: 'time', label: '时间', type: 'date' }
     ],
     doc: {
       overview: '操作日志是系统操作的审计记录工具，记录后台用户的增删改查等所有操作，用于安全审计和问题追溯。是保障系统安全和数据安全的重要机制。',
@@ -2519,7 +2519,7 @@ export const MODULES: ModuleConfig[] = [
       { name: 'name', label: '菜单名称', type: 'text', required: true },
       { name: 'path', label: '路径', type: 'text' },
       { name: 'icon', label: '图标', type: 'text' },
-      { name: 'parentId', label: '父菜单ID', type: 'number' },
+      { name: 'parentId', label: '父菜单ID', type: 'number', source: { path: 'shop/categories', labelField: 'name', valueField: 'id' } },
       { name: 'sort', label: '排序', type: 'number' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
@@ -2546,7 +2546,7 @@ export const MODULES: ModuleConfig[] = [
         { label: '生命周期', value: 'lifecycle' }, { label: '价值分层', value: 'value' },
         { label: '等级', value: 'level' }, { label: '纪念日', value: 'anniversary' }, { label: 'RFM', value: 'rmf' }
       ] },
-      { name: 'condition', label: '筛选条件', type: 'textarea' },
+      { name: 'condition', label: '筛选条件', type: 'conditionBuilder' },
       { name: 'audienceCount', label: '目标人数', type: 'number' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
@@ -2575,8 +2575,8 @@ export const MODULES: ModuleConfig[] = [
       { name: 'channel', label: '渠道', type: 'select', options: [
         { label: '短信', value: 'sms' }, { label: '微信', value: 'wechat' }, { label: '订阅消息', value: 'subscribe' }
       ] },
-      { name: 'template', label: '消息模板', type: 'text' },
-      { name: 'sendTime', label: '发送时间', type: 'text' },
+      { name: 'template', label: '消息模板', type: 'select', source: { path: 'coupon/templates', labelField: 'name', valueField: 'name' } },
+      { name: 'sendTime', label: '发送时间', type: 'date' },
       { name: 'targetCount', label: '目标人数', type: 'number' },
       { name: 'sentCount', label: '已发送', type: 'number' },
       { name: 'readCount', label: '已读', type: 'number' },
@@ -2605,17 +2605,17 @@ export const MODULES: ModuleConfig[] = [
       { title: '时间', dataIndex: 'time' }
     ],
     fields: [
-      { name: 'member', label: '会员', type: 'text', required: true },
+      { name: 'member', label: '会员', type: 'select', required: true, source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
       { name: 'type', label: '类型', type: 'select', options: [
         { label: '手动', value: 'manual' }, { label: '批量', value: 'batch' }, { label: '清零', value: 'reset' }
       ] },
       { name: 'points', label: '调整积分', type: 'number' },
       { name: 'reason', label: '调整原因', type: 'textarea' },
-      { name: 'operator', label: '操作人', type: 'text' },
+      { name: 'operator', label: '操作人', type: 'select', source: { path: 'system/staff', labelField: 'name', valueField: 'name' } },
       { name: 'status', label: '状态', type: 'select', options: [
         { label: '待审核', value: 'pending' }, { label: '已通过', value: 'approved' }, { label: '已拒绝', value: 'rejected' }
       ] },
-      { name: 'time', label: '时间', type: 'text' }
+      { name: 'time', label: '时间', type: 'date' }
     ],
     doc: {
       overview: '手动或批量调整会员积分，支持积分清零操作，支持审核流程控制，确保积分变动安全可控，所有操作留痕可追溯。',
@@ -2641,8 +2641,8 @@ export const MODULES: ModuleConfig[] = [
       { name: 'status', label: '状态', type: 'select', options: [
         { label: '处理中', value: 'processing' }, { label: '成功', value: 'success' }, { label: '失败', value: 'failed' }
       ] },
-      { name: 'operator', label: '操作人', type: 'text' },
-      { name: 'time', label: '时间', type: 'text' },
+      { name: 'operator', label: '操作人', type: 'select', source: { path: 'system/staff', labelField: 'name', valueField: 'name' } },
+      { name: 'time', label: '时间', type: 'date' },
       { name: 'remark', label: '备注', type: 'textarea' }
     ],
     doc: {
@@ -2664,17 +2664,17 @@ export const MODULES: ModuleConfig[] = [
       { title: '加入时间', dataIndex: 'addTime' }
     ],
     fields: [
-      { name: 'member', label: '会员', type: 'text', required: true },
+      { name: 'member', label: '会员', type: 'select', required: true, source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
       { name: 'phone', label: '手机号', type: 'text' },
       { name: 'reason', label: '原因', type: 'textarea' },
       { name: 'type', label: '类型', type: 'select', options: [
         { label: '手动', value: 'manual' }, { label: '自动风控', value: 'auto' }
       ] },
-      { name: 'operator', label: '操作人', type: 'text' },
+      { name: 'operator', label: '操作人', type: 'select', source: { path: 'system/staff', labelField: 'name', valueField: 'name' } },
       { name: 'status', label: '状态', type: 'select', options: [
         { label: '已加入', value: 'enabled' }, { label: '已移出', value: 'disabled' }
       ] },
-      { name: 'addTime', label: '加入时间', type: 'text' }
+      { name: 'addTime', label: '加入时间', type: 'date' }
     ],
     doc: {
       overview: '管理积分黑名单，风控系统自动记录异常会员，支持手动加入和移出，批量导入黑名单，防止刷单作弊等恶意行为。',
@@ -2707,8 +2707,8 @@ export const MODULES: ModuleConfig[] = [
       { name: 'maxAmount', label: '最大抵现金额', type: 'number' },
       { name: 'minAmount', label: '最小参与金额', type: 'number' },
       { name: 'maxTimesPerDay', label: '每日最大抵现次数', type: 'number' },
-      { name: 'validFrom', label: '有效期起', type: 'text' },
-      { name: 'validTo', label: '有效期止', type: 'text' },
+      { name: 'validFrom', label: '有效期起', type: 'date' },
+      { name: 'validTo', label: '有效期止', type: 'date' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
     doc: {
@@ -2765,7 +2765,7 @@ export const MODULES: ModuleConfig[] = [
       { name: 'project', label: '项目', type: 'select', source: { path: 'system/projects', labelField: 'name', valueField: 'name' } },
       { name: 'businessType', label: '业态', type: 'text' },
       { name: 'settleRatio', label: '结算比例', type: 'number' },
-      { name: 'settleDate', label: '结算日期', type: 'text' },
+      { name: 'settleDate', label: '结算日期', type: 'date' },
       { name: 'period', label: '周期', type: 'select', options: [
         { label: '周结', value: 'weekly' }, { label: '月结', value: 'monthly' }
       ] },
@@ -2801,7 +2801,7 @@ export const MODULES: ModuleConfig[] = [
       { name: 'status', label: '状态', type: 'select', options: [
         { label: '未结算', value: 'unsettled' }, { label: '已结算', value: 'settled' }, { label: '已作废', value: 'void' }
       ] },
-      { name: 'createTime', label: '创建时间', type: 'text' }
+      { name: 'createTime', label: '创建时间', type: 'date' }
     ],
     doc: {
       overview: '按结算规则自动生成积分结算单，可查看积分明细和调整结算金额，支持未结算/已结算/已作废状态，实现平台与商户间的积分成本结算。',
@@ -2824,18 +2824,18 @@ export const MODULES: ModuleConfig[] = [
       { title: '审核时间', dataIndex: 'auditTime' }
     ],
     fields: [
-      { name: 'member', label: '会员', type: 'text', required: true },
+      { name: 'member', label: '会员', type: 'select', required: true, source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
       { name: 'image', label: '小票图片', type: 'text' },
       { name: 'amount', label: '消费金额', type: 'number' },
       { name: 'points', label: '应得积分', type: 'number' },
-      { name: 'shop', label: '门店', type: 'text' },
+      { name: 'shop', label: '门店', type: 'select', source: { path: 'config/shops', labelField: 'name', valueField: 'name' } },
       { name: 'status', label: '状态', type: 'select', options: [
         { label: '待审核', value: 'pending' }, { label: '已通过', value: 'approved' },
         { label: '已拒绝', value: 'rejected' }, { label: 'AI已审', value: 'ai' }
       ] },
-      { name: 'auditor', label: '审核人', type: 'text' },
-      { name: 'submitTime', label: '提交时间', type: 'text' },
-      { name: 'auditTime', label: '审核时间', type: 'text' }
+      { name: 'auditor', label: '审核人', type: 'select', source: { path: 'system/staff', labelField: 'name', valueField: 'name' } },
+      { name: 'submitTime', label: '提交时间', type: 'date' },
+      { name: 'auditTime', label: '审核时间', type: 'date' }
     ],
     doc: {
       overview: '查询客户拍照积分记录，支持后台人工审核和AI智能审核，审核通过后自动发放积分，实现小票拍照积分的全流程管理。',
@@ -2856,7 +2856,7 @@ export const MODULES: ModuleConfig[] = [
       { name: 'name', label: '规则名称', type: 'text', required: true },
       { name: 'shopType', label: '商户类型', type: 'text' },
       { name: 'fields', label: '识别字段', type: 'text' },
-      { name: 'template', label: '模板配置', type: 'textarea' },
+      { name: 'template', label: '模板配置', type: 'select', source: { path: 'coupon/templates', labelField: 'name', valueField: 'name' } },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
     doc: {
@@ -2941,8 +2941,8 @@ export const MODULES: ModuleConfig[] = [
     fields: [
       { name: 'name', label: '活动名称', type: 'text', required: true },
       { name: 'rules', label: '满减规则', type: 'textarea' },
-      { name: 'startTime', label: '开始时间', type: 'text' },
-      { name: 'endTime', label: '结束时间', type: 'text' },
+      { name: 'startTime', label: '开始时间', type: 'date' },
+      { name: 'endTime', label: '结束时间', type: 'date' },
       { name: 'applyRange', label: '适用范围', type: 'select', options: [
         { label: '全部', value: 'all' }, { label: '分类', value: 'category' }, { label: '指定商品', value: 'goods' }
       ] },
@@ -2968,11 +2968,11 @@ export const MODULES: ModuleConfig[] = [
     ],
     fields: [
       { name: 'name', label: '活动名称', type: 'text', required: true },
-      { name: 'goods', label: '关联商品', type: 'text' },
+      { name: 'goods', label: '关联商品', type: 'select', source: { path: 'shop/goods', labelField: 'name', valueField: 'name' } },
       { name: 'depositAmount', label: '定金', type: 'number' },
       { name: 'finalAmount', label: '尾款', type: 'number' },
-      { name: 'depositStartTime', label: '定金开始时间', type: 'text' },
-      { name: 'finalPayTime', label: '尾款支付时间', type: 'text' },
+      { name: 'depositStartTime', label: '定金开始时间', type: 'date' },
+      { name: 'finalPayTime', label: '尾款支付时间', type: 'date' },
       { name: 'stock', label: '库存', type: 'number' },
       { name: 'sold', label: '已售', type: 'number' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
@@ -2999,13 +2999,13 @@ export const MODULES: ModuleConfig[] = [
     ],
     fields: [
       { name: 'name', label: '活动名称', type: 'text', required: true },
-      { name: 'goods', label: '商品', type: 'text' },
+      { name: 'goods', label: '商品', type: 'select', source: { path: 'shop/goods', labelField: 'name', valueField: 'name' } },
       { name: 'originalPrice', label: '原价', type: 'number' },
       { name: 'floorPrice', label: '底价', type: 'number' },
       { name: 'helpCount', label: '助力次数', type: 'number' },
       { name: 'startedCount', label: '发起次数', type: 'number' },
-      { name: 'startTime', label: '开始时间', type: 'text' },
-      { name: 'endTime', label: '结束时间', type: 'text' },
+      { name: 'startTime', label: '开始时间', type: 'date' },
+      { name: 'endTime', label: '结束时间', type: 'date' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
     doc: {
@@ -3029,7 +3029,7 @@ export const MODULES: ModuleConfig[] = [
     ],
     fields: [
       { name: 'merchant', label: '商户', type: 'text', required: true },
-      { name: 'reportDate', label: '上报日期', type: 'text' },
+      { name: 'reportDate', label: '上报日期', type: 'date' },
       { name: 'amount', label: '销售金额', type: 'number' },
       { name: 'orderCount', label: '订单数', type: 'number' },
       { name: 'points', label: '产生积分', type: 'number' },
@@ -3059,7 +3059,7 @@ export const MODULES: ModuleConfig[] = [
       { title: '结束时间', dataIndex: 'endTime' }
     ],
     fields: [
-      { name: 'member', label: '会员', type: 'text', required: true },
+      { name: 'member', label: '会员', type: 'select', required: true, source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
       { name: 'memberNickname', label: '会员昵称', type: 'text' },
       { name: 'questionType', label: '问题类型', type: 'select', options: [
         { label: '积分问题', value: 'points' }, { label: '优惠券问题', value: 'coupon' }, { label: '订单问题', value: 'order' },
@@ -3071,8 +3071,8 @@ export const MODULES: ModuleConfig[] = [
         { label: '已解决', value: 'resolved' }, { label: '已关闭', value: 'closed' }
       ] },
       { name: 'agent', label: '客服人员', type: 'text' },
-      { name: 'startTime', label: '开始时间', type: 'text' },
-      { name: 'endTime', label: '结束时间', type: 'text' },
+      { name: 'startTime', label: '开始时间', type: 'date' },
+      { name: 'endTime', label: '结束时间', type: 'date' },
       { name: 'replyContent', label: '回复内容', type: 'textarea' }
     ],
     doc: {
@@ -3125,13 +3125,13 @@ export const MODULES: ModuleConfig[] = [
       { title: '状态', dataIndex: 'status', render: (v) => ({ active: '有效', expired: '已失效', deleted: '已删除' }[v] || v) }
     ],
     fields: [
-      { name: 'member', label: '会员', type: 'text', required: true },
-      { name: 'goods', label: '商品', type: 'text', required: true },
+      { name: 'member', label: '会员', type: 'select', required: true, source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
+      { name: 'goods', label: '商品', type: 'select', required: true, source: { path: 'shop/goods', labelField: 'name', valueField: 'name' } },
       { name: 'specs', label: '规格', type: 'text' },
       { name: 'quantity', label: '数量', type: 'number', required: true },
       { name: 'price', label: '单价', type: 'number' },
       { name: 'discount', label: '优惠信息', type: 'text' },
-      { name: 'addTime', label: '添加时间', type: 'text' },
+      { name: 'addTime', label: '添加时间', type: 'date' },
       { name: 'status', label: '状态', type: 'select', options: [
         { label: '有效', value: 'active' }, { label: '已失效', value: 'expired' }, { label: '已删除', value: 'deleted' }
       ] }
@@ -3158,7 +3158,7 @@ export const MODULES: ModuleConfig[] = [
       { title: '审核备注', dataIndex: 'remark' }
     ],
     fields: [
-      { name: 'member', label: '会员', type: 'text', required: true },
+      { name: 'member', label: '会员', type: 'select', required: true, source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
       { name: 'taskType', label: '任务类型', type: 'select', options: [
         { label: '发言建议', value: 'suggestion' }, { label: '朋友圈转发', value: 'share' }, { label: '关注官号', value: 'follow' },
         { label: '暖场活动', value: 'warmup' }, { label: '圈层活动', value: 'circle' }, { label: '推荐到访', value: 'visit' },
@@ -3166,12 +3166,12 @@ export const MODULES: ModuleConfig[] = [
       ] },
       { name: 'taskName', label: '任务名称', type: 'text' },
       { name: 'points', label: '申请积分', type: 'number', required: true },
-      { name: 'submitTime', label: '提交时间', type: 'text' },
+      { name: 'submitTime', label: '提交时间', type: 'date' },
       { name: 'status', label: '状态', type: 'select', options: [
         { label: '待审核', value: 'pending' }, { label: '已通过', value: 'approved' }, { label: '已驳回', value: 'rejected' }
       ] },
-      { name: 'auditor', label: '审核人', type: 'text' },
-      { name: 'auditTime', label: '审核时间', type: 'text' },
+      { name: 'auditor', label: '审核人', type: 'select', source: { path: 'system/staff', labelField: 'name', valueField: 'name' } },
+      { name: 'auditTime', label: '审核时间', type: 'date' },
       { name: 'remark', label: '审核备注', type: 'textarea' }
     ],
     doc: {
@@ -3195,8 +3195,8 @@ export const MODULES: ModuleConfig[] = [
     ],
     fields: [
       { name: 'douyinUser', label: '抖音用户', type: 'text', required: true },
-      { name: 'member', label: '会员', type: 'text' },
-      { name: 'bindTime', label: '绑定时间', type: 'text' },
+      { name: 'member', label: '会员', type: 'select', source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
+      { name: 'bindTime', label: '绑定时间', type: 'date' },
       { name: 'syncStatus', label: '同步状态', type: 'select', options: [
         { label: '已同步', value: 'synced' }, { label: '待同步', value: 'pending' }, { label: '同步失败', value: 'failed' }
       ] },
@@ -3227,7 +3227,7 @@ export const MODULES: ModuleConfig[] = [
       { name: 'type', label: '活动类型', type: 'select', options: [
         { label: '注册引流', value: 'register' }, { label: '本地生活券', value: 'coupon' }, { label: '交易打通', value: 'transaction' }
       ] },
-      { name: 'publishTime', label: '发布时间', type: 'text' },
+      { name: 'publishTime', label: '发布时间', type: 'date' },
       { name: 'participantCount', label: '参与人数', type: 'number' },
       { name: 'registerCount', label: '引流注册数', type: 'number' },
       { name: 'verificationCount', label: '券核销数', type: 'number' },
@@ -3263,7 +3263,7 @@ export const MODULES: ModuleConfig[] = [
       ] },
       { name: 'content', label: '通知内容', type: 'textarea', required: true },
       { name: 'targetMerchant', label: '目标商户', type: 'text' },
-      { name: 'sendTime', label: '发送时间', type: 'text' },
+      { name: 'sendTime', label: '发送时间', type: 'date' },
       { name: 'channel', label: '发送渠道', type: 'select', options: [
         { label: '微信', value: 'wechat' }, { label: '短信', value: 'sms' }, { label: '商户助手', value: 'app' }
       ] },
@@ -3299,7 +3299,7 @@ export const MODULES: ModuleConfig[] = [
         { label: '线上', value: 'online' }, { label: '线下', value: 'offline' }, { label: '视频', value: 'video' }
       ] },
       { name: 'content', label: '培训内容', type: 'textarea', required: true },
-      { name: 'trainingTime', label: '培训时间', type: 'text' },
+      { name: 'trainingTime', label: '培训时间', type: 'date' },
       { name: 'materials', label: '培训资料', type: 'text' },
       { name: 'participantCount', label: '参与商户数', type: 'number' },
       { name: 'completionRate', label: '完成率', type: 'number' },
@@ -3333,7 +3333,7 @@ export const MODULES: ModuleConfig[] = [
       ] },
       { name: 'coverImage', label: '封面图片', type: 'text' },
       { name: 'content', label: '资讯内容', type: 'textarea', required: true },
-      { name: 'publishTime', label: '发布时间', type: 'text' },
+      { name: 'publishTime', label: '发布时间', type: 'date' },
       { name: 'readCount', label: '阅读量', type: 'number' },
       { name: 'status', label: '状态', type: 'select', options: [
         { label: '草稿', value: 'draft' }, { label: '已发布', value: 'published' }, { label: '已下线', value: 'offline' }
@@ -3364,8 +3364,8 @@ export const MODULES: ModuleConfig[] = [
         { label: '品牌海报', value: 'brand' }, { label: '会员海报', value: 'member' }
       ] },
       { name: 'image', label: '海报图片', type: 'text', required: true },
-      { name: 'activity', label: '关联活动', type: 'text' },
-      { name: 'createTime', label: '创建时间', type: 'text' },
+      { name: 'activity', label: '关联活动', type: 'select', source: { path: 'marketing/campaigns', labelField: 'name', valueField: 'name' } },
+      { name: 'createTime', label: '创建时间', type: 'date' },
       { name: 'usedCount', label: '使用次数', type: 'number' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
@@ -3422,8 +3422,8 @@ export const MODULES: ModuleConfig[] = [
       ] },
       { name: 'conditions', label: '筛选条件', type: 'textarea', required: true },
       { name: 'size', label: '人群规模', type: 'number' },
-      { name: 'createTime', label: '创建时间', type: 'text' },
-      { name: 'updateTime', label: '更新时间', type: 'text' },
+      { name: 'createTime', label: '创建时间', type: 'date' },
+      { name: 'updateTime', label: '更新时间', type: 'date' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
     doc: {
@@ -3477,7 +3477,7 @@ export const MODULES: ModuleConfig[] = [
       { name: 'status', label: '状态', type: 'select', options: [
         { label: '启用', value: 'enabled' }, { label: '禁用', value: 'disabled' }, { label: '试用中', value: 'trial' }
       ] },
-      { name: 'createdAt', label: '创建时间', type: 'text' }
+      { name: 'createdAt', label: '创建时间', type: 'date' }
     ],
     doc: {
       overview: '项目管理是集团多项目运营的核心管理模块，支持新增、编辑、禁用商业项目，为每个项目配置独立的数据隔离规则、管理权限、计费模式和功能模块。系统支持壹中心、碧湘楚巷等多个商业项目同时运营，各项目数据互不干扰、权限独立管控。项目管理与系统用户、角色权限、数据分析等模块深度联动，确保集团级多项目运营的规范性和安全性。',
@@ -3524,7 +3524,7 @@ export const MODULES: ModuleConfig[] = [
     fields: [
       { name: 'name', label: '菜品名称', type: 'text', required: true },
       { name: 'shopName', label: '所属商户', type: 'text', required: true },
-      { name: 'cuisine', label: '所属菜系', type: 'text' },
+      { name: 'cuisine', label: '所属菜系', type: 'select', source: { path: 'restaurant/cuisine', labelField: 'name', valueField: 'name' } },
       { name: 'mainImage', label: '菜品主图', type: 'text' },
       { name: 'price', label: '价格(元)', type: 'number' },
       { name: 'description', label: '菜品介绍', type: 'textarea' },
@@ -3568,7 +3568,7 @@ export const MODULES: ModuleConfig[] = [
       { name: 'pointsBefore', label: '主账号合并前积分', type: 'number' },
       { name: 'pointsAfter', label: '合并后积分', type: 'number' },
       { name: 'remark', label: '备注', type: 'textarea' },
-      { name: 'operator', label: '操作人', type: 'text' },
+      { name: 'operator', label: '操作人', type: 'select', source: { path: 'system/staff', labelField: 'name', valueField: 'name' } },
       { name: 'mergedAt', label: '合并时间', type: 'text' },
       { name: 'status', label: '状态', type: 'select', options: [
         { label: '已完成', value: 'done' }, { label: '待确认', value: 'pending' }, { label: '已取消', value: 'cancelled' }
@@ -3597,7 +3597,7 @@ export const MODULES: ModuleConfig[] = [
       { title: '发放时间', dataIndex: 'createdAt' }
     ],
     fields: [
-      { name: 'member', label: '会员', type: 'text', required: true },
+      { name: 'member', label: '会员', type: 'select', required: true, source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
       { name: 'phone', label: '手机号', type: 'text', required: true },
       { name: 'fromLevel', label: '原等级', type: 'text' },
       { name: 'toLevel', label: '新等级', type: 'text' },
@@ -3611,14 +3611,60 @@ export const MODULES: ModuleConfig[] = [
         { label: '发放成功', value: 'success' }, { label: '发放失败', value: 'failed' }, { label: '部分成功', value: 'partial' }
       ] },
       { name: 'failReason', label: '失败原因', type: 'textarea' },
-      { name: 'operator', label: '操作人', type: 'text' },
+      { name: 'operator', label: '操作人', type: 'select', source: { path: 'system/staff', labelField: 'name', valueField: 'name' } },
       { name: 'remark', label: '备注', type: 'textarea' },
-      { name: 'createdAt', label: '发放时间', type: 'text' }
+      { name: 'createdAt', label: '发放时间', type: 'date' }
     ],
     doc: {
       overview: '升级礼包发放记录是会员等级升级时奖励发放的全程追溯模块，记录每次会员升级时发放的积分、优惠券、停车券等礼包明细，以及发放状态、触发方式和操作人信息。支持自动升级触发和手动补发两种触发方式，可按会员、等级、状态、时间等多维度筛选查询。与会员等级、积分流水、会员券包、停车券等模块深度联动，确保升级奖励准确发放且全程可追溯，是会员成长体系公平性和透明度的重要保障。',
       features: ['完整记录每次升级礼包发放的全量信息', '记录会员信息：会员姓名、手机号，便于快速定位', '记录等级变动：原等级、新等级，明确升级跨度', '记录发放礼包明细：积分数量、优惠券明细、停车券小时数', '支持两种触发方式：自动升级（系统自动触发）、手动补发（运营手动触发）', '支持三种发放状态：发放成功、发放失败、部分成功', '记录失败原因，便于排查和重试发放', '记录操作人信息，明确发放责任主体', '支持按会员、等级、状态、触发方式、时间范围等多维度筛选查询', '与会员等级联动，升级礼包配置变更后自动同步发放逻辑', '与积分流水联动，发放积分时自动生成积分流水记录', '与会员券包联动，发放优惠券时自动写入会员券包', '与停车券模块联动，发放停车券时自动写入停车券账户', '提供发放成功率统计，评估升级礼包系统稳定性'],
       tips: ['自动升级发放失败时，建议先检查等级配置的礼包是否完整，再手动补发', '手动补发前请确认会员确实符合升级条件，避免重复发放', '发放记录不可删除，仅可查看，确保审计追溯的完整性', '部分成功状态表示部分奖励发放成功，需检查失败项并处理', '升级礼包发放日志需定期备份，防止数据丢失']
+    }
+  },
+  {
+    key: 'system-staff', path: 'system/staff', name: '员工管理', category: '系统管理',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '姓名', dataIndex: 'name' },
+      { title: '电话', dataIndex: 'phone' },
+      { title: '角色', dataIndex: 'role' },
+      { title: '所属门店', dataIndex: 'shop' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '姓名', type: 'text', required: true },
+      { name: 'phone', label: '电话', type: 'text', required: true },
+      { name: 'role', label: '角色', type: 'select', source: { path: 'system/roles', labelField: 'name', valueField: 'name' } },
+      { name: 'shop', label: '所属门店', type: 'select', source: { path: 'config/shops', labelField: 'name', valueField: 'name' } },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: {
+      overview: '员工管理是系统的基础人事管理模块，用于管理平台运营人员、客服人员、门店店员等员工信息。员工数据与核销记录、积分调整、会员合并等操作联动，自动记录操作人信息，确保业务操作可追溯。',
+      features: ['支持新增、编辑、删除员工信息', '记录员工姓名、电话、角色、所属门店等基础信息', '角色与系统角色管理联动，支持权限控制', '门店与门店管理联动，便于多门店管理', '状态管理：启用/禁用，禁用后无法登录系统'],
+      tips: ['员工手机号建议唯一，便于系统识别和联系', '删除员工前请确认该员工没有未完成的业务操作', '角色变更后需重新登录才能生效']
+    }
+  },
+  {
+    key: 'services-items', path: 'services/items', name: '服务项目管理', category: '服务中心',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '项目名称', dataIndex: 'name' },
+      { title: '价格', dataIndex: 'price' },
+      { title: '时长(分钟)', dataIndex: 'duration' },
+      { title: '适用门店', dataIndex: 'shop' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '项目名称', type: 'text', required: true },
+      { name: 'price', label: '价格', type: 'number' },
+      { name: 'duration', label: '时长(分钟)', type: 'number' },
+      { name: 'shop', label: '适用门店', type: 'select', source: { path: 'config/shops', labelField: 'name', valueField: 'name' } },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: {
+      overview: '服务项目管理是服务中心的基础配置模块，用于管理会员可购买的增值服务项，如面部护理、按摩理疗、健身私教等。服务项目与服务订单联动，会员购买服务后生成服务订单并跟踪服务进度。',
+      features: ['支持新增、编辑、删除服务项目', '记录项目名称、价格、服务时长等基础信息', '适用门店配置，支持多门店差异化服务', '状态管理：启用/禁用，禁用后会员无法购买'],
+      tips: ['服务项目价格变更不影响已生成订单的价格', '删除服务项目前请确认没有进行中的服务订单', '建议为每个服务项目配置详细的描述和注意事项']
     }
   }
 ];
