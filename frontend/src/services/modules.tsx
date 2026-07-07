@@ -221,14 +221,21 @@ export const MODULES: ModuleConfig[] = [
       ] },
       { name: 'description', label: '商品详情', type: 'textarea' },
       { name: 'sort', label: '排序', type: 'number' },
+      { name: 'ownerOnly', label: '业主专属', type: 'select', options: [
+        { label: '仅业主可兑换', value: 'yes' }, { label: '所有会员', value: 'no' }
+      ] },
+      { name: 'exchangeMode', label: '兑换模式', type: 'select', options: [
+        { label: '纯积分兑换', value: 'pointsOnly' }, { label: '积分+现金兑换', value: 'pointsAndCash' }
+      ] },
+      { name: 'cashAmount', label: '加价金额(元)', type: 'number' },
       { name: 'status', label: '状态', type: 'select', options: [
         { label: '上架', value: 'enabled' }, { label: '下架', value: 'disabled' }
       ] }
     ],
     doc: {
-      overview: '积分商品是积分商城的核心商品库，管理所有可用积分兑换的商品和权益。通过将实物商品、虚拟权益、优惠券、服务项目等配置为积分商品，为会员提供丰富的积分消耗出口，提升积分价值感知和会员活跃度。积分商品支持配置商品图片、分类、类型、兑换方式、每人限兑数量等丰富属性，满足多样化的积分运营场景。积分商品与积分流水、会员档案、核销记录、积分商城订单等模块深度联动，会员兑换后自动扣减积分并生成兑换订单，实物商品可走物流配送，虚拟商品和权益可直接到账或到店核销，形成完整的积分消费闭环。',
-      features: ['支持新增、编辑、删除积分商品，构建丰富的积分兑换商品库', '配置商品基础信息：名称、主图、详情图、分类等，提升商品展示效果', '支持多种商品类型：实物商品、虚拟商品、优惠券、服务权益', '设置商品所需兑换积分，合理定价确保积分价值体系平衡', '管理商品库存数量，支持库存预警和售罄自动下架', '配置每人限兑数量，防止热门商品被少数会员集中兑换', '支持三种兑换方式：门店自提、快递邮寄、自动到账', '商品上下架管理，灵活控制可兑换商品', '商品排序和推荐位配置，引导会员兑换高价值商品', '与积分流水模块联动，兑换时自动扣减积分并生成流水记录', '与积分商城订单联动，兑换后自动生成订单并跟踪履约', '与会员档案联动，查看会员已兑换的商品记录', '与核销记录联动，支持到店核销类积分商品的验证', '提供兑换数据统计，掌握热门商品和库存周转情况'],
-      tips: ['积分商品定价需结合积分获取成本，确保积分价值体系健康', '热门商品建议设置合理的库存和每人限兑数量，避免积分过度消耗', '实物商品需配置物流配送能力，确保兑换后能及时送达', '虚拟商品兑换后应自动到账，提升会员兑换体验', '商品主图和详情图建议使用高清图片，提升展示效果和兑换意愿', '定期更新积分商品库，保持新鲜感，提升会员兑换意愿']
+      overview: '积分商品是积分商城的核心商品库，管理所有可用积分兑换的商品和权益。通过将实物商品、虚拟权益、优惠券、服务项目等配置为积分商品，为会员提供丰富的积分消耗出口，提升积分价值感知和会员活跃度。积分商品支持配置商品图片、分类、类型、兑换方式、每人限兑数量等丰富属性，支持纯积分兑换和积分+现金组合兑换两种模式，支持设置业主专属商品。积分商品与积分流水、会员档案、核销记录、积分商城订单等模块深度联动，会员兑换后自动扣减积分并生成兑换订单，实物商品可走物流配送，虚拟商品和权益可直接到账或到店核销，形成完整的积分消费闭环。',
+      features: ['支持新增、编辑、删除积分商品，构建丰富的积分兑换商品库', '配置商品基础信息：名称、主图、详情图、分类等，提升商品展示效果', '支持多种商品类型：实物商品、虚拟商品、优惠券、服务权益', '设置商品所需兑换积分，合理定价确保积分价值体系平衡', '管理商品库存数量，支持库存预警和售殃自动下架', '配置每人限兑数量，防止热门商品被少数会员集中兑换', '支持三种兑换方式：门店自提、快递邮寄、自动到账', '支持纯积分兑换和积分+现金组合兑换两种模式', '支持设置业主专属商品，仅地产业主可兑换', '商品上下架管理，灵活控制可兑换商品', '商品排序和推荐位配置，引导会员兑换高价值商品', '与积分流水模块联动，兑换时自动扣减积分并生成流水记录', '与积分商城订单联动，兑换后自动生成订单并跟踪履约', '与会员档案联动，查看会员已兑换的商品记录', '与核销记录联动，支持到店核销类积分商品的验证', '提供兑换数据统计，掌握热门商品和库存周转情况'],
+      tips: ['积分商品定价需结合积分获取成本，确保积分价值体系健康', '热门商品建议设置合理的库存和每人限兑数量，避免积分过度消耗', '实物商品需配置物流配送能力，确保兑换后能及时送达', '虚拟商品兑换后应自动到账，提升会员兑换体验', '商品主图和详情图建议使用高清图片，提升展示效果和兑换意愿', '业主专属商品需在业主端积分商城单独展示', '定期更新积分商品库，保持新鲜感，提升会员兑换意愿']
     }
   },
   {
@@ -690,18 +697,34 @@ export const MODULES: ModuleConfig[] = [
     columns: [
       { title: 'ID', dataIndex: 'id', width: 60 },
       { title: '商户名称', dataIndex: 'name' },
-      { title: '分类', dataIndex: 'category' },
+      { title: '业态', dataIndex: 'category' },
+      { title: '楼层', dataIndex: 'floor' },
+      { title: '菜系', dataIndex: 'cuisine' },
       { title: '联系人', dataIndex: 'contact' },
       { title: '电话', dataIndex: 'phone' },
+      { title: '券额度', dataIndex: 'couponQuota' },
+      { title: '停车券额度', dataIndex: 'parkingQuota' },
       { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
     ],
     fields: [
       { name: 'name', label: '商户名称', type: 'text', required: true },
-      { name: 'category', label: '分类', type: 'select', options: [
-        { label: '餐饮', value: '餐饮' }, { label: '零售', value: '零售' }, { label: '服务', value: '服务' }
+      { name: 'category', label: '业态', type: 'select', options: [
+        { label: '餐饮', value: '餐饮' }, { label: '零售', value: '零售' }, { label: '服务', value: '服务' }, { label: '娱乐', value: '娱乐' }, { label: '教育', value: '教育' }
       ] },
+      { name: 'floor', label: '所在楼层', type: 'text' },
+      { name: 'location', label: '店铺位置', type: 'text' },
+      { name: 'cuisine', label: '餐饮菜系', type: 'text' },
+      { name: 'logo', label: '商户Logo', type: 'text' },
+      { name: 'storePhotos', label: '门店照片', type: 'textarea' },
+      { name: 'brandStory', label: '品牌故事', type: 'textarea' },
       { name: 'contact', label: '联系人', type: 'text' },
-      { name: 'phone', label: '电话', type: 'text' },
+      { name: 'phone', label: '联系电话', type: 'text' },
+      { name: 'couponQuota', label: '代金券月发放额度', type: 'number' },
+      { name: 'couponUsed', label: '已使用券额度', type: 'number' },
+      { name: 'parkingQuota', label: '停车券月发放额度', type: 'number' },
+      { name: 'parkingUsed', label: '已使用停车券额度', type: 'number' },
+      { name: 'storePromotion', label: '门店优惠活动', type: 'textarea' },
+      { name: 'promotionExpiry', label: '优惠活动有效期', type: 'text' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
     doc: {
@@ -1557,19 +1580,60 @@ export const MODULES: ModuleConfig[] = [
       { title: '免费时长(分)', dataIndex: 'freeMinutes' },
       { title: '单价(元/小时)', dataIndex: 'pricePerHour' },
       { title: '封顶金额', dataIndex: 'capAmount' },
+      { title: '无感支付', dataIndex: 'autoPay', render: (v) => (v === 'enabled' ? '已开启' : '未开启') },
       { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
     ],
     fields: [
       { name: 'name', label: '规则名称', type: 'text', required: true },
       { name: 'freeMinutes', label: '免费时长(分钟)', type: 'number' },
       { name: 'pricePerHour', label: '单价(元/小时)', type: 'number' },
-      { name: 'capAmount', label: '封顶金额', type: 'number' },
+      { name: 'capAmount', label: '封顶金额(元)', type: 'number' },
+      { name: 'autoPay', label: '无感支付', type: 'select', options: [
+        { label: '已开启', value: 'enabled' }, { label: '未开启', value: 'disabled' }
+      ] },
+      { name: 'autoPayLimit', label: '免密支付额度(元)', type: 'number' },
+      { name: 'autoPayRule', label: '自动扣费规则说明', type: 'textarea' },
+      { name: 'pointsDeductEnabled', label: '积分抵扣停车费', type: 'select', options: [
+        { label: '已开启', value: 'enabled' }, { label: '未开启', value: 'disabled' }
+      ] },
+      { name: 'pointsDeductRate', label: '积分抵扣比例(积分/元)', type: 'number' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
     doc: {
-      overview: '停车计费规则是停车场收费的核心配置模块，支持免费时长、按时计费、封顶金额等多种计费策略组合。灵活的计费规则可满足不同停车场的定价需求，是停车收费准确计算的基础。',
-      features: ['支持新增、编辑、删除计费规则', '免费时长配置，设置入场后免费停车时间', '按时计费，设置每小时收费标准', '封顶金额设置，每日最高收费限额', '规则状态管理：启用/禁用', '与停车场联动，不同停车场可应用不同计费规则'],
-      tips: ['计费规则修改前请充分测试，避免收费错误引发投诉', '免费时长建议设置合理，既要吸引客流又要控制成本', '封顶金额可有效提升长时停车用户的满意度']
+      overview: '停车计费规则是停车场收费的核心配置模块，支持免费时长、按时计费、封顶金额等多种计费策略组合。同时支持无感支付（自动扣费）、积分抵扣停车费等高级功能配置。灵活的计费规则可满足不同停车场的定价需求，是停车收费准确计算的基础。',
+      features: ['支持新增、编辑、删除计费规则', '免费时长配置，设置入场后免费停车时间', '按时计费，设置每小时收费标准', '封顶金额设置，每日最高收费限额', '无感支付开关配置，开启后用户离场自动从微信账户扣费', '免密支付额度配置，设置自动扣费的单次最高金额', '积分抵扣停车费开关，支持使用积分抵扣停车费', '积分抵扣比例配置，设置每元停车费所需积分数量', '规则状态管理：启用/禁用', '与停车场联动，不同停车场可应用不同计费规则'],
+      tips: ['计费规则修改前请充分测试，避免收费错误引发投诉', '免费时长建议设置合理，既要吸引客流又要控制成本', '封顶金额可有效提升长时停车用户的满意度', '无感支付需对接微信支付免密支付接口', '积分抵扣比例需结合积分获取成本合理设置']
+    }
+  },
+  {
+    key: 'parking-plates', path: 'parking/plates', name: '车牌绑定管理', category: '智慧停车',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '会员', dataIndex: 'member' },
+      { title: '车牌号', dataIndex: 'plateNo' },
+      { title: '车牌颜色', dataIndex: 'plateColor', render: (v) => ({ blue: '蓝牌', yellow: '黄牌', green: '绿牌', white: '白牌' }[v] || v) },
+      { title: '车辆类型', dataIndex: 'vehicleType', render: (v) => ({ sedan: '轿车', suv: 'SUV', van: '面包车', newEnergy: '新能源' }[v] || v) },
+      { title: '绑定时间', dataIndex: 'bindTime' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '正常' : '解绑') }
+    ],
+    fields: [
+      { name: 'member', label: '会员', type: 'text', required: true },
+      { name: 'plateNo', label: '车牌号', type: 'text', required: true },
+      { name: 'plateColor', label: '车牌颜色', type: 'select', options: [
+        { label: '蓝牌', value: 'blue' }, { label: '黄牌', value: 'yellow' }, { label: '绿牌', value: 'green' }, { label: '白牌', value: 'white' }
+      ] },
+      { name: 'vehicleType', label: '车辆类型', type: 'select', options: [
+        { label: '轿车', value: 'sedan' }, { label: 'SUV', value: 'suv' }, { label: '面包车', value: 'van' }, { label: '新能源', value: 'newEnergy' }
+      ] },
+      { name: 'bindTime', label: '绑定时间', type: 'text' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '正常', value: 'enabled' }, { label: '解绑', value: 'disabled' }
+      ] }
+    ],
+    doc: {
+      overview: '车牌绑定管理是会员车辆信息的维护模块，支持会员在线绑定车牌号码，支持多车牌绑定。绑定车牌后可使用无感支付、停车券自动抵扣、积分抵扣停车费等智慧停车功能。运营人员可在后台查看、新增、编辑、删除会员车牌绑定关系，处理会员车牌绑定异常问题。',
+      features: ['支持查看全平台会员车牌绑定关系', '支持新增、编辑、删除车牌绑定记录', '支持多车牌绑定，一个会员可绑定多个车牌', '区分车牌颜色：蓝牌、黄牌、绿牌、白牌', '记录车辆类型：轿车、SUV、面包车、新能源', '绑定状态管理：正常/解绑', '与停车记录联动，根据车牌匹配会员停车数据', '与停车权益联动，绑定车牌的会员享受会员停车优惠', '与无感支付联动，绑定车牌后可使用自动扣费功能'],
+      tips: ['车牌号格式需校验，避免绑定错误车牌', '同一车牌不可重复绑定不同会员', '解绑车牌前请确认无未完成的停车订单', '新能源车牌需特别注意号牌格式校验']
     }
   },
   // ===== 商户营销（补充）=====
@@ -3347,6 +3411,154 @@ export const MODULES: ModuleConfig[] = [
       overview: '人群定向管理用于创建和管理不同类型的会员人群，支持标签人群、行为人群、价值人群、自定义人群，为广告推广、精准营销提供人群基础。参考有赞广告投放人群定向设计，实现千人千面的个性化运营。',
       features: ['人群类型分类', '多维度筛选', '人群规模预估', '人群包管理', '人群交集并集', '人群更新', '人群导出', '人群标签', '行为分析', '价值分层', '自定义规则', '数据统计'],
       tips: ['人群定义要清晰，便于运营使用', '定期更新人群数据', '结合营销活动使用人群定向']
+    }
+  },
+  {
+    key: 'project-management', path: 'system/projects', name: '项目管理', category: '系统管理',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '项目名称', dataIndex: 'name' },
+      { title: '项目编码', dataIndex: 'code' },
+      { title: '业态', dataIndex: 'businessType', render: (v) => ({ shopping: '购物中心', scenic: '景区街区', mixed: '综合体', property: '地产' }[v] || v) },
+      { title: '地址', dataIndex: 'address' },
+      { title: '管理员', dataIndex: 'adminName' },
+      { title: '会员数', dataIndex: 'memberCount' },
+      { title: '数据隔离', dataIndex: 'dataIsolation', render: (v) => (v === 'enabled' ? '已启用' : '未启用') },
+      { title: '计费模式', dataIndex: 'billingMode', render: (v) => ({ full: '全功能计费', basic: '基础版计费', custom: '自定义计费' }[v] || v) },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ enabled: '启用', disabled: '禁用', trial: '试用中' }[v] || v) },
+      { title: '创建时间', dataIndex: 'createdAt' }
+    ],
+    fields: [
+      { name: 'name', label: '项目名称', type: 'text', required: true },
+      { name: 'code', label: '项目编码', type: 'text', required: true },
+      { name: 'businessType', label: '业态类型', type: 'select', options: [
+        { label: '购物中心', value: 'shopping' }, { label: '景区街区', value: 'scenic' },
+        { label: '综合体', value: 'mixed' }, { label: '地产', value: 'property' }
+      ] },
+      { name: 'address', label: '项目地址', type: 'text' },
+      { name: 'cooperationParty', label: '合作方', type: 'text' },
+      { name: 'contactPerson', label: '联系人', type: 'text' },
+      { name: 'contactPhone', label: '联系电话', type: 'text' },
+      { name: 'adminName', label: '项目管理员', type: 'text' },
+      { name: 'adminAccount', label: '管理员账号', type: 'text' },
+      { name: 'memberCount', label: '当前会员数', type: 'number' },
+      { name: 'maxMembers', label: '会员上限', type: 'number' },
+      { name: 'dataIsolation', label: '数据隔离', type: 'select', options: [
+        { label: '已启用', value: 'enabled' }, { label: '未启用', value: 'disabled' }
+      ] },
+      { name: 'isolationRule', label: '隔离规则说明', type: 'textarea' },
+      { name: 'billingMode', label: '计费模式', type: 'select', options: [
+        { label: '全功能计费', value: 'full' }, { label: '基础版计费', value: 'basic' }, { label: '自定义计费', value: 'custom' }
+      ] },
+      { name: 'billingConfig', label: '计费配置说明', type: 'textarea' },
+      { name: 'enabledModules', label: '启用功能模块', type: 'textarea' },
+      { name: 'resourceQuota', label: '资源配额', type: 'textarea' },
+      { name: 'contractPeriod', label: '合同期限', type: 'text' },
+      { name: 'remark', label: '备注', type: 'textarea' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '启用', value: 'enabled' }, { label: '禁用', value: 'disabled' }, { label: '试用中', value: 'trial' }
+      ] },
+      { name: 'createdAt', label: '创建时间', type: 'text' }
+    ],
+    doc: {
+      overview: '项目管理是集团多项目运营的核心管理模块，支持新增、编辑、禁用商业项目，为每个项目配置独立的数据隔离规则、管理权限、计费模式和功能模块。系统支持壹中心、碧湘楚巷等多个商业项目同时运营，各项目数据互不干扰、权限独立管控。项目管理与系统用户、角色权限、数据分析等模块深度联动，确保集团级多项目运营的规范性和安全性。',
+      features: ['支持新增商业项目，填写项目名称、编码、业态、地址、合作方等基础信息，生成独立项目租户', '支持对已创建项目的基础信息进行修改、更新，同步更新前端展示内容', '支持对项目进行启停控制，禁用后项目相关前端功能全部关闭，数据保留', '配置不同项目的数据隔离规则，确保壹中心、碧湘楚巷等项目数据互不干扰', '为不同项目分配独立的管理员账号，配置仅可查看本项目数据的权限', '跨项目汇总全平台核心运营数据，生成集团级总览报表', '为不同项目配置独立的功能计费、资源配额规则，适配不同项目合作模式', '支持按业态类型分类：购物中心、景区街区、综合体、地产', '管理项目合同期限和资源配额，控制各项目的功能模块开通情况', '与系统用户模块联动，项目管理员仅可查看和管理本项目数据', '与角色权限模块联动，支持按项目维度配置菜单和数据权限', '与数据分析模块联动，支持单项目报表和跨项目汇总报表'],
+      tips: ['新增项目前请确认项目编码唯一性，编码创建后不可修改', '数据隔离规则启用后不可随意关闭，关闭可能导致数据混淆', '禁用项目前请确认无正在进行的营销活动和待处理订单', '计费模式变更需与商务确认，避免产生计费争议', '建议为每个项目指定至少一名管理员，确保项目运营正常', '资源配额设置需根据项目规模合理规划，避免资源浪费或不足']
+    }
+  },
+  {
+    key: 'restaurant-cuisine', path: 'restaurant/cuisine', name: '餐饮菜系管理', category: '内容管理',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '菜系名称', dataIndex: 'name' },
+      { title: '图标', dataIndex: 'icon' },
+      { title: '排序', dataIndex: 'sort' },
+      { title: '关联商户数', dataIndex: 'shopCount' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '菜系名称', type: 'text', required: true },
+      { name: 'icon', label: '菜系图标', type: 'text' },
+      { name: 'description', label: '菜系描述', type: 'textarea' },
+      { name: 'sort', label: '排序', type: 'number' },
+      { name: 'shopCount', label: '关联商户数', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: {
+      overview: '餐饮菜系管理用于维护商场餐饮商户的菜系分类体系，支持新增、编辑、删除菜系分类，为餐饮商户绑定对应菜系。菜系分类在小程序餐饮美食专区展示，帮助用户快速按菜系筛选餐厅。与商户管理、小程序餐饮导览深度联动，是餐饮美食导览功能的数据基础。',
+      features: ['支持新增、编辑、删除餐饮菜系分类', '配置菜系名称、图标、描述，提升小程序展示效果', '支持菜系排序，控制小程序端展示顺序', '统计关联商户数，掌握各菜系下的商户规模', '菜系启用/禁用管理，禁用后前端不再展示', '与商户管理联动，商户绑定菜系后自动更新统计', '与小程序餐饮导览联动，按菜系筛选展示餐厅'],
+      tips: ['菜系名称建议使用通用分类如湘菜、川菜、粤菜、日料等', '图标建议使用统一风格的SVG或PNG图片', '排序值越小越靠前展示']
+    }
+  },
+  {
+    key: 'restaurant-dishes', path: 'restaurant/dishes', name: '餐饮菜品管理', category: '内容管理',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '菜品名称', dataIndex: 'name' },
+      { title: '所属商户', dataIndex: 'shopName' },
+      { title: '菜系', dataIndex: 'cuisine' },
+      { title: '价格(元)', dataIndex: 'price' },
+      { title: '推荐', dataIndex: 'isRecommend', render: (v) => (v === 'yes' ? '推荐' : '普通') },
+      { title: '排序', dataIndex: 'sort' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '上架' : '下架') }
+    ],
+    fields: [
+      { name: 'name', label: '菜品名称', type: 'text', required: true },
+      { name: 'shopName', label: '所属商户', type: 'text', required: true },
+      { name: 'cuisine', label: '所属菜系', type: 'text' },
+      { name: 'mainImage', label: '菜品主图', type: 'text' },
+      { name: 'price', label: '价格(元)', type: 'number' },
+      { name: 'description', label: '菜品介绍', type: 'textarea' },
+      { name: 'ingredients', label: '主要食材', type: 'text' },
+      { name: 'taste', label: '口味', type: 'select', options: [
+        { label: '不辣', value: 'mild' }, { label: '微辣', value: 'spicy' }, { label: '中辣', value: 'medium' }, { label: '特辣', value: 'hot' }
+      ] },
+      { name: 'isRecommend', label: '是否推荐', type: 'select', options: [
+        { label: '推荐', value: 'yes' }, { label: '普通', value: 'no' }
+      ] },
+      { name: 'sort', label: '排序', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '上架', value: 'enabled' }, { label: '下架', value: 'disabled' }
+      ] }
+    ],
+    doc: {
+      overview: '餐饮菜品管理用于维护商场餐饮商户的推荐菜品信息，为每个商户配置推荐菜品、菜品图片、价格、介绍等内容。菜品信息在小程序商户详情页和餐饮美食专区展示，帮助用户了解商户特色和推荐菜。与商户管理、餐饮菜系管理深度联动，是餐饮美食导览功能的重要组成部分。',
+      features: ['支持新增、编辑、删除餐饮菜品信息', '配置菜品名称、主图、价格、介绍，提升展示效果', '关联所属商户和菜系，便于按商户和菜系分类展示', '支持口味标签：不辣、微辣、中辣、特辣', '支持推荐标记，推荐菜品在小程序端优先展示', '菜品上架/下架管理，灵活控制展示状态', '排序管理，控制同商户下菜品展示顺序', '与商户管理联动，从商户详情可查看和管理菜品', '与餐饮菜系联动，按菜系筛选展示菜品'],
+      tips: ['菜品主图建议使用高清实拍图片，提升展示效果和用户食欲', '推荐菜品建议选择商户招牌菜和人气菜', '价格建议标注实际售价，避免与线下价格不一致', '定期更新菜品信息，确保与商户实际菜单同步']
+    }
+  },
+  {
+    key: 'member-merge', path: 'member/merge', name: '会员合并', category: '会员数字化',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '主账号', dataIndex: 'mainAccount' },
+      { title: '被合并账号', dataIndex: 'mergedAccount' },
+      { title: '合并原因', dataIndex: 'reason' },
+      { title: '合并前积分', dataIndex: 'pointsBefore' },
+      { title: '合并后积分', dataIndex: 'pointsAfter' },
+      { title: '操作人', dataIndex: 'operator' },
+      { title: '合并时间', dataIndex: 'mergedAt' },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ done: '已完成', pending: '待确认', cancelled: '已取消' }[v] || v) }
+    ],
+    fields: [
+      { name: 'mainAccount', label: '主账号(手机号)', type: 'text', required: true },
+      { name: 'mergedAccount', label: '被合并账号(手机号)', type: 'text', required: true },
+      { name: 'reason', label: '合并原因', type: 'select', options: [
+        { label: '重复注册', value: 'duplicate' }, { label: '换号合并', value: 'phoneChange' }, { label: '人工申请', value: 'manual' }
+      ] },
+      { name: 'pointsBefore', label: '主账号合并前积分', type: 'number' },
+      { name: 'pointsAfter', label: '合并后积分', type: 'number' },
+      { name: 'remark', label: '备注', type: 'textarea' },
+      { name: 'operator', label: '操作人', type: 'text' },
+      { name: 'mergedAt', label: '合并时间', type: 'text' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '已完成', value: 'done' }, { label: '待确认', value: 'pending' }, { label: '已取消', value: 'cancelled' }
+      ] }
+    ],
+    doc: {
+      overview: '会员合并用于处理会员重复注册的场景，支持将多个会员账号合并为一个主账号，整合全量数据（积分、消费记录、优惠券等），保留主账号并归集被合并账号的所有资产。系统记录完整的合并日志，包括合并前后积分变动、操作人和合并原因，确保数据可追溯。会员合并与会员档案、会员积分账户、会员资产等模块深度联动，合并后自动更新相关数据。',
+      features: ['支持将重复注册的会员账号合并为主账号', '自动整合被合并账号的积分、消费记录、优惠券等全量数据', '合并原因分类：重复注册、换号合并、人工申请', '记录合并前后积分变动，确保资产数据准确', '记录操作人信息，明确合并操作的责任主体', '支持待确认状态，重要合并操作需二次确认', '完整的合并日志记录，便于审计和数据追溯', '与会员档案联动，合并后自动更新会员档案信息', '与会员积分账户联动，合并后自动汇总积分余额', '与会员资产联动，合并后自动整合优惠券等资产'],
+      tips: ['合并操作不可逆，执行前请仔细核对主账号和被合并账号', '建议先备份数据再执行合并操作', '合并后被合并账号将无法登录，请提前通知会员', '大额积分合并建议由主管审批后执行']
     }
   }
 ];
