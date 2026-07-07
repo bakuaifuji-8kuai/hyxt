@@ -28,12 +28,12 @@ interface ModuleConfig {
 interface FieldDef {
   name: string;
   label: string;
-  type: 'input' | 'number' | 'select' | 'date' | 'daterange' | 'text';
+  type: 'input' | 'number' | 'select' | 'date' | 'daterange' | 'text' | 'goods-select';
   options?: { label: string; value: string }[];
   required?: boolean;
   placeholder?: string;
   multiple?: boolean;
-  /** 从其他模块拉取下拉数据 */
+  selectMode?: 'goods' | 'category' | 'both';
   source?: {
     path: string;
     labelField: string;
@@ -65,6 +65,7 @@ const MODULE_CONFIGS: ModuleConfig[] = [
       { name: 'type', label: '活动类型', type: 'select', required: true, options: [
         { label: '促销', value: 'promotion' }, { label: '会员日', value: 'memberday' }, { label: '节日', value: 'festival' },
       ] },
+      { name: 'goods', label: '适用商品', type: 'goods-select', required: true, selectMode: 'both', multiple: true },
       { name: 'startTime', label: '开始时间', type: 'date', required: true },
       { name: 'endTime', label: '结束时间', type: 'date', required: true },
       { name: 'budget', label: '预算(元)', type: 'number', required: true },
@@ -74,7 +75,7 @@ const MODULE_CONFIGS: ModuleConfig[] = [
     key: 'countdown', path: 'marketing/countdown', label: '限时购', icon: <ClockCircleOutlined />, group: 'promotion',
     fields: [
       { name: 'name', label: '活动名称', type: 'input', required: true },
-      { name: 'goods', label: '商品', type: 'select', required: true, source: { path: 'shop/goods', labelField: 'name', valueField: 'name' } },
+      { name: 'goods', label: '活动商品', type: 'goods-select', required: true, selectMode: 'goods', multiple: true },
       { name: 'price', label: '活动价', type: 'number', required: true },
       { name: 'originalPrice', label: '原价', type: 'number', required: true },
       { name: 'startTime', label: '开始时间', type: 'date', required: true },
@@ -85,6 +86,7 @@ const MODULE_CONFIGS: ModuleConfig[] = [
     key: 'seckill', path: 'marketing/seckill', label: '秒杀活动', icon: <ThunderboltOutlined />, group: 'promotion',
     fields: [
       { name: 'name', label: '活动名称', type: 'input', required: true },
+      { name: 'goods', label: '秒杀商品', type: 'goods-select', required: true, selectMode: 'goods', multiple: true },
       { name: 'price', label: '秒杀价', type: 'number', required: true },
       { name: 'originalPrice', label: '原价', type: 'number', required: true },
       { name: 'stock', label: '库存', type: 'number', required: true },
@@ -95,6 +97,7 @@ const MODULE_CONFIGS: ModuleConfig[] = [
     key: 'groupbuy', path: 'marketing/groupbuy', label: '拼团活动', icon: <TeamOutlined />, group: 'social',
     fields: [
       { name: 'name', label: '活动名称', type: 'input', required: true },
+      { name: 'goods', label: '拼团商品', type: 'goods-select', required: true, selectMode: 'goods', multiple: true },
       { name: 'price', label: '拼团价', type: 'number', required: true },
       { name: 'originalPrice', label: '原价', type: 'number', required: true },
       { name: 'minCount', label: '成团人数', type: 'number', required: true },
@@ -104,7 +107,7 @@ const MODULE_CONFIGS: ModuleConfig[] = [
     key: 'bargain', path: 'marketing/bargain', label: '帮砍价', icon: <ScissorOutlined />, group: 'social',
     fields: [
       { name: 'name', label: '活动名称', type: 'input', required: true },
-      { name: 'goods', label: '商品', type: 'select', required: true, source: { path: 'shop/goods', labelField: 'name', valueField: 'name' } },
+      { name: 'goods', label: '砍价商品', type: 'goods-select', required: true, selectMode: 'goods', multiple: true },
       { name: 'originalPrice', label: '原价', type: 'number', required: true },
       { name: 'floorPrice', label: '底价', type: 'number', required: true },
     ],
@@ -225,6 +228,225 @@ const SourceSelect: React.FC<{ source: { path: string; labelField: string; value
   return <Select options={options} placeholder={placeholder || '请选择'} showSearch optionFilterProp="label" mode={multiple ? 'multiple' : undefined} />;
 };
 
+/** 商品选择器组件 - 支持选择商品或分类 */
+const GoodsSelector: React.FC<{ 
+  mode?: 'goods' | 'category' | 'both'; 
+  multiple?: boolean; 
+  placeholder?: string;
+  value?: any;
+  onChange?: (value: any) => void;
+}> = ({ mode = 'goods', multiple = true, placeholder = '请选择商品或分类', value, onChange }) => {
+  const [goods, setGoods] = useState<{ id: number; name: string; category: string; price: number; stock: number }[]>([]);
+  const [categories, setCategories] = useState<{ id: number; name: string; icon?: string }[]>([]);
+  const [activeTab, setActiveTab] = useState<'goods' | 'category'>('goods');
+  const [selectedGoods, setSelectedGoods] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState<string>('');
+
+  useEffect(() => {
+    let alive = true;
+    fetchListData('shop/goods', { page: 1, pageSize: 999 }).then((res: any) => {
+      if (!alive) return;
+      setGoods(res?.list || []);
+    }).catch(() => {});
+    fetchListData('shop/categories', { page: 1, pageSize: 999 }).then((res: any) => {
+      if (!alive) return;
+      setCategories(res?.list || []);
+    }).catch(() => {});
+    return () => { alive = false; };
+  }, []);
+
+  useEffect(() => {
+    if (value) {
+      const arr = Array.isArray(value) ? value : [value];
+      const goodsIds = arr.filter(v => v.startsWith('goods_'));
+      const catIds = arr.filter(v => v.startsWith('cat_'));
+      setSelectedGoods(goodsIds);
+      setSelectedCategories(catIds);
+    } else {
+      setSelectedGoods([]);
+      setSelectedCategories([]);
+    }
+  }, [value]);
+
+  const handleGoodsToggle = (id: number) => {
+    const goodsId = `goods_${id}`;
+    if (multiple) {
+      const newSelected = selectedGoods.includes(goodsId) 
+        ? selectedGoods.filter(g => g !== goodsId)
+        : [...selectedGoods, goodsId];
+      setSelectedGoods(newSelected);
+      onChange?.([...newSelected, ...selectedCategories]);
+    } else {
+      setSelectedGoods([goodsId]);
+      onChange?.([goodsId]);
+    }
+  };
+
+  const handleCategoryToggle = (id: number) => {
+    const catId = `cat_${id}`;
+    if (multiple) {
+      const newSelected = selectedCategories.includes(catId)
+        ? selectedCategories.filter(c => c !== catId)
+        : [...selectedCategories, catId];
+      setSelectedCategories(newSelected);
+      onChange?.([...selectedGoods, ...newSelected]);
+    } else {
+      setSelectedCategories([catId]);
+      onChange?.([catId]);
+    }
+  };
+
+  const handleSelectAll = () => {
+    if (activeTab === 'goods') {
+      const filteredGoods = goods.filter(g => 
+        (!searchKeyword || g.name.toLowerCase().includes(searchKeyword.toLowerCase())) &&
+        (!categoryFilter || g.category === categoryFilter)
+      );
+      const ids = filteredGoods.map(g => `goods_${g.id}`);
+      setSelectedGoods(ids);
+      onChange?.([...ids, ...selectedCategories]);
+    } else {
+      const ids = categories.map(c => `cat_${c.id}`);
+      setSelectedCategories(ids);
+      onChange?.([...selectedGoods, ...ids]);
+    }
+  };
+
+  const handleClearAll = () => {
+    if (activeTab === 'goods') {
+      setSelectedGoods([]);
+      onChange?.(selectedCategories);
+    } else {
+      setSelectedCategories([]);
+      onChange?.(selectedGoods);
+    }
+  };
+
+  const filteredGoods = goods.filter(g => 
+    (!searchKeyword || g.name.toLowerCase().includes(searchKeyword.toLowerCase())) &&
+    (!categoryFilter || g.category === categoryFilter)
+  );
+
+  const canShowCategory = mode === 'both' || mode === 'category';
+  const canShowGoods = mode === 'both' || mode === 'goods';
+
+  return (
+    <div style={{ border: '1px solid #d9d9d9', borderRadius: 6, overflow: 'hidden' }}>
+      {mode === 'both' && (
+        <div style={{ display: 'flex', borderBottom: '1px solid #d9d9d9' }}>
+          <button
+            onClick={() => setActiveTab('goods')}
+            style={{
+              flex: 1, padding: '8px', background: activeTab === 'goods' ? '#e6f7ff' : 'transparent',
+              border: 'none', cursor: 'pointer', color: activeTab === 'goods' ? '#1890ff' : '#666',
+              fontWeight: activeTab === 'goods' ? 600 : 400,
+            }}
+          >商品选择</button>
+          <button
+            onClick={() => setActiveTab('category')}
+            style={{
+              flex: 1, padding: '8px', background: activeTab === 'category' ? '#e6f7ff' : 'transparent',
+              border: 'none', cursor: 'pointer', color: activeTab === 'category' ? '#1890ff' : '#666',
+              fontWeight: activeTab === 'category' ? 600 : 400,
+            }}
+          >分类选择</button>
+        </div>
+      )}
+
+      <div style={{ padding: 12 }}>
+        {activeTab === 'goods' && canShowGoods && (
+          <div>
+            <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+              <Input
+                placeholder="搜索商品"
+                value={searchKeyword}
+                onChange={e => setSearchKeyword(e.target.value)}
+                style={{ flex: 1 }}
+                size="small"
+              />
+              <Select
+                placeholder="筛选分类"
+                value={categoryFilter}
+                onChange={v => setCategoryFilter(v)}
+                style={{ width: 140 }}
+                size="small"
+                allowClear
+                options={[...new Set(goods.map(g => g.category))].map(c => ({ label: c, value: c }))}
+              />
+              <Button size="small" onClick={handleSelectAll}>全选</Button>
+              <Button size="small" onClick={handleClearAll}>清空</Button>
+            </div>
+            <div style={{ maxHeight: 240, overflowY: 'auto' }}>
+              {filteredGoods.length === 0 ? (
+                <div style={{ textAlign: 'center', color: '#999', padding: 20 }}>暂无商品</div>
+              ) : (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                  {filteredGoods.map(item => (
+                    <div
+                      key={item.id}
+                      onClick={() => handleGoodsToggle(item.id)}
+                      style={{
+                        padding: '8px 12px', border: `2px solid ${selectedGoods.includes(`goods_${item.id}`) ? '#1890ff' : '#e8e8e8'}`,
+                        borderRadius: 6, cursor: 'pointer',
+                        background: selectedGoods.includes(`goods_${item.id}`) ? '#e6f7ff' : '#fff',
+                        display: 'flex', flexDirection: 'column', gap: 4, minWidth: 140,
+                      }}
+                    >
+                      <span style={{ fontWeight: 500 }}>{item.name}</span>
+                      <span style={{ fontSize: 12, color: '#999' }}>
+                        ¥{item.price} | 库存:{item.stock} | {item.category}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div style={{ marginTop: 8, fontSize: 12, color: '#999' }}>
+              已选择 {selectedGoods.length} 件商品
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'category' && canShowCategory && (
+          <div>
+            <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+              <Button size="small" onClick={handleSelectAll}>全选</Button>
+              <Button size="small" onClick={handleClearAll}>清空</Button>
+            </div>
+            <div style={{ maxHeight: 240, overflowY: 'auto' }}>
+              {categories.length === 0 ? (
+                <div style={{ textAlign: 'center', color: '#999', padding: 20 }}>暂无分类</div>
+              ) : (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                  {categories.map(cat => (
+                    <div
+                      key={cat.id}
+                      onClick={() => handleCategoryToggle(cat.id)}
+                      style={{
+                        padding: '8px 16px', border: `2px solid ${selectedCategories.includes(`cat_${cat.id}`) ? '#1890ff' : '#e8e8e8'}`,
+                        borderRadius: 6, cursor: 'pointer',
+                        background: selectedCategories.includes(`cat_${cat.id}`) ? '#e6f7ff' : '#fff',
+                        fontSize: 14,
+                      }}
+                    >
+                      {cat.icon} {cat.name}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div style={{ marginTop: 8, fontSize: 12, color: '#999' }}>
+              已选择 {selectedCategories.length} 个分类（选择分类将包含该分类下所有商品）
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 function getStatusBadge(status: string) {
   const cfg = STATUS_MAP[status] || { text: status, color: 'default' };
   return <Badge status={cfg.color as any} text={cfg.text} />;
@@ -242,27 +464,60 @@ function getGroupOfModule(key: string): ActivityGroup {
 /** 根据模块配置提取卡片展示的关键指标 */
 function extractMetrics(config: ModuleConfig, item: ActivityItem): { label: string; value: string }[] {
   const m: { label: string; value: string }[] = [];
+  
+  const formatGoods = (goods: any) => {
+    if (!goods) return '';
+    if (Array.isArray(goods)) {
+      const goodsCount = goods.filter(g => g.startsWith('goods_')).length;
+      const catCount = goods.filter(g => g.startsWith('cat_')).length;
+      if (goodsCount > 0 && catCount > 0) return `${goodsCount}件商品 + ${catCount}个分类`;
+      if (goodsCount > 0) return `${goodsCount}件商品`;
+      if (catCount > 0) return `${catCount}个分类`;
+      return '';
+    }
+    return String(goods);
+  };
+
   switch (config.key) {
     case 'campaigns':
       if (item.budget != null) m.push({ label: '预算', value: `¥${item.budget}` });
+      if (item.goods) {
+        const goodsStr = formatGoods(item.goods);
+        if (goodsStr) m.push({ label: '商品', value: goodsStr });
+      }
       break;
     case 'groupbuy':
       if (item.price != null) m.push({ label: '拼团价', value: `¥${item.price}` });
       if (item.minCount != null) m.push({ label: '成团人数', value: String(item.minCount) });
       if (item.joined != null) m.push({ label: '已参与', value: String(item.joined) });
+      if (item.goods) {
+        const goodsStr = formatGoods(item.goods);
+        if (goodsStr) m.push({ label: '商品', value: goodsStr });
+      }
       break;
     case 'seckill':
       if (item.price != null) m.push({ label: '秒杀价', value: `¥${item.price}` });
       if (item.stock != null) m.push({ label: '库存', value: String(item.stock) });
       if (item.sold != null) m.push({ label: '已售', value: String(item.sold) });
+      if (item.goods) {
+        const goodsStr = formatGoods(item.goods);
+        if (goodsStr) m.push({ label: '商品', value: goodsStr });
+      }
       break;
     case 'countdown':
       if (item.price != null) m.push({ label: '活动价', value: `¥${item.price}` });
-      if (item.goods) m.push({ label: '商品', value: String(item.goods) });
+      if (item.goods) {
+        const goodsStr = formatGoods(item.goods);
+        if (goodsStr) m.push({ label: '商品', value: goodsStr });
+      }
       break;
     case 'bargain':
       if (item.floorPrice != null) m.push({ label: '底价', value: `¥${item.floorPrice}` });
       if (item.started != null) m.push({ label: '参与人次', value: String(item.started) });
+      if (item.goods) {
+        const goodsStr = formatGoods(item.goods);
+        if (goodsStr) m.push({ label: '商品', value: goodsStr });
+      }
       break;
     case 'referral':
       if (item.referrerReward) m.push({ label: '推荐人奖励', value: String(item.referrerReward) });
@@ -500,6 +755,15 @@ export default function MarketingCenter() {
 
   // ---------- 渲染表单字段 ----------
   const renderFormField = (field: FieldDef) => {
+    if (field.type === 'goods-select') {
+      return (
+        <GoodsSelector
+          mode={field.selectMode || 'goods'}
+          multiple={field.multiple}
+          placeholder={`请选择${field.label}`}
+        />
+      );
+    }
     if (field.source) {
       return <SourceSelect source={field.source} placeholder={`请选择${field.label}`} multiple={field.multiple} />;
     }
@@ -727,50 +991,75 @@ export default function MarketingCenter() {
         {/* 左侧导航 */}
         <Col span={5}>
           <Card size="small" style={{ borderRadius: 8 }} styles={{ body: { padding: '8px 0' } }}>
-            {/* 全部 */}
+            <div style={{ fontSize: 12, fontWeight: 600, color: '#999', padding: '8px 16px', borderBottom: '1px solid #f0f0f0', marginBottom: 4 }}>
+              营销活动导航
+            </div>
+
             <div
               onClick={() => { setActiveGroup('all'); setActiveModule('all'); }}
               style={{
-                padding: '10px 16px', cursor: 'pointer', fontWeight: activeGroup === 'all' ? 600 : 400,
-                color: activeGroup === 'all' ? '#1890ff' : '#333',
-                background: activeGroup === 'all' ? '#e6f7ff' : 'transparent',
-                borderRight: activeGroup === 'all' ? '3px solid #1890ff' : '3px solid transparent',
+                padding: '12px 16px', cursor: 'pointer', fontWeight: activeGroup === 'all' && activeModule === 'all' ? 600 : 400,
+                color: activeGroup === 'all' && activeModule === 'all' ? '#1890ff' : '#333',
+                background: activeGroup === 'all' && activeModule === 'all' ? '#e6f7ff' : 'transparent',
+                borderRight: activeGroup === 'all' && activeModule === 'all' ? '3px solid #1890ff' : '3px solid transparent',
                 transition: 'all 0.2s',
+                display: 'flex', alignItems: 'center', gap: 8,
               }}
             >
+              <span style={{ width: 24, height: 24, borderRadius: 6, background: '#e6f7ff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, color: '#1890ff' }}>📊</span>
               全部活动
             </div>
 
             {GROUP_ORDER.map(groupKey => {
               const g = GROUP_MAP[groupKey];
               const mods = MODULE_CONFIGS.filter(m => m.group === groupKey);
+              const groupCount = mods.reduce((sum, m) => sum + (dataMap[m.key]?.length || 0), 0);
+              
               return (
                 <div key={groupKey}>
                   <div
                     onClick={() => { setActiveGroup(groupKey); setActiveModule('all'); }}
                     style={{
-                      padding: '10px 16px', cursor: 'pointer', fontWeight: activeGroup === groupKey ? 600 : 400,
-                      color: g.color, display: 'flex', alignItems: 'center', gap: 6,
+                      padding: '12px 16px', cursor: 'pointer', fontWeight: activeGroup === groupKey && activeModule === 'all' ? 600 : 400,
+                      color: g.color, display: 'flex', alignItems: 'center', gap: 8,
                       background: activeGroup === groupKey ? g.color + '10' : 'transparent',
-                      borderRight: activeGroup === groupKey ? `3px solid ${g.color}` : '3px solid transparent',
+                      borderRight: activeGroup === groupKey && activeModule === 'all' ? `3px solid ${g.color}` : '3px solid transparent',
+                      transition: 'all 0.2s',
                     }}
                   >
-                    {g.icon} {g.label}
+                    <span style={{ width: 24, height: 24, borderRadius: 6, background: g.color + '15', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>
+                      {g.icon}
+                    </span>
+                    <span>{g.label}</span>
+                    <span style={{ marginLeft: 'auto', background: g.color + '20', color: g.color, padding: '2px 6px', borderRadius: 10, fontSize: 11 }}>
+                      {groupCount}
+                    </span>
                   </div>
-                  {mods.map(mod => (
-                    <div
-                      key={mod.key}
-                      onClick={() => { setActiveGroup(groupKey); setActiveModule(mod.key); }}
-                      style={{
-                        padding: '8px 16px 8px 40px', cursor: 'pointer', fontSize: 13,
-                        color: activeModule === mod.key ? g.color : '#666',
-                        background: activeModule === mod.key ? g.color + '10' : 'transparent',
-                        borderRight: activeModule === mod.key ? `3px solid ${g.color}` : '3px solid transparent',
-                      }}
-                    >
-                      {mod.label}
-                    </div>
-                  ))}
+                  
+                  <div style={{ background: activeGroup === groupKey ? g.color + '05' : 'transparent' }}>
+                    {mods.map(mod => (
+                      <div
+                        key={mod.key}
+                        onClick={() => { setActiveGroup(groupKey); setActiveModule(mod.key); }}
+                        style={{
+                          padding: '10px 16px 10px 56px', cursor: 'pointer', fontSize: 13,
+                          color: activeModule === mod.key ? g.color : '#666',
+                          background: activeModule === mod.key ? g.color + '15' : 'transparent',
+                          borderRight: activeModule === mod.key ? `3px solid ${g.color}` : '3px solid transparent',
+                          display: 'flex', alignItems: 'center', gap: 6,
+                          transition: 'all 0.15s',
+                        }}
+                      >
+                        <span style={{ fontSize: 12, opacity: 0.6 }}>{mod.icon}</span>
+                        <span>{mod.label}</span>
+                        {dataMap[mod.key]?.length > 0 && (
+                          <span style={{ marginLeft: 'auto', fontSize: 11, color: '#999' }}>
+                            ({dataMap[mod.key].length})
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               );
             })}
