@@ -518,6 +518,30 @@ initModule('services/items', ['name', 'price', 'duration', 'shop', 'status'], [
   { name: '按摩理疗', price: 188, duration: 45, shop: '总店', status: 'enabled' },
   { name: '健身私教', price: 500, duration: 60, shop: '总店', status: 'enabled' }
 ]);
+initModule('marketing/prizes', ['name', 'type', 'value', 'stock', 'used', 'status'], [
+  { name: '100积分', type: 'points', value: 100, stock: 9999, used: 0, status: 'enabled' },
+  { name: '500积分', type: 'points', value: 500, stock: 9999, used: 0, status: 'enabled' },
+  { name: '10元停车券', type: 'parking', value: 10, stock: 500, used: 0, status: 'enabled' },
+  { name: '满100减10券', type: 'coupon', value: 10, stock: 9999, used: 0, status: 'enabled' },
+  { name: '满200减30券', type: 'coupon', value: 30, stock: 9999, used: 0, status: 'enabled' },
+  { name: '5元红包', type: 'redpacket', value: 5, stock: 9999, used: 0, status: 'enabled' },
+  { name: '蓝牙耳机', type: 'goods', value: 199, stock: 100, used: 0, status: 'enabled' },
+  { name: '电影票', type: 'goods', value: 80, stock: 200, used: 0, status: 'enabled' }
+]);
+initModule('system/merchants', ['name', 'category', 'floor', 'phone', 'businessHours', 'status'], [
+  { name: '肯德基', category: '餐饮', floor: 'F1', phone: '0731-88888001', businessHours: '07:00-23:00', status: 'enabled' },
+  { name: '星巴克', category: '餐饮', floor: 'F1', phone: '0731-88888002', businessHours: '08:00-22:00', status: 'enabled' },
+  { name: '优衣库', category: '零售', floor: 'F2', phone: '0731-88888003', businessHours: '10:00-22:00', status: 'enabled' },
+  { name: '屈臣氏', category: '零售', floor: 'F2', phone: '0731-88888004', businessHours: '10:00-22:00', status: 'enabled' },
+  { name: '万达影城', category: '娱乐', floor: 'F3', phone: '0731-88888005', businessHours: '10:00-24:00', status: 'enabled' },
+  { name: '美甲店', category: '服务', floor: 'F4', phone: '0731-88888006', businessHours: '10:00-22:00', status: 'enabled' }
+]);
+initModule('system/departments', ['name', 'manager', 'memberCount', 'status'], [
+  { name: '运营部', manager: '张三', memberCount: 12, status: 'enabled' },
+  { name: '市场部', manager: '李四', memberCount: 8, status: 'enabled' },
+  { name: '客服部', manager: '王五', memberCount: 20, status: 'enabled' },
+  { name: '技术部', manager: '赵六', memberCount: 15, status: 'enabled' }
+]);
 initModule('system/projects', ['name', 'code', 'businessType', 'address', 'cooperationParty', 'contactPerson', 'contactPhone', 'adminName', 'adminAccount', 'memberCount', 'maxMembers', 'dataIsolation', 'isolationRule', 'billingMode', 'billingConfig', 'enabledModules', 'resourceQuota', 'contractPeriod', 'remark', 'status', 'createdAt'], [
   { name: '凯德壹中心', code: 'KDYZX', businessType: 'shopping', address: '长沙市岳麓区', cooperationParty: '凯德集团', contactPerson: '李总', contactPhone: '13800138001', adminName: 'admin', adminAccount: 'admin', memberCount: 12580, maxMembers: 50000, dataIsolation: 'no', isolationRule: '按项目隔离', billingMode: 'full', billingConfig: '全功能计费', enabledModules: '全部', resourceQuota: '无限', contractPeriod: '2024-2026', remark: '', status: 'enabled', createdAt: '2024-01-01' },
   { name: '碧湘楚巷', code: 'BXCX', businessType: 'scenic', address: '长沙市天心区', cooperationParty: '碧湘集团', contactPerson: '王总', contactPhone: '13900139002', adminName: 'admin2', adminAccount: 'admin2', memberCount: 3200, maxMembers: 30000, dataIsolation: 'no', isolationRule: '按项目隔离', billingMode: 'basic', billingConfig: '基础版计费', enabledModules: '基础模块', resourceQuota: '有限', contractPeriod: '2024-2025', remark: '', status: 'enabled', createdAt: '2024-03-01' }

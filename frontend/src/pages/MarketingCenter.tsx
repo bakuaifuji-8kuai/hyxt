@@ -28,9 +28,17 @@ interface ModuleConfig {
 interface FieldDef {
   name: string;
   label: string;
-  type: 'input' | 'number' | 'select' | 'date' | 'daterange';
+  type: 'input' | 'number' | 'select' | 'date' | 'daterange' | 'text';
   options?: { label: string; value: string }[];
   required?: boolean;
+  placeholder?: string;
+  multiple?: boolean;
+  /** 从其他模块拉取下拉数据 */
+  source?: {
+    path: string;
+    labelField: string;
+    valueField: string;
+  };
 }
 
 interface ActivityItem {
@@ -66,7 +74,7 @@ const MODULE_CONFIGS: ModuleConfig[] = [
     key: 'countdown', path: 'marketing/countdown', label: '限时购', icon: <ClockCircleOutlined />, group: 'promotion',
     fields: [
       { name: 'name', label: '活动名称', type: 'input', required: true },
-      { name: 'goods', label: '商品', type: 'input', required: true },
+      { name: 'goods', label: '商品', type: 'select', required: true, source: { path: 'shop/goods', labelField: 'name', valueField: 'name' } },
       { name: 'price', label: '活动价', type: 'number', required: true },
       { name: 'originalPrice', label: '原价', type: 'number', required: true },
       { name: 'startTime', label: '开始时间', type: 'date', required: true },
@@ -96,7 +104,7 @@ const MODULE_CONFIGS: ModuleConfig[] = [
     key: 'bargain', path: 'marketing/bargain', label: '帮砍价', icon: <ScissorOutlined />, group: 'social',
     fields: [
       { name: 'name', label: '活动名称', type: 'input', required: true },
-      { name: 'goods', label: '商品', type: 'input', required: true },
+      { name: 'goods', label: '商品', type: 'select', required: true, source: { path: 'shop/goods', labelField: 'name', valueField: 'name' } },
       { name: 'originalPrice', label: '原价', type: 'number', required: true },
       { name: 'floorPrice', label: '底价', type: 'number', required: true },
     ],
@@ -125,7 +133,7 @@ const MODULE_CONFIGS: ModuleConfig[] = [
         { label: '大转盘', value: 'wheel' }, { label: '老虎机', value: 'slot' },
         { label: '红包', value: 'redpacket' }, { label: '九宫格', value: 'grid' },
       ] },
-      { name: 'rewards', label: '奖品', type: 'input', required: true },
+      { name: 'rewards', label: '奖品', type: 'select', required: true, source: { path: 'marketing/prizes', labelField: 'name', valueField: 'name' } },
     ],
   },
   {
@@ -133,14 +141,14 @@ const MODULE_CONFIGS: ModuleConfig[] = [
     fields: [
       { name: 'name', label: '活动名称', type: 'input', required: true },
       { name: 'price', label: '价格', type: 'number', required: true },
-      { name: 'prizes', label: '奖品', type: 'input', required: true },
+      { name: 'prizes', label: '奖品', type: 'select', required: true, source: { path: 'marketing/prizes', labelField: 'name', valueField: 'name' } },
     ],
   },
   {
     key: 'lucky-draw', path: 'marketing/lucky-draw', label: '众筹抽奖', icon: <TrophyOutlined />, group: 'game',
     fields: [
       { name: 'name', label: '活动名称', type: 'input', required: true },
-      { name: 'prize', label: '奖品', type: 'input', required: true },
+      { name: 'prize', label: '奖品', type: 'select', required: true, source: { path: 'marketing/prizes', labelField: 'name', valueField: 'name' } },
     ],
   },
   {
@@ -160,7 +168,7 @@ const MODULE_CONFIGS: ModuleConfig[] = [
     key: 'new-member', path: 'marketing/new-member', label: '新人礼', icon: <GiftOutlined />, group: 'member',
     fields: [
       { name: 'name', label: '活动名称', type: 'input', required: true },
-      { name: 'rewards', label: '奖励内容', type: 'input', required: true },
+      { name: 'rewards', label: '奖励内容', type: 'select', required: true, source: { path: 'marketing/prizes', labelField: 'name', valueField: 'name' } },
       { name: 'validDays', label: '有效天数', type: 'number', required: true },
     ],
   },
@@ -170,7 +178,7 @@ const MODULE_CONFIGS: ModuleConfig[] = [
       { name: 'name', label: '名称', type: 'input', required: true },
       { name: 'times', label: '次数', type: 'number', required: true },
       { name: 'price', label: '价格', type: 'number', required: true },
-      { name: 'merchants', label: '适用商户', type: 'input' },
+      { name: 'merchants', label: '适用商户', type: 'select', source: { path: 'system/merchants', labelField: 'name', valueField: 'name' } },
     ],
   },
   {
@@ -178,7 +186,7 @@ const MODULE_CONFIGS: ModuleConfig[] = [
     fields: [
       { name: 'name', label: '活动名称', type: 'input', required: true },
       { name: 'signupTime', label: '报名时间', type: 'date', required: true },
-      { name: 'member', label: '报名会员', type: 'input' },
+      { name: 'member', label: '报名会员', type: 'select', source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
       { name: 'count', label: '报名人数', type: 'number' },
     ],
   },
@@ -196,6 +204,26 @@ const STATUS_MAP: Record<string, { text: string; color: string }> = {
 };
 
 // ======================== 辅助函数 ========================
+
+/** 从指定模块路径拉取数据渲染为下拉选择 */
+const SourceSelect: React.FC<{ source: { path: string; labelField: string; valueField: string }; placeholder?: string; multiple?: boolean }> = ({ source, placeholder, multiple }) => {
+  const [options, setOptions] = useState<{ label: string; value: string }[]>([]);
+  useEffect(() => {
+    let alive = true;
+    fetchListData(source.path).then((res: any) => {
+      if (!alive) return;
+      const list = res?.list || res || [];
+      setOptions(
+        list.map((item: any) => ({
+          label: String(item[source.labelField] ?? ''),
+          value: String(item[source.valueField] ?? ''),
+        })).filter((o: any) => o.label && o.value)
+      );
+    }).catch(() => {});
+    return () => { alive = false; };
+  }, [source.path, source.labelField, source.valueField]);
+  return <Select options={options} placeholder={placeholder || '请选择'} showSearch optionFilterProp="label" mode={multiple ? 'multiple' : undefined} />;
+};
 
 function getStatusBadge(status: string) {
   const cfg = STATUS_MAP[status] || { text: status, color: 'default' };
@@ -472,11 +500,14 @@ export default function MarketingCenter() {
 
   // ---------- 渲染表单字段 ----------
   const renderFormField = (field: FieldDef) => {
+    if (field.source) {
+      return <SourceSelect source={field.source} placeholder={`请选择${field.label}`} multiple={field.multiple} />;
+    }
     switch (field.type) {
       case 'number':
         return <InputNumber style={{ width: '100%' }} placeholder={`请输入${field.label}`} />;
       case 'select':
-        return <Select options={field.options} placeholder={`请选择${field.label}`} />;
+        return <Select options={field.options} placeholder={`请选择${field.label}`} mode={field.multiple ? 'multiple' : undefined} />;
       case 'date':
         return <DatePicker style={{ width: '100%' }} placeholder={`请选择${field.label}`} />;
       default:

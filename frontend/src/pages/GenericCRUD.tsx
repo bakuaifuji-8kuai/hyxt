@@ -59,7 +59,7 @@ const getStatusColor = (val: any): string => {
 
 /** 从指定模块路径拉取数据渲染为下拉选择。配置示例：
  * { path: 'system/projects', labelField: 'name', valueField: 'code' } */
-const SourceSelect: React.FC<{ source: { path: string; labelField: string; valueField: string }; placeholder?: string }> = ({ source, placeholder }) => {
+const SourceSelect: React.FC<{ source: { path: string; labelField: string; valueField: string }; placeholder?: string; multiple?: boolean }> = ({ source, placeholder, multiple }) => {
   const [options, setOptions] = useState<{ label: string; value: string }[]>([]);
   useEffect(() => {
     let alive = true;
@@ -75,7 +75,7 @@ const SourceSelect: React.FC<{ source: { path: string; labelField: string; value
     }).catch(() => {});
     return () => { alive = false; };
   }, [source.path, source.labelField, source.valueField]);
-  return <Select options={options} placeholder={placeholder || '请选择'} showSearch optionFilterProp="label" />;
+  return <Select options={options} placeholder={placeholder || '请选择'} showSearch optionFilterProp="label" mode={multiple ? 'multiple' : undefined} />;
 };
 
 /** 条件构建器：用于营销模型等筛选条件 */
@@ -390,9 +390,9 @@ export default function GenericCRUD({ moduleKey }: { moduleKey: string }) {
         return <InputNumber style={{ width: '100%' }} placeholder={field.placeholder} />;
       case 'select':
         if (field.source) {
-          return <SourceSelect source={field.source} placeholder={field.placeholder || '请选择'} />;
+          return <SourceSelect source={field.source} placeholder={field.placeholder || '请选择'} multiple={field.multiple} />;
         }
-        return <Select options={field.options} placeholder={field.placeholder || '请选择'} />;
+        return <Select options={field.options} placeholder={field.placeholder || '请选择'} mode={field.multiple ? 'multiple' : undefined} />;
       case 'textarea':
         return <Input.TextArea rows={3} placeholder={field.placeholder} />;
       case 'switch':
