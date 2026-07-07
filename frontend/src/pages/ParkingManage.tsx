@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Card, Row, Col, Tabs, Table, Tag, Button, Modal, Form, Input, InputNumber, Select, Space, Popconfirm, Drawer, Descriptions, Progress, message } from 'antd';
 import {
   CarOutlined, DashboardOutlined, DollarOutlined,
@@ -47,6 +48,16 @@ interface ParkingBenefit {
   status: string;
 }
 
+interface ParkingPlate {
+  id: number;
+  member: string;
+  plateNo: string;
+  plateColor: string;
+  vehicleType: string;
+  bindTime: string;
+  status: string;
+}
+
 // ---- Stat card config ----
 const statCards = [
   { key: 'todayCount', label: '今日停车数', icon: CarOutlined, color: '#3B82F6', bg: '#EFF6FF', suffix: '辆' },
@@ -64,13 +75,28 @@ const levelConfig: Record<string, { label: string; color: string; bg: string; ic
 
 // ---- Main Component ----
 export default function ParkingManage() {
-  const [activeTab, setActiveTab] = useState('records');
+  const location = useLocation();
+  const pathMap: Record<string, string> = {
+    'parking-records': 'records',
+    'parking-lots': 'lots',
+    'parking-rules': 'rules',
+    'parking-benefit': 'benefit',
+    'parking-plates': 'plates',
+  };
+  const moduleKey = location.pathname.split('/m/')[1] || 'parking-records';
+  const [activeTab, setActiveTab] = useState(pathMap[moduleKey] || 'records');
+
+  useEffect(() => {
+    const key = location.pathname.split('/m/')[1] || 'parking-records';
+    setActiveTab(pathMap[key] || 'records');
+  }, [location.pathname]);
   const [records, setRecords] = useState<ParkingRecord[]>([]);
   const [recordTotal, setRecordTotal] = useState(0);
   const [recordPage, setRecordPage] = useState(1);
   const [lots, setLots] = useState<ParkingLot[]>([]);
   const [rules, setRules] = useState<ParkingRule[]>([]);
   const [benefits, setBenefits] = useState<ParkingBenefit[]>([]);
+  const [plates, setPlates] = useState<ParkingPlate[]>([]);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editId, setEditId] = useState<number | null>(null);
@@ -99,12 +125,17 @@ export default function ParkingManage() {
     fetchListData('parking/benefit').then((res: any) => setBenefits(res?.list || res || []));
   }, []);
 
+  const loadPlates = useCallback(() => {
+    fetchListData('parking/plates').then((res: any) => setPlates(res?.list || res || []));
+  }, []);
+
   useEffect(() => {
     loadRecords();
     loadLots();
     loadRules();
     loadBenefits();
-  }, [loadRecords, loadLots, loadRules, loadBenefits]);
+    loadPlates();
+  }, [loadRecords, loadLots, loadRules, loadBenefits, loadPlates]);
 
   // ---- Computed stats ----
   const stats = {
@@ -135,6 +166,7 @@ export default function ParkingManage() {
     else if (path === 'parking/lots') loadLots();
     else if (path === 'parking/rules') loadRules();
     else if (path === 'parking/benefit') loadBenefits();
+    else if (path === 'parking/plates') loadPlates();
   };
 
   const handleSubmit = async () => {
@@ -144,6 +176,7 @@ export default function ParkingManage() {
       lots: 'parking/lots',
       rules: 'parking/rules',
       benefit: 'parking/benefit',
+      plates: 'parking/plates',
     };
     const path = pathMap[activeTab] || 'parking/records';
     if (editId != null) {
@@ -158,6 +191,7 @@ export default function ParkingManage() {
     else if (activeTab === 'lots') loadLots();
     else if (activeTab === 'rules') loadRules();
     else if (activeTab === 'benefit') loadBenefits();
+    else if (activeTab === 'plates') loadPlates();
   };
 
   // ---- Record detail ----
@@ -314,6 +348,39 @@ export default function ParkingManage() {
             </Form.Item>
           </>
         );
+      case 'plates':
+        return (
+          <>
+            <Form.Item name="member" label="会员" rules={[{ required: true }]}>
+              <Input placeholder="会员姓名" />
+            </Form.Item>
+            <Form.Item name="plateNo" label="车牌号" rules={[{ required: true }]}>
+              <Input placeholder="如：京A12345" />
+            </Form.Item>
+            <Form.Item name="plateColor" label="车牌颜色">
+              <Select options={[
+                { label: '蓝牌', value: 'blue' },
+                { label: '黄牌', value: 'yellow' },
+                { label: '绿牌', value: 'green' },
+                { label: '白牌', value: 'white' },
+              ]} />
+            </Form.Item>
+            <Form.Item name="vehicleType" label="车辆类型">
+              <Select options={[
+                { label: '轿车', value: 'sedan' },
+                { label: 'SUV', value: 'suv' },
+                { label: '面包车', value: 'van' },
+                { label: '新能源', value: 'newEnergy' },
+              ]} />
+            </Form.Item>
+            <Form.Item name="bindTime" label="绑定时间">
+              <Input placeholder="2024-06-01" />
+            </Form.Item>
+            <Form.Item name="status" label="状态">
+              <Select options={[{ label: '正常', value: 'enabled' }, { label: '解绑', value: 'disabled' }]} />
+            </Form.Item>
+          </>
+        );
       default:
         return null;
     }
@@ -324,6 +391,7 @@ export default function ParkingManage() {
     lots: '停车场',
     rules: '计费规则',
     benefit: '停车权益',
+    plates: '车牌绑定',
   };
 
   return (
@@ -528,6 +596,35 @@ export default function ParkingManage() {
                     );
                   })}
                 </Row>
+              ),
+            },
+            {
+              key: 'plates',
+              label: '车牌绑定管理',
+              children: (
+                <Table
+                  rowKey="id"
+                  dataSource={plates}
+                  columns={[
+                    { title: '会员', dataIndex: 'member', width: 120 },
+                    { title: '车牌号', dataIndex: 'plateNo', width: 120, render: (v: string) => <span style={{ fontWeight: 600, color: '#3B82F6' }}>{v}</span> },
+                    { title: '车牌颜色', dataIndex: 'plateColor', width: 100, render: (v: string) => ({ blue: '蓝牌', yellow: '黄牌', green: '绿牌', white: '白牌' }[v] || v) },
+                    { title: '车辆类型', dataIndex: 'vehicleType', width: 100, render: (v: string) => ({ sedan: '轿车', suv: 'SUV', van: '面包车', newEnergy: '新能源' }[v] || v) },
+                    { title: '绑定时间', dataIndex: 'bindTime', width: 140 },
+                    { title: '状态', dataIndex: 'status', width: 80, render: (v: string) => <Tag color={v === 'enabled' ? 'green' : 'red'}>{v === 'enabled' ? '正常' : '解绑'}</Tag> },
+                    {
+                      title: '操作', key: 'action', width: 160,
+                      render: (_: any, record: ParkingPlate) => (
+                        <Space>
+                          <Button type="link" size="small" icon={<EditOutlined />} onClick={() => handleEdit(record)}>编辑</Button>
+                          <Popconfirm title="确认删除?" onConfirm={() => handleDelete('parking/plates', record.id)}>
+                            <Button type="link" size="small" danger icon={<DeleteOutlined />}>删除</Button>
+                          </Popconfirm>
+                        </Space>
+                      ),
+                    },
+                  ]}
+                />
               ),
             },
           ]}

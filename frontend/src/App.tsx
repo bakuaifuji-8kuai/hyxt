@@ -152,6 +152,7 @@ export default function App() {
             <Route path="/m/parking-lots" element={<ParkingManage />} />
             <Route path="/m/parking-rules" element={<ParkingManage />} />
             <Route path="/m/parking-benefit" element={<ParkingManage />} />
+            <Route path="/m/parking-plates" element={<ParkingManage />} />
             <Route path="/m/marketing-campaigns" element={<MarketingCenter />} />
             <Route path="/m/marketing-coupons" element={<MarketingCenter />} />
             <Route path="/m/marketing-groupbuy" element={<MarketingCenter />} />
