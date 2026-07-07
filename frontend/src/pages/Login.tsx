@@ -27,7 +27,7 @@ export default function Login() {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
-      <Card title="恒伟智慧商业会员营销平台" style={{ width: 400, textAlign: 'center' }} styles={{ header: { fontSize: 18, fontWeight: 'bold' } }}>
+      <Card title="力唯智慧商业会员营销平台" style={{ width: 400, textAlign: 'center' }} styles={{ header: { fontSize: 18, fontWeight: 'bold' } }}>
         <Form form={form} layout="vertical" initialValues={{ username: 'admin', password: 'admin' }}>
           <Form.Item name="username" label="用户名" rules={[{ required: true }]}>
             <Input placeholder="请输入用户名" />

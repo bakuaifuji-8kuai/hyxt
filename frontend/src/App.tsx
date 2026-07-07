@@ -19,6 +19,12 @@ import BusinessFlow from './pages/BusinessFlow';
 import MemberProfile from './pages/MemberProfile';
 import ShopGoods from './pages/ShopGoods';
 import ShopHomeConfig from './pages/ShopHomeConfig';
+import OrderManage from './pages/OrderManage';
+import AnalyticsCenter from './pages/AnalyticsCenter';
+import ParkingManage from './pages/ParkingManage';
+import CouponManage from './pages/CouponManage';
+import PointsMall from './pages/PointsMall';
+import MarketingCenter from './pages/MarketingCenter';
 
 const { Header, Sider, Content } = Layout;
 
@@ -104,7 +110,7 @@ export default function App() {
     <Layout style={{ minHeight: '100vh' }}>
       <Sider collapsible collapsed={collapsed} onCollapse={setCollapsed} width={240} theme="light">
         <div style={{ height: 56, display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid #f0f0f0' }}>
-          <span style={{ fontSize: 16, fontWeight: 'bold', color: themeToken.colorPrimary }}>恒伟会员营销平台</span>
+          <span style={{ fontSize: 16, fontWeight: 'bold', color: themeToken.colorPrimary }}>力唯会员营销平台</span>
         </div>
         <Menu
           mode="inline"
@@ -117,7 +123,7 @@ export default function App() {
       <Layout>
         <Header style={{ background: '#fff', padding: '0 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f0f0f0' }}>
           <Space>
-            <span style={{ fontWeight: 600 }}>恒伟智慧商业会员营销平台</span>
+            <span style={{ fontWeight: 600 }}>力唯智慧商业会员营销平台</span>
           </Space>
           <Dropdown menu={{ items: [
             { key: 'logout', icon: <LogoutOutlined />, label: '退出登录', onClick: handleLogoutClick }
@@ -132,9 +138,40 @@ export default function App() {
           <Routes>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/business-flow" element={<BusinessFlow />} />
+            <Route path="/m/member-list" element={<MemberProfile />} />
             <Route path="/m/member-profiles" element={<MemberProfile />} />
             <Route path="/m/shop-goods" element={<ShopGoods />} />
+            <Route path="/m/shop-orders" element={<OrderManage />} />
             <Route path="/m/shop-home-config" element={<ShopHomeConfig />} />
+            <Route path="/m/coupon-templates" element={<CouponManage />} />
+            <Route path="/m/points-goods" element={<PointsMall />} />
+            <Route path="/m/analytics-overview" element={<AnalyticsCenter />} />
+            <Route path="/m/analytics-reports" element={<AnalyticsCenter />} />
+            <Route path="/m/parking-records" element={<ParkingManage />} />
+            <Route path="/m/parking-lots" element={<ParkingManage />} />
+            <Route path="/m/parking-rules" element={<ParkingManage />} />
+            <Route path="/m/parking-benefit" element={<ParkingManage />} />
+            <Route path="/m/marketing-campaigns" element={<MarketingCenter />} />
+            <Route path="/m/marketing-coupons" element={<MarketingCenter />} />
+            <Route path="/m/marketing-groupbuy" element={<MarketingCenter />} />
+            <Route path="/m/marketing-seckill" element={<MarketingCenter />} />
+            <Route path="/m/activity-signups" element={<MarketingCenter />} />
+            <Route path="/m/checkin-activities" element={<MarketingCenter />} />
+            <Route path="/m/referral-gifts" element={<MarketingCenter />} />
+            <Route path="/m/new-member-gifts" element={<MarketingCenter />} />
+            <Route path="/m/help-coupons" element={<MarketingCenter />} />
+            <Route path="/m/word-coupons" element={<MarketingCenter />} />
+            <Route path="/m/games" element={<MarketingCenter />} />
+            <Route path="/m/surveys" element={<MarketingCenter />} />
+            <Route path="/m/votes" element={<MarketingCenter />} />
+            <Route path="/m/countdown-sales" element={<MarketingCenter />} />
+            <Route path="/m/pre-sales" element={<MarketingCenter />} />
+            <Route path="/m/bargain" element={<MarketingCenter />} />
+            <Route path="/m/lucky-draws" element={<MarketingCenter />} />
+            <Route path="/m/blind-boxes" element={<MarketingCenter />} />
+            <Route path="/m/count-cards" element={<MarketingCenter />} />
+            <Route path="/m/checkin-coupons" element={<MarketingCenter />} />
+            <Route path="/m/douyin-coupons" element={<MarketingCenter />} />
             <Route path="/m/:moduleKey" element={<GenericCRUDWrapper />} />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>

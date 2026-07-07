@@ -281,7 +281,7 @@ export default function ShopHomeConfig() {
               <div style={{ maxWidth: screens.sm ? '100%' : '375px', margin: '0 auto' }}>
                 <div style={{ background: 'white', borderRadius: '8px', padding: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
                   <div style={{ textAlign: 'center', marginBottom: '16px' }}>
-                    <div style={{ fontSize: '16px', fontWeight: '700' }}>{selectedConfig?.name || '恒伟商城'}</div>
+                    <div style={{ fontSize: '16px', fontWeight: '700' }}>{selectedConfig?.name || '力唯商城'}</div>
                   </div>
                   {components.length > 0 ? (
                     components.map(renderComponentPreview)
