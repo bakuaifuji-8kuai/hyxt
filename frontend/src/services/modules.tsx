@@ -194,21 +194,41 @@ export const MODULES: ModuleConfig[] = [
     key: 'points-goods', path: 'points/goods', name: '积分商品', category: '积分中心',
     columns: [
       { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '商品图片', dataIndex: 'mainImage' },
       { title: '商品名称', dataIndex: 'name' },
+      { title: '分类', dataIndex: 'category' },
+      { title: '商品类型', dataIndex: 'goodsType', render: (v) => ({ physical: '实物', virtual: '虚拟', coupon: '优惠券', service: '服务权益' }[v] || v) },
       { title: '所需积分', dataIndex: 'points' },
       { title: '库存', dataIndex: 'stock' },
-      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+      { title: '每人限兑', dataIndex: 'limitPerUser' },
+      { title: '兑换方式', dataIndex: 'deliveryType', render: (v) => ({ self: '自提', express: '邮寄', auto: '自动到账' }[v] || v) },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '上架' : '下架') }
     ],
     fields: [
       { name: 'name', label: '商品名称', type: 'text', required: true },
+      { name: 'mainImage', label: '商品主图', type: 'text' },
+      { name: 'detailImages', label: '商品详情图', type: 'textarea' },
+      { name: 'category', label: '商品分类', type: 'text' },
+      { name: 'goodsType', label: '商品类型', type: 'select', options: [
+        { label: '实物商品', value: 'physical' }, { label: '虚拟商品', value: 'virtual' },
+        { label: '优惠券', value: 'coupon' }, { label: '服务权益', value: 'service' }
+      ] },
       { name: 'points', label: '所需积分', type: 'number' },
       { name: 'stock', label: '库存', type: 'number' },
-      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+      { name: 'limitPerUser', label: '每人限兑数量', type: 'number' },
+      { name: 'deliveryType', label: '兑换方式', type: 'select', options: [
+        { label: '门店自提', value: 'self' }, { label: '快递邮寄', value: 'express' }, { label: '自动到账', value: 'auto' }
+      ] },
+      { name: 'description', label: '商品详情', type: 'textarea' },
+      { name: 'sort', label: '排序', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '上架', value: 'enabled' }, { label: '下架', value: 'disabled' }
+      ] }
     ],
     doc: {
-      overview: '积分商品是积分商城的核心商品库，管理所有可用积分兑换的商品和权益。通过将实物商品、虚拟权益、优惠券、服务项目等配置为积分商品，为会员提供丰富的积分消耗出口，提升积分价值感知和会员活跃度。积分商品与积分流水、会员档案、核销记录等模块深度联动，会员兑换后自动扣减积分并生成兑换订单，实物商品可走物流配送，虚拟商品和权益可直接到账或到店核销，形成完整的积分消费闭环。',
-      features: ['支持新增、编辑、删除积分商品，构建丰富的积分兑换商品库', '配置商品名称、展示图片等基础信息，提升商品吸引力', '设置商品所需兑换积分，合理定价确保积分价值体系平衡', '管理商品库存数量，支持库存预警和售罄自动下架', '支持商品上架/下架状态管理，灵活控制可兑换商品', '支持多种商品类型：实物商品、虚拟商品、优惠券、服务权益等', '与积分流水模块联动，兑换时自动扣减积分并生成流水记录', '与会员档案联动，查看会员已兑换的商品记录', '与核销记录联动，支持到店核销类积分商品的验证', '支持商品排序和推荐位配置，引导会员兑换高价值商品', '支持商品分类管理，便于会员按类别浏览查找', '提供兑换数据统计，掌握热门商品和库存周转情况'],
-      tips: ['积分商品定价需结合积分获取成本，确保积分价值体系健康', '热门商品建议设置合理的库存和兑换限制，避免积分过度消耗', '实物商品需配置物流配送能力，确保兑换后能及时送达', '虚拟商品兑换后应自动到账，提升会员兑换体验', '定期更新积分商品库，保持新鲜感，提升会员兑换意愿']
+      overview: '积分商品是积分商城的核心商品库，管理所有可用积分兑换的商品和权益。通过将实物商品、虚拟权益、优惠券、服务项目等配置为积分商品，为会员提供丰富的积分消耗出口，提升积分价值感知和会员活跃度。积分商品支持配置商品图片、分类、类型、兑换方式、每人限兑数量等丰富属性，满足多样化的积分运营场景。积分商品与积分流水、会员档案、核销记录、积分商城订单等模块深度联动，会员兑换后自动扣减积分并生成兑换订单，实物商品可走物流配送，虚拟商品和权益可直接到账或到店核销，形成完整的积分消费闭环。',
+      features: ['支持新增、编辑、删除积分商品，构建丰富的积分兑换商品库', '配置商品基础信息：名称、主图、详情图、分类等，提升商品展示效果', '支持多种商品类型：实物商品、虚拟商品、优惠券、服务权益', '设置商品所需兑换积分，合理定价确保积分价值体系平衡', '管理商品库存数量，支持库存预警和售罄自动下架', '配置每人限兑数量，防止热门商品被少数会员集中兑换', '支持三种兑换方式：门店自提、快递邮寄、自动到账', '商品上下架管理，灵活控制可兑换商品', '商品排序和推荐位配置，引导会员兑换高价值商品', '与积分流水模块联动，兑换时自动扣减积分并生成流水记录', '与积分商城订单联动，兑换后自动生成订单并跟踪履约', '与会员档案联动，查看会员已兑换的商品记录', '与核销记录联动，支持到店核销类积分商品的验证', '提供兑换数据统计，掌握热门商品和库存周转情况'],
+      tips: ['积分商品定价需结合积分获取成本，确保积分价值体系健康', '热门商品建议设置合理的库存和每人限兑数量，避免积分过度消耗', '实物商品需配置物流配送能力，确保兑换后能及时送达', '虚拟商品兑换后应自动到账，提升会员兑换体验', '商品主图和详情图建议使用高清图片，提升展示效果和兑换意愿', '定期更新积分商品库，保持新鲜感，提升会员兑换意愿']
     }
   },
   {
@@ -216,24 +236,44 @@ export const MODULES: ModuleConfig[] = [
     columns: [
       { title: 'ID', dataIndex: 'id', width: 60 },
       { title: '会员', dataIndex: 'member' },
-      { title: '类型', dataIndex: 'type' },
+      { title: '业务类型', dataIndex: 'bizType', render: (v) => ({ consume: '消费奖励', signin: '签到奖励', birthday: '生日积分', exchange: '积分兑换', recharge: '积分充值', deduct: '积分扣减', clear: '年度清零', expire: '过期清零', activity: '活动奖励', referral: '推荐奖励', manual: '人工调整' }[v] || v) },
       { title: '积分变动', dataIndex: 'points', render: (v) => (v > 0 ? `+${v}` : `${v}`) },
-      { title: '余额', dataIndex: 'balance' },
+      { title: '变动前余额', dataIndex: 'beforeBalance' },
+      { title: '变动后余额', dataIndex: 'balance' },
+      { title: '有效期至', dataIndex: 'expireDate' },
+      { title: '是否历史积分', dataIndex: 'isHistory', render: (v) => (v === 'yes' ? '是' : '否') },
+      { title: '关联单号', dataIndex: 'bizNo' },
+      { title: '操作人', dataIndex: 'operator' },
+      { title: '时间', dataIndex: 'createdAt' },
       { title: '备注', dataIndex: 'remark' }
     ],
     fields: [
       { name: 'member', label: '会员', type: 'text', required: true },
-      { name: 'type', label: '类型', type: 'select', options: [
-        { label: '消费', value: 'consume' }, { label: '签到', value: 'signin' }, { label: '兑换', value: 'exchange' }
+      { name: 'bizType', label: '业务类型', type: 'select', options: [
+        { label: '消费奖励', value: 'consume' }, { label: '签到奖励', value: 'signin' }, { label: '生日积分', value: 'birthday' },
+        { label: '积分兑换', value: 'exchange' }, { label: '积分充值', value: 'recharge' }, { label: '积分扣减', value: 'deduct' },
+        { label: '年度清零', value: 'clear' }, { label: '过期清零', value: 'expire' }, { label: '活动奖励', value: 'activity' },
+        { label: '推荐奖励', value: 'referral' }, { label: '人工调整', value: 'manual' }
       ] },
       { name: 'points', label: '积分变动', type: 'number' },
-      { name: 'balance', label: '余额', type: 'number' },
-      { name: 'remark', label: '备注', type: 'text' }
+      { name: 'beforeBalance', label: '变动前余额', type: 'number' },
+      { name: 'balance', label: '变动后余额', type: 'number' },
+      { name: 'expireDate', label: '有效期至', type: 'text' },
+      { name: 'isHistory', label: '是否历史积分', type: 'select', options: [
+        { label: '是', value: 'yes' }, { label: '否', value: 'no' }
+      ] },
+      { name: 'bizNo', label: '关联业务单号', type: 'text' },
+      { name: 'operator', label: '操作人', type: 'text' },
+      { name: 'source', label: '积分来源', type: 'select', options: [
+        { label: '系统发放', value: 'system' }, { label: '人工充值', value: 'manual' }, { label: '消费返积', value: 'consume' }, { label: '活动赠送', value: 'activity' }
+      ] },
+      { name: 'createdAt', label: '时间', type: 'text' },
+      { name: 'remark', label: '备注', type: 'textarea' }
     ],
     doc: {
-      overview: '积分流水是会员积分账户的完整交易记录，详细记录每一笔积分的获取和消耗，是积分体系的账务核心。系统自动记录所有积分变动，包括消费奖励、签到赠送、生日礼遇、商城兑换、活动奖励等场景，每笔流水都关联具体的会员、业务类型和变动金额。积分流水与会员档案、积分规则、积分商品等模块深度联动，为积分对账、会员查询、财务核算和数据分析提供完整的数据支撑，是确保积分体系透明可信、运营合规的重要基础。',
-      features: ['完整记录所有积分变动流水，支持查询每一笔积分的来龙去脉', '记录会员信息，可按会员维度查询个人积分账户明细', '区分积分类型：消费、签到、兑换、活动奖励等多种业务场景', '展示积分变动数值（正数为获得，负数为消耗），直观反映变动方向', '实时记录每笔流水后的积分余额，确保账户数据准确', '支持备注字段，记录积分变动的具体业务背景和关联单号', '与积分规则模块联动，规则触发的积分发放自动生成流水', '与积分商品模块联动，积分兑换自动扣减并生成消耗流水', '与会员档案联动，可从会员详情查看个人积分流水', '支持按时间范围、类型、会员等多维度筛选查询', '提供积分收支统计，分析积分发放和消耗趋势', '支持流水导出，便于财务对账和数据分析'],
-      tips: ['积分流水为账务记录，创建后不建议修改和删除，确保数据完整性', '查询流水时建议结合会员和时间范围，快速定位目标记录', '积分余额为每笔流水计算得出，如发现异常请检查流水记录', '定期进行积分账务核对，确保系统积分与财务数据一致', '涉及大量积分调整时，建议通过后台批量操作并生成对应流水记录']
+      overview: '积分流水是会员积分账户的完整交易记录，详细记录每一笔积分的获取和消耗，是积分体系的账务核心。系统自动记录所有积分变动，包括消费奖励、签到赠送、生日礼遇、商城兑换、活动奖励、年度清零、过期清零等场景，每笔流水都关联具体的会员、业务类型、变动金额、有效期和操作人。积分流水支持区分当前积分与历史积分，年度即将过期积分可转为历史积分并优先使用。积分流水与会员档案、积分规则、积分商品、积分账户等模块深度联动，为积分对账、会员查询、财务核算和数据分析提供完整的数据支撑，是确保积分体系透明可信、运营合规的重要基础。',
+      features: ['完整记录所有积分变动流水，支持查询每一笔积分的来龙去脉', '细化的业务类型：消费奖励、签到奖励、生日积分、积分兑换、积分充值、积分扣减、年度清零、过期清零、活动奖励、推荐奖励、人工调整', '记录变动前余额和变动后余额，确保账务可追溯', '支持积分有效期管理，记录每笔积分的过期时间', '区分当前积分与历史积分，即将过期积分自动转为历史积分', '关联业务单号，可追溯积分变动的具体业务来源', '记录操作人信息，明确积分变动的责任主体', '支持积分来源分类：系统发放、人工充值、消费返积、活动赠送', '与积分规则模块联动，规则触发的积分发放自动生成流水', '与积分商品模块联动，积分兑换自动扣减并生成消耗流水', '与会员积分账户联动，实时更新会员可用积分和历史积分', '与会员档案联动，可从会员详情查看个人积分流水', '支持按时间范围、类型、会员、有效期等多维度筛选查询', '提供积分收支统计，分析积分发放和消耗趋势', '支持流水导出，便于财务对账和数据分析'],
+      tips: ['积分流水为账务记录，创建后不建议修改和删除，确保数据完整性', '查询流水时建议结合会员和时间范围，快速定位目标记录', '积分余额为每笔流水计算得出，如发现异常请检查流水记录', '定期进行积分账务核对，确保系统积分与财务数据一致', '涉及大量积分调整时，建议通过后台批量操作并生成对应流水记录', '历史积分优先使用，配置清零规则时请注意会员体验']
     }
   },
   // ===== 礼券中心 =====
@@ -346,26 +386,45 @@ export const MODULES: ModuleConfig[] = [
     columns: [
       { title: 'ID', dataIndex: 'id', width: 60 },
       { title: '活动名称', dataIndex: 'name' },
-      { title: '类型', dataIndex: 'type' },
+      { title: '类型', dataIndex: 'type', render: (v) => ({ promotion: '促销活动', memberday: '会员日', festival: '节日营销', flash: '限时抢购', group: '拼团', seckill: '秒杀', preSale: '预售', bargain: '砍价', lottery: '抽奖', vote: '投票', survey: '问卷', checkin: '签到', game: '游戏', referral: '推荐有礼', newMember: '新人礼', helpCoupon: '助力领券', wordCoupon: '口令领券', blindBox: '盲盒', countCard: '计次卡', douyin: '抖音券', checkinCoupon: '打卡领券' }[v] || v) },
       { title: '开始时间', dataIndex: 'startTime' },
       { title: '结束时间', dataIndex: 'endTime' },
       { title: '预算', dataIndex: 'budget' },
+      { title: '参与人群', dataIndex: 'targetGroup' },
       { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '进行中' : '已停用') }
     ],
     fields: [
       { name: 'name', label: '活动名称', type: 'text', required: true },
-      { name: 'type', label: '类型', type: 'select', options: [
-        { label: '促销', value: 'promotion' }, { label: '会员日', value: 'memberday' }, { label: '节日', value: 'festival' }
+      { name: 'cover', label: '活动封面', type: 'text' },
+      { name: 'type', label: '活动类型', type: 'select', options: [
+        { label: '促销活动', value: 'promotion' }, { label: '会员日', value: 'memberday' }, { label: '节日营销', value: 'festival' },
+        { label: '限时抢购', value: 'flash' }, { label: '拼团', value: 'group' }, { label: '秒杀', value: 'seckill' },
+        { label: '预售', value: 'preSale' }, { label: '砍价', value: 'bargain' }, { label: '抽奖', value: 'lottery' },
+        { label: '投票', value: 'vote' }, { label: '问卷', value: 'survey' }, { label: '签到', value: 'checkin' },
+        { label: '游戏', value: 'game' }, { label: '推荐有礼', value: 'referral' }, { label: '新人礼', value: 'newMember' },
+        { label: '助力领券', value: 'helpCoupon' }, { label: '口令领券', value: 'wordCoupon' },
+        { label: '盲盒', value: 'blindBox' }, { label: '计次卡', value: 'countCard' }, { label: '抖音券', value: 'douyin' },
+        { label: '打卡领券', value: 'checkinCoupon' }
       ] },
+      { name: 'description', label: '活动描述', type: 'textarea' },
+      { name: 'rules', label: '活动规则', type: 'textarea' },
       { name: 'startTime', label: '开始时间', type: 'text' },
       { name: 'endTime', label: '结束时间', type: 'text' },
-      { name: 'budget', label: '预算', type: 'number' },
-      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+      { name: 'budget', label: '预算(元)', type: 'number' },
+      { name: 'targetGroup', label: '参与人群', type: 'text' },
+      { name: 'targetTags', label: '目标标签', type: 'text' },
+      { name: 'threshold', label: '参与门槛', type: 'textarea' },
+      { name: 'couponTemplates', label: '关联券模板', type: 'textarea' },
+      { name: 'relatedGoods', label: '关联商品', type: 'textarea' },
+      { name: 'maxParticipants', label: '最大参与人数', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '进行中', value: 'enabled' }, { label: '已停用', value: 'disabled' }, { label: '待开始', value: 'pending' }
+      ] }
     ],
     doc: {
-      overview: '营销活动是整合各类营销资源的统一管理平台，通过创建不同类型的营销活动，集中管理活动时间、预算、关联资源和执行效果。系统支持促销活动、会员日、节日营销等多种活动类型，可灵活配置活动时间、预算规模和关联的券、商品、积分等营销资源。营销活动与礼券中心、会员标签、推送任务、数据报表等模块深度联动，形成从活动策划、资源配置、人群定向、消息触达到效果追踪的完整营销闭环，是运营团队开展精细化营销、提升会员转化和复购的核心工具。',
-      features: ['支持新增、编辑、删除营销活动，全生命周期管理营销活动', '提供多种活动类型：促销活动、会员日、节日营销等，覆盖核心营销场景', '配置活动名称和描述，清晰传达活动主题和利益点', '设置活动开始时间和结束时间，精确控制活动周期', '管理活动预算，合理规划营销费用投入', '活动状态管理：进行中/已停用，灵活控制活动开关', '与活动发券联动，可在活动中配置多种券的发放', '与会员标签联动，支持按标签人群定向开展活动', '与推送任务联动，通过消息渠道触达目标会员', '与数据报表联动，追踪活动效果和ROI分析', '支持活动排序和优先级配置，管理多活动并行', '提供活动模板功能，快速复用成功活动配置'],
-      tips: ['活动开始前请检查所有关联资源（券、商品、推送）是否配置完整', '活动预算建议根据历史数据和目标转化率合理估算', '多活动并行时注意避免优惠叠加导致成本超支', '重要活动建议设置AB测试，对比不同方案效果', '活动结束后及时分析数据，总结经验优化后续活动']
+      overview: '营销活动是整合各类营销资源的统一管理平台，通过创建不同类型的营销活动，集中管理活动时间、预算、关联资源、参与人群和执行效果。系统支持促销活动、会员日、节日营销、限时抢购、拼团、秒杀、预售、砍价、抽奖、投票、问卷、签到、游戏、推荐有礼、新人礼、助力领券、口令领券、盲盒、计次卡、抖音券、打卡领券等20余种活动类型，可灵活配置活动时间、预算规模、参与门槛、目标人群和关联的券、商品、积分等营销资源。营销活动与礼券中心、会员标签、会员画像、推送任务、数据报表等模块深度联动，形成从活动策划、资源配置、人群定向、消息触达到效果追踪的完整营销闭环，是运营团队开展精细化营销、提升会员转化和复购的核心工具。',
+      features: ['支持新增、编辑、删除营销活动，全生命周期管理营销活动', '提供20余种活动类型：促销、会员日、节日营销、限时抢购、拼团、秒杀、预售、砍价、抽奖、投票、问卷、签到、游戏、推荐有礼、新人礼、助力领券、口令领券、盲盒、计次卡、抖音券、打卡领券', '配置活动名称、描述和规则，清晰传达活动主题和利益点', '上传活动封面图，提升活动视觉效果和吸引力', '设置活动开始时间和结束时间，精确控制活动周期', '管理活动预算，合理规划营销费用投入', '配置参与人群和目标标签，支持按会员画像精准定向', '设置参与门槛，如最低消费、会员等级、积分要求等', '关联券模板和商品，实现活动与营销资源的联动', '配置最大参与人数，控制活动成本和资源消耗', '三种活动状态：进行中、已停用、待开始', '与活动发券联动，可在活动中配置多种券的发放', '与会员标签联动，支持按标签人群定向开展活动', '与会员画像联动，基于画像特征精准圈选目标人群', '与推送任务联动，通过消息渠道触达目标会员', '与数据报表联动，追踪活动效果和ROI分析', '支持活动排序和优先级配置，管理多活动并行', '提供活动模板功能，快速复用成功活动配置'],
+      tips: ['活动开始前请检查所有关联资源（券、商品、推送）是否配置完整', '活动预算建议根据历史数据和目标转化率合理估算', '多活动并行时注意避免优惠叠加导致成本超支', '参与门槛设置要合理，过高会降低参与度，过低会浪费资源', '重要活动建议设置AB测试，对比不同方案效果', '活动结束后及时分析数据，总结经验优化后续活动']
     }
   },
   {
@@ -1188,23 +1247,29 @@ export const MODULES: ModuleConfig[] = [
     columns: [
       { title: 'ID', dataIndex: 'id', width: 60 },
       { title: '会员', dataIndex: 'member' },
-      { title: '标签', dataIndex: 'tags' },
-      { title: '消费偏好', dataIndex: 'consumeTag' },
-      { title: '品牌偏好', dataIndex: 'brandTag' },
+      { title: '动态标签', dataIndex: 'tags' },
+      { title: '消费喜好', dataIndex: 'consumeTag' },
+      { title: '品牌喜好', dataIndex: 'brandTag' },
       { title: '积分偏好', dataIndex: 'pointsTag' },
-      { title: '最近活跃', dataIndex: 'lastActive' }
+      { title: '兑礼偏好', dataIndex: 'redeemTag' },
+      { title: '线上互动', dataIndex: 'onlineTag' },
+      { title: '最近活跃', dataIndex: 'lastActive' },
+      { title: '画像更新时间', dataIndex: 'updatedAt' }
     ],
     fields: [
       { name: 'member', label: '会员', type: 'text', required: true },
-      { name: 'tags', label: '标签', type: 'text' },
-      { name: 'consumeTag', label: '消费偏好', type: 'text' },
-      { name: 'brandTag', label: '品牌偏好', type: 'text' },
-      { name: 'pointsTag', label: '积分偏好', type: 'text' },
-      { name: 'lastActive', label: '最近活跃', type: 'text' }
+      { name: 'tags', label: '动态标签', type: 'textarea' },
+      { name: 'consumeTag', label: '消费喜好', type: 'textarea' },
+      { name: 'brandTag', label: '品牌喜好', type: 'textarea' },
+      { name: 'pointsTag', label: '积分偏好', type: 'textarea' },
+      { name: 'redeemTag', label: '兑礼偏好', type: 'textarea' },
+      { name: 'onlineTag', label: '线上互动', type: 'textarea' },
+      { name: 'lastActive', label: '最近活跃', type: 'text' },
+      { name: 'updatedAt', label: '画像更新时间', type: 'text' }
     ],
     doc: {
-      overview: '会员画像是基于会员全量行为数据构建的360度用户画像，通过多维度标签体系立体呈现每个会员的特征和偏好，是实现精准营销和个性化服务的数据基础。系统整合消费偏好、品牌偏好、积分偏好、行为标签等多个维度数据，自动生成和更新会员画像。会员画像与会员标签、会员档案、营销活动、推送任务等模块深度联动，为人群定向、商品推荐、精准触达提供数据支撑，帮助运营团队从千人一面升级为千人千面的精细化运营，显著提升营销转化率和会员满意度。',
-      features: ['构建会员360度全景画像，多维度呈现会员特征', '整合会员基础标签，直观展示会员人群归属', '消费偏好分析：识别会员的消费品类、价格区间、频次等偏好', '品牌偏好分析：挖掘会员喜爱的品牌和商户，指导品牌合作', '积分偏好分析：了解会员对积分的使用习惯和兑换偏好', '记录最近活跃时间，识别会员活跃状态和生命周期阶段', '与会员档案联动，可从会员详情查看完整画像', '与会员标签联动，画像标签自动同步更新', '与营销活动联动，支持按画像特征定向营销', '与推送任务联动，实现个性化消息和内容推荐', '支持画像数据导出，便于进一步的数据分析和挖掘', '提供画像标签统计，掌握整体会员的特征分布'],
+      overview: '会员画像是基于会员全量行为数据构建的360度用户画像，通过多维度标签体系立体呈现每个会员的特征和偏好，是实现精准营销和个性化服务的数据基础。系统整合消费喜好、品牌喜好、积分偏好、兑礼偏好、线上互动、动态标签等多个维度数据，自动生成和更新会员画像。会员画像与会员标签、会员档案、营销活动、推送任务等模块深度联动，为人群定向、商品推荐、精准触达提供数据支撑，帮助运营团队从千人一面升级为千人千面的精细化运营，显著提升营销转化率和会员满意度。',
+      features: ['构建会员360度全景画像，多维度呈现会员特征', '整合会员动态标签，直观展示会员人群归属和实时特征', '消费喜好分析：识别会员的消费品类、价格区间、消费频次、消费时段等偏好', '品牌喜好分析：挖掘会员喜爱的品牌和商户，指导品牌招商和合作策略', '积分偏好分析：了解会员对积分的获取习惯、使用频率和兑换偏好', '兑礼偏好分析：掌握会员在积分商城的兑换品类、兑换频次、兑换价值偏好', '线上互动分析：统计会员在小程序的浏览、点击、分享、评论等互动行为', '记录最近活跃时间和画像更新时间，识别会员活跃状态和生命周期阶段', '与会员档案联动，可从会员详情查看完整画像', '与会员标签联动，画像标签自动同步更新', '与营销活动联动，支持按画像特征定向营销', '与推送任务联动，实现个性化消息和内容推荐', '支持画像数据导出，便于进一步的数据分析和挖掘', '提供画像标签统计，掌握整体会员的特征分布'],
       tips: ['会员画像基于行为数据自动生成，数据积累越丰富画像越准确', '画像标签仅供运营参考，重要营销活动建议结合人工判断', '建议定期评估画像标签的准确性，持续优化标签算法', '画像涉及会员隐私数据，请注意数据安全和合规使用', '可结合会员分群功能，将相似画像会员分组运营']
     }
   },
@@ -1322,12 +1387,49 @@ export const MODULES: ModuleConfig[] = [
     }
   },
   {
+    key: 'member-points', path: 'member/points', name: '会员积分账户', category: '会员数字化',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '会员', dataIndex: 'member' },
+      { title: '可用积分', dataIndex: 'points' },
+      { title: '历史积分', dataIndex: 'historyPoints' },
+      { title: '即将过期', dataIndex: 'expiringPoints' },
+      { title: '冻结积分', dataIndex: 'frozenPoints' },
+      { title: '积分有效期', dataIndex: 'expireDate' },
+      { title: '年度清零日期', dataIndex: 'clearDate' },
+      { title: '累计获取', dataIndex: 'totalEarned' },
+      { title: '累计消耗', dataIndex: 'totalUsed' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '正常' : '冻结') }
+    ],
+    fields: [
+      { name: 'member', label: '会员', type: 'text', required: true },
+      { name: 'points', label: '可用积分', type: 'number' },
+      { name: 'historyPoints', label: '历史积分', type: 'number' },
+      { name: 'expiringPoints', label: '即将过期积分', type: 'number' },
+      { name: 'frozenPoints', label: '冻结积分', type: 'number' },
+      { name: 'expireDate', label: '积分有效期至', type: 'text' },
+      { name: 'clearDate', label: '年度清零日期', type: 'text' },
+      { name: 'totalEarned', label: '累计获取积分', type: 'number' },
+      { name: 'totalUsed', label: '累计消耗积分', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '正常', value: 'enabled' }, { label: '冻结', value: 'frozen' }
+      ] }
+    ],
+    doc: {
+      overview: '会员积分账户是管理会员积分资产的核心模块，集中展示每位会员的可用积分、历史积分、即将过期积分、冻结积分等多维度积分数据。系统支持积分有效期管理和年度清零规则，即将过期的积分可自动转为历史积分并优先使用。运营人员可通过本模块进行积分充值、扣减等人工调整操作，满足客服补偿、活动补发等运营需求。会员积分账户与积分流水、积分规则、积分商城、会员档案等模块深度联动，是积分体系运营和财务管理的重要基础。',
+      features: ['集中管理会员积分账户，展示可用积分、历史积分、即将过期积分、冻结积分', '支持积分充值操作，满足客服补偿和活动补发等场景', '支持积分扣减操作，处理异常积分回收和退款场景', '积分有效期管理，记录积分过期时间并提前预警', '年度清零规则配置，支持按自然年或会员周期清零', '即将过期积分自动转为历史积分，历史积分优先使用', '累计获取和累计消耗统计，掌握会员积分全生命周期', '账户状态管理：正常/冻结，控制异常账户的积分使用', '与积分流水联动，每笔变动自动生成流水记录', '与积分规则联动，自动计算和发放规则积分', '与积分商城联动，兑换时实时扣减可用积分', '与会员档案联动，查看会员积分资产概况', '支持积分账户数据导出，便于财务核对和审计'],
+      tips: ['积分充值和扣减操作会生成积分流水，请填写清晰的备注说明原因', '年度清零前建议提前通知会员，避免引发投诉', '历史积分优先使用，确保会员权益不受影响', '冻结积分账户后，会员将无法进行积分兑换和使用', '建议定期核对积分账户数据，确保与积分流水一致']
+    }
+  },
+  {
     key: 'member-assets', path: 'member/assets', name: '会员资产', category: '会员数字化',
     columns: [
       { title: 'ID', dataIndex: 'id', width: 60 },
       { title: '会员', dataIndex: 'member' },
       { title: '储值余额', dataIndex: 'balance' },
-      { title: '积分', dataIndex: 'points' },
+      { title: '可用积分', dataIndex: 'points' },
+      { title: '历史积分', dataIndex: 'historyPoints' },
+      { title: '即将过期积分', dataIndex: 'expiringPoints' },
       { title: '优惠券数', dataIndex: 'couponCount' },
       { title: '权益卡数', dataIndex: 'benefitCount' },
       { title: '总价值', dataIndex: 'totalValue' }
@@ -1335,15 +1437,17 @@ export const MODULES: ModuleConfig[] = [
     fields: [
       { name: 'member', label: '会员', type: 'text', required: true },
       { name: 'balance', label: '储值余额', type: 'number' },
-      { name: 'points', label: '积分', type: 'number' },
+      { name: 'points', label: '可用积分', type: 'number' },
+      { name: 'historyPoints', label: '历史积分', type: 'number' },
+      { name: 'expiringPoints', label: '即将过期积分', type: 'number' },
       { name: 'couponCount', label: '优惠券数', type: 'number' },
       { name: 'benefitCount', label: '权益卡数', type: 'number' },
       { name: 'totalValue', label: '总价值', type: 'number' }
     ],
     doc: {
-      overview: '会员资产是会员在平台拥有的全部资产的汇总视图，集中展示储值余额、积分、优惠券、权益卡等资产情况，并估算总价值。是会员了解自身权益、运营评估会员价值的重要数据。',
-      features: ['储值余额汇总，展示会员储值账户余额', '积分汇总，展示会员可用积分数量', '优惠券数量统计，统计会员持有的有效券数量', '权益卡数量统计，统计会员拥有的权益卡数量', '总价值估算，量化会员资产的货币价值', '与各资产模块联动，数据实时同步更新'],
-      tips: ['总价值为估算值，仅供参考，实际价值以各模块明细为准', '会员资产数据由各业务模块自动汇总，不建议直接修改', '建议定期检查资产数据一致性，确保各模块数据同步']
+      overview: '会员资产是会员在平台拥有的全部资产的汇总视图，集中展示储值余额、可用积分、历史积分、即将过期积分、优惠券、权益卡等资产情况，并估算总价值。是会员了解自身权益、运营评估会员价值的重要数据。',
+      features: ['储值余额汇总，展示会员储值账户余额', '可用积分汇总，展示会员当前可使用的积分数量', '历史积分统计，展示已转为历史积分的数量', '即将过期积分预警，提前掌握即将失效的积分', '优惠券数量统计，统计会员持有的有效券数量', '权益卡数量统计，统计会员拥有的权益卡数量', '总价值估算，量化会员资产的货币价值', '与各资产模块联动，数据实时同步更新'],
+      tips: ['总价值为估算值，仅供参考，实际价值以各模块明细为准', '会员资产数据由各业务模块自动汇总，不建议直接修改', '建议定期检查资产数据一致性，确保各模块数据同步', '即将过期积分建议及时提醒会员使用，提升会员体验']
     }
   },
   {
@@ -1386,8 +1490,13 @@ export const MODULES: ModuleConfig[] = [
       { title: '会员', dataIndex: 'member' },
       { title: '商品', dataIndex: 'goods' },
       { title: '消耗积分', dataIndex: 'points' },
-      { title: '提货方式', dataIndex: 'delivery', render: (v) => ({ self: '自提', express: '邮寄' }[v] || v) },
-      { title: '状态', dataIndex: 'status', render: (v) => ({ pending: '待发货', shipped: '已发货', done: '已完成', cancelled: '已取消' }[v] || v) }
+      { title: '提货方式', dataIndex: 'delivery', render: (v) => ({ self: '自提', express: '邮寄', auto: '自动到账' }[v] || v) },
+      { title: '收货人', dataIndex: 'receiverName' },
+      { title: '收货电话', dataIndex: 'receiverPhone' },
+      { title: '物流单号', dataIndex: 'logisticsNo' },
+      { title: '核销码', dataIndex: 'verifyCode' },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ pending: '待发货', shipped: '已发货', done: '已完成', cancelled: '已取消' }[v] || v) },
+      { title: '下单时间', dataIndex: 'createdAt' }
     ],
     fields: [
       { name: 'orderNo', label: '订单号', type: 'text', required: true },
@@ -1395,16 +1504,25 @@ export const MODULES: ModuleConfig[] = [
       { name: 'goods', label: '商品', type: 'text' },
       { name: 'points', label: '消耗积分', type: 'number' },
       { name: 'delivery', label: '提货方式', type: 'select', options: [
-        { label: '自提', value: 'self' }, { label: '邮寄', value: 'express' }
+        { label: '自提', value: 'self' }, { label: '邮寄', value: 'express' }, { label: '自动到账', value: 'auto' }
       ] },
+      { name: 'receiverName', label: '收货人', type: 'text' },
+      { name: 'receiverPhone', label: '收货电话', type: 'text' },
+      { name: 'receiverAddress', label: '收货地址', type: 'text' },
+      { name: 'logisticsCompany', label: '物流公司', type: 'text' },
+      { name: 'logisticsNo', label: '物流单号', type: 'text' },
+      { name: 'verifyCode', label: '核销码', type: 'text' },
+      { name: 'createdAt', label: '下单时间', type: 'text' },
+      { name: 'doneTime', label: '完成时间', type: 'text' },
+      { name: 'cancelReason', label: '取消原因', type: 'textarea' },
       { name: 'status', label: '状态', type: 'select', options: [
         { label: '待发货', value: 'pending' }, { label: '已发货', value: 'shipped' }, { label: '已完成', value: 'done' }, { label: '已取消', value: 'cancelled' }
       ] }
     ],
     doc: {
-      overview: '积分商城订单是会员兑换积分商品的订单管理模块，记录所有积分兑换订单，支持自提和邮寄两种履约方式。是积分消费闭环的重要环节，确保积分兑换顺利完成。',
-      features: ['记录积分兑换订单，包含订单号、会员、商品、消耗积分等', '两种提货方式：门店自提和快递邮寄', '订单状态流转：待发货、已发货、已完成、已取消', '与积分商品联动，兑换后自动扣减商品库存', '与积分流水联动，兑换时自动扣减积分并生成流水', '与核销记录联动，自提商品核销后订单完成'],
-      tips: ['积分兑换订单一旦确认，积分一般不予退还，请谨慎操作', '邮寄订单请及时填写物流信息，便于会员查询跟踪', '自提订单请设置合理的提货有效期，避免长期未提货']
+      overview: '积分商城订单是会员兑换积分商品的订单管理模块，记录所有积分兑换订单的完整履约流程，支持自提、邮寄和自动到账三种履约方式。系统详细记录订单信息、收货地址、物流跟踪、核销验证等全链路数据，是积分消费闭环的重要环节。积分商城订单与积分商品、积分流水、会员档案、核销记录等模块深度联动，确保积分兑换从下单到履约的全程可追溯。',
+      features: ['记录积分兑换订单，包含订单号、会员、商品、消耗积分等核心信息', '支持三种提货方式：门店自提、快递邮寄、自动到账', '管理收货信息：收货人、联系电话、收货地址', '物流跟踪：记录物流公司和物流单号', '自提订单生成核销码，到店扫码核销完成履约', '订单状态流转：待发货、已发货、已完成、已取消', '记录下单时间和完成时间，跟踪订单履约时效', '支持取消原因记录，便于分析订单取消原因', '与积分商品联动，兑换后自动扣减商品库存', '与积分流水联动，兑换时自动扣减积分并生成流水', '与核销记录联动，自提商品核销后订单完成', '与会员档案联动，查看会员积分兑换历史'],
+      tips: ['积分兑换订单一旦确认，积分一般不予退还，请谨慎操作', '邮寄订单请及时填写物流信息，便于会员查询跟踪', '自提订单请设置合理的提货有效期，避免长期未提货', '自动到账类虚拟商品请确保系统自动化发放链路正常']
     }
   },
   // ===== 智慧停车（补充）=====

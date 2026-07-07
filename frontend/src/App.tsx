@@ -140,7 +140,6 @@ export default function App() {
           <Routes>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/business-flow" element={<BusinessFlow />} />
-            <Route path="/m/member-list" element={<MemberProfile />} />
             <Route path="/m/member-profiles" element={<MemberProfile />} />
             <Route path="/m/shop-goods" element={<ShopGoods />} />
             <Route path="/m/shop-orders" element={<OrderManage />} />
