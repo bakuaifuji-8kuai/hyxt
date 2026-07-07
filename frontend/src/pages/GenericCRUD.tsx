@@ -652,9 +652,9 @@ export default function GenericCRUD({ moduleKey }: { moduleKey: string }) {
       >
         <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
           <Row gutter={16}>
-            {module.fields.map((field) => {
+            {module.fields.filter(f => !f.hidden).map((field) => {
               const isImg = isImageField(field.name);
-              const isFullRow = field.type === 'textarea' || isImg;
+              const isFullRow = field.type === 'textarea' || isImg || field.type === 'conditionBuilder';
               return (
                 <Col span={isFullRow ? 24 : 12} key={field.name}>
                   <Form.Item

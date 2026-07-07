@@ -8,6 +8,7 @@ export interface FieldConfig {
   options?: { label: string; value: string }[];
   required?: boolean;
   placeholder?: string;
+  hidden?: boolean;
   /** 从其他模块拉取下拉数据。配置后 options 失效，从 store 中读取指定 path 的列表。
    * source: { path: 'system/projects', labelField: 'name', valueField: 'code' } */
   source?: {
@@ -122,11 +123,11 @@ export const MODULES: ModuleConfig[] = [
         { label: '普通会员', value: 'NORMAL' }, { label: '银卡会员', value: 'SILVER' },
         { label: '金卡会员', value: 'GOLD' }, { label: '钻石会员', value: 'DIAMOND' }
       ] },
-      { name: 'growthValue', label: '成长值', type: 'number' },
+      { name: 'growthValue', label: '成长值', type: 'number', hidden: true },
       { name: 'points', label: '积分', type: 'number' },
-      { name: 'balance', label: '储值余额', type: 'number' },
-      { name: 'totalSpent', label: '消费总额', type: 'number' },
-      { name: 'orderCount', label: '订单数', type: 'number' },
+      { name: 'balance', label: '储值余额', type: 'number', hidden: true },
+      { name: 'totalSpent', label: '消费总额', type: 'number', hidden: true },
+      { name: 'orderCount', label: '订单数', type: 'number', hidden: true },
       { name: 'avgAmount', label: '客单价', type: 'number' },
       { name: 'source', label: '注册来源', type: 'select', options: [
         { label: '小程序', value: 'miniapp' }, { label: '微信', value: 'wxapp' }, { label: '门店', value: 'shop' }, { label: '活动', value: 'activity' }
@@ -233,7 +234,7 @@ export const MODULES: ModuleConfig[] = [
         { label: '优惠券', value: 'coupon' }, { label: '服务权益', value: 'service' }
       ] },
       { name: 'points', label: '所需积分', type: 'number' },
-      { name: 'stock', label: '库存', type: 'number' },
+      { name: 'stock', label: '库存', type: 'number', hidden: true },
       { name: 'limitPerUser', label: '每人限兑数量', type: 'number' },
       { name: 'deliveryType', label: '兑换方式', type: 'select', options: [
         { label: '门店自提', value: 'self' }, { label: '快递邮寄', value: 'express' }, { label: '自动到账', value: 'auto' }
@@ -283,7 +284,7 @@ export const MODULES: ModuleConfig[] = [
       ] },
       { name: 'points', label: '积分变动', type: 'number' },
       { name: 'beforeBalance', label: '变动前余额', type: 'number' },
-      { name: 'balance', label: '变动后余额', type: 'number' },
+      { name: 'balance', label: '变动后余额', type: 'number', hidden: true },
       { name: 'expireDate', label: '有效期至', type: 'date' },
       { name: 'isHistory', label: '是否历史积分', type: 'select', options: [
         { label: '是', value: 'yes' }, { label: '否', value: 'no' }
@@ -517,8 +518,8 @@ export const MODULES: ModuleConfig[] = [
       { name: 'name', label: '商品名称', type: 'text', required: true },
       { name: 'price', label: '秒杀价', type: 'number' },
       { name: 'originalPrice', label: '原价', type: 'number' },
-      { name: 'stock', label: '库存', type: 'number' },
-      { name: 'sold', label: '已售', type: 'number' },
+      { name: 'stock', label: '库存', type: 'number', hidden: true },
+      { name: 'sold', label: '已售', type: 'number', hidden: true },
       { name: 'startTime', label: '开始时间', type: 'date' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
@@ -629,7 +630,7 @@ export const MODULES: ModuleConfig[] = [
       { name: 'type', label: '类型', type: 'select', options: [
         { label: '微信群', value: 'wechat' }, { label: '企微群', value: 'wecom' }
       ] },
-      { name: 'memberCount', label: '人数', type: 'number' },
+      { name: 'memberCount', label: '人数', type: 'number', hidden: true },
       { name: 'owner', label: '群主', type: 'text' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
@@ -673,7 +674,7 @@ export const MODULES: ModuleConfig[] = [
     ],
     fields: [
       { name: 'member', label: '会员', type: 'select', required: true, source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
-      { name: 'balance', label: '余额', type: 'number' },
+      { name: 'balance', label: '余额', type: 'number', hidden: true },
       { name: 'points', label: '积分', type: 'number' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
@@ -700,7 +701,7 @@ export const MODULES: ModuleConfig[] = [
         { label: '充值', value: 'recharge' }, { label: '消费', value: 'consume' }, { label: '退款', value: 'refund' }
       ] },
       { name: 'amount', label: '金额(正为入账)', type: 'number' },
-      { name: 'balance', label: '余额', type: 'number' },
+      { name: 'balance', label: '余额', type: 'number', hidden: true },
       { name: 'remark', label: '备注', type: 'text' },
       { name: 'time', label: '时间', type: 'date' }
     ],
@@ -781,7 +782,7 @@ export const MODULES: ModuleConfig[] = [
       { name: 'price', label: '价格', type: 'number' },
       { name: 'originalPrice', label: '原价', type: 'number' },
       { name: 'costPrice', label: '成本价', type: 'number' },
-      { name: 'stock', label: '库存', type: 'number' },
+      { name: 'stock', label: '库存', type: 'number', hidden: true },
       { name: 'sales', label: '销量', type: 'number' },
       { name: 'tags', label: '商品标签', type: 'text' },
       { name: 'group', label: '商品分组', type: 'text' },
@@ -1172,7 +1173,7 @@ export const MODULES: ModuleConfig[] = [
       { name: 'name', label: '物品名称', type: 'text', required: true },
       { name: 'deposit', label: '押金', type: 'number' },
       { name: 'rent', label: '租金', type: 'number' },
-      { name: 'stock', label: '库存', type: 'number' },
+      { name: 'stock', label: '库存', type: 'number', hidden: true },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
     doc: {
@@ -1325,12 +1326,12 @@ export const MODULES: ModuleConfig[] = [
       { title: '时间', dataIndex: 'time' }
     ],
     fields: [
-      { name: 'member', label: '会员', type: 'select', required: true, source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
-      { name: 'tag', label: '标签', type: 'text', required: true },
+      { name: 'member', label: '会员', type: 'select', source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
+      { name: 'tag', label: '标签', type: 'select', required: true, source: { path: 'member/tags', labelField: 'name', valueField: 'name' } },
       { name: 'source', label: '打标方式', type: 'select', options: [
         { label: '手动', value: 'manual' }, { label: '自动', value: 'auto' }
       ] },
-      { name: 'time', label: '时间', type: 'date' }
+      { name: 'time', label: '时间', type: 'date', hidden: true }
     ],
     doc: {
       overview: '会员打标签是会员与标签关联关系的管理模块，支持手动打标和规则自动打标两种方式，是标签体系落地执行的关键环节。运营人员可手动为指定会员打上标签，也可通过自动标签规则系统自动计算并关联。',
@@ -1386,7 +1387,7 @@ export const MODULES: ModuleConfig[] = [
         { label: '实体卡', value: 'entity' }, { label: '电子卡', value: 'electronic' }, { label: '虚拟卡', value: 'virtual' }
       ] },
       { name: 'cardStyle', label: '卡面样式', type: 'text' },
-      { name: 'balance', label: '余额', type: 'number' },
+      { name: 'balance', label: '余额', type: 'number', hidden: true },
       { name: 'points', label: '积分', type: 'number' },
       { name: 'status', label: '状态', type: 'select', options: [
         { label: '正常', value: 'normal' }, { label: '锁定', value: 'locked' }, { label: '挂失', value: 'loss' }
@@ -1478,11 +1479,11 @@ export const MODULES: ModuleConfig[] = [
     ],
     fields: [
       { name: 'member', label: '会员', type: 'select', required: true, source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
-      { name: 'balance', label: '储值余额', type: 'number' },
+      { name: 'balance', label: '储值余额', type: 'number', hidden: true },
       { name: 'points', label: '可用积分', type: 'number' },
       { name: 'historyPoints', label: '历史积分', type: 'number' },
       { name: 'expiringPoints', label: '即将过期积分', type: 'number' },
-      { name: 'couponCount', label: '优惠券数', type: 'number' },
+      { name: 'couponCount', label: '优惠券数', type: 'number', hidden: true },
       { name: 'benefitCount', label: '权益卡数', type: 'number' },
       { name: 'totalValue', label: '总价值', type: 'number' }
     ],
@@ -2186,7 +2187,7 @@ export const MODULES: ModuleConfig[] = [
     ],
     fields: [
       { name: 'title', label: '问卷标题', type: 'text', required: true },
-      { name: 'participants', label: '参与人数', type: 'number' },
+      { name: 'participants', label: '参与人数', type: 'number', hidden: true },
       { name: 'reward', label: '奖励', type: 'text' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
@@ -2307,7 +2308,7 @@ export const MODULES: ModuleConfig[] = [
     fields: [
       { name: 'name', label: '活动名称', type: 'text', required: true },
       { name: 'prize', label: '奖品', type: 'text' },
-      { name: 'participants', label: '参与人数', type: 'number' },
+      { name: 'participants', label: '参与人数', type: 'number', hidden: true },
       { name: 'drawTime', label: '开奖时间', type: 'date' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
@@ -2571,15 +2572,15 @@ export const MODULES: ModuleConfig[] = [
     ],
     fields: [
       { name: 'name', label: '任务名称', type: 'text', required: true },
-      { name: 'modelId', label: '关联模型', type: 'text' },
+      { name: 'modelId', label: '关联模型', type: 'select', source: { path: 'member/marketing-models', labelField: 'name', valueField: 'name' } },
       { name: 'channel', label: '渠道', type: 'select', options: [
         { label: '短信', value: 'sms' }, { label: '微信', value: 'wechat' }, { label: '订阅消息', value: 'subscribe' }
       ] },
-      { name: 'template', label: '消息模板', type: 'select', source: { path: 'coupon/templates', labelField: 'name', valueField: 'name' } },
+      { name: 'template', label: '消息模板', type: 'select', source: { path: 'message/templates', labelField: 'name', valueField: 'name' } },
       { name: 'sendTime', label: '发送时间', type: 'date' },
       { name: 'targetCount', label: '目标人数', type: 'number' },
-      { name: 'sentCount', label: '已发送', type: 'number' },
-      { name: 'readCount', label: '已读', type: 'number' },
+      { name: 'sentCount', label: '已发送', type: 'number', hidden: true },
+      { name: 'readCount', label: '已读', type: 'number', hidden: true },
       { name: 'status', label: '状态', type: 'select', options: [
         { label: '草稿', value: 'draft' }, { label: '进行中', value: 'running' },
         { label: '已完成', value: 'finished' }, { label: '已暂停', value: 'paused' }
@@ -2796,7 +2797,7 @@ export const MODULES: ModuleConfig[] = [
       { name: 'project', label: '项目', type: 'select', source: { path: 'system/projects', labelField: 'name', valueField: 'name' } },
       { name: 'merchant', label: '商户', type: 'text' },
       { name: 'period', label: '结算周期', type: 'text' },
-      { name: 'totalPoints', label: '总积分', type: 'number' },
+      { name: 'totalPoints', label: '总积分', type: 'number', hidden: true },
       { name: 'settleAmount', label: '结算金额', type: 'number' },
       { name: 'status', label: '状态', type: 'select', options: [
         { label: '未结算', value: 'unsettled' }, { label: '已结算', value: 'settled' }, { label: '已作废', value: 'void' }
@@ -2886,7 +2887,7 @@ export const MODULES: ModuleConfig[] = [
       { name: 'sellPrice', label: '售价', type: 'number' },
       { name: 'pointsPrice', label: '积分价', type: 'number' },
       { name: 'quantity', label: '发行总量', type: 'number' },
-      { name: 'sold', label: '已售', type: 'number' },
+      { name: 'sold', label: '已售', type: 'number', hidden: true },
       { name: 'validDays', label: '有效期(天)', type: 'number' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
@@ -2973,8 +2974,8 @@ export const MODULES: ModuleConfig[] = [
       { name: 'finalAmount', label: '尾款', type: 'number' },
       { name: 'depositStartTime', label: '定金开始时间', type: 'date' },
       { name: 'finalPayTime', label: '尾款支付时间', type: 'date' },
-      { name: 'stock', label: '库存', type: 'number' },
-      { name: 'sold', label: '已售', type: 'number' },
+      { name: 'stock', label: '库存', type: 'number', hidden: true },
+      { name: 'sold', label: '已售', type: 'number', hidden: true },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
     doc: {
@@ -3031,7 +3032,7 @@ export const MODULES: ModuleConfig[] = [
       { name: 'merchant', label: '商户', type: 'text', required: true },
       { name: 'reportDate', label: '上报日期', type: 'date' },
       { name: 'amount', label: '销售金额', type: 'number' },
-      { name: 'orderCount', label: '订单数', type: 'number' },
+      { name: 'orderCount', label: '订单数', type: 'number', hidden: true },
       { name: 'points', label: '产生积分', type: 'number' },
       { name: 'reporter', label: '上报人', type: 'text' },
       { name: 'status', label: '状态', type: 'select', options: [
@@ -3101,7 +3102,7 @@ export const MODULES: ModuleConfig[] = [
       { name: 'answer', label: '标准回答', type: 'textarea', required: true },
       { name: 'similarQuestions', label: '相似问法', type: 'textarea' },
       { name: 'keywords', label: '关键词', type: 'text' },
-      { name: 'usedCount', label: '使用次数', type: 'number' },
+      { name: 'usedCount', label: '使用次数', type: 'number', hidden: true },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
     doc: {
@@ -3334,7 +3335,7 @@ export const MODULES: ModuleConfig[] = [
       { name: 'coverImage', label: '封面图片', type: 'text' },
       { name: 'content', label: '资讯内容', type: 'textarea', required: true },
       { name: 'publishTime', label: '发布时间', type: 'date' },
-      { name: 'readCount', label: '阅读量', type: 'number' },
+      { name: 'readCount', label: '阅读量', type: 'number', hidden: true },
       { name: 'status', label: '状态', type: 'select', options: [
         { label: '草稿', value: 'draft' }, { label: '已发布', value: 'published' }, { label: '已下线', value: 'offline' }
       ] }
@@ -3366,7 +3367,7 @@ export const MODULES: ModuleConfig[] = [
       { name: 'image', label: '海报图片', type: 'text', required: true },
       { name: 'activity', label: '关联活动', type: 'select', source: { path: 'marketing/campaigns', labelField: 'name', valueField: 'name' } },
       { name: 'createTime', label: '创建时间', type: 'date' },
-      { name: 'usedCount', label: '使用次数', type: 'number' },
+      { name: 'usedCount', label: '使用次数', type: 'number', hidden: true },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
     doc: {
@@ -3394,7 +3395,7 @@ export const MODULES: ModuleConfig[] = [
       ] },
       { name: 'target', label: '关联内容', type: 'text' },
       { name: 'weight', label: '排序权重', type: 'number' },
-      { name: 'clickCount', label: '点击次数', type: 'number' },
+      { name: 'clickCount', label: '点击次数', type: 'number', hidden: true },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
     doc: {
@@ -3460,7 +3461,7 @@ export const MODULES: ModuleConfig[] = [
       { name: 'contactPhone', label: '联系电话', type: 'text' },
       { name: 'adminName', label: '项目管理员', type: 'text' },
       { name: 'adminAccount', label: '管理员账号', type: 'text' },
-      { name: 'memberCount', label: '当前会员数', type: 'number' },
+      { name: 'memberCount', label: '当前会员数', type: 'number', hidden: true },
       { name: 'maxMembers', label: '会员上限', type: 'number' },
       { name: 'dataIsolation', label: '数据隔离', type: 'select', options: [
         { label: '已启用', value: 'enabled' }, { label: '未启用', value: 'disabled' }

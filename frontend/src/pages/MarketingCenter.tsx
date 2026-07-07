@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Card, Row, Col, Statistic, Input, Select, Button, Badge, Drawer, Modal,
   Form, InputNumber, DatePicker, Space, Popconfirm, message, Tag, Empty, Spin,
@@ -284,9 +285,40 @@ function getTimeRange(item: ActivityItem): string {
 
 // ======================== 主组件 ========================
 
+const URL_KEY_TO_MODULE: Record<string, string> = {
+  'marketing-campaigns': 'campaigns',
+  'marketing-coupons': 'coupons',
+  'marketing-groupbuy': 'groupbuy',
+  'marketing-seckill': 'seckill',
+  'activity-signups': 'signups',
+  'checkin-activities': 'checkin',
+  'referral-gifts': 'referral',
+  'new-member-gifts': 'new-member',
+  'help-coupons': 'checkin-coupon',
+  'word-coupons': 'word-coupon',
+  'games': 'games',
+  'surveys': 'surveys',
+  'votes': 'votes',
+  'countdown-sales': 'countdown',
+  'pre-sales': 'pre-sale',
+  'bargain': 'bargain',
+  'lucky-draws': 'lucky-draw',
+  'blind-boxes': 'blind-box',
+  'count-cards': 'count-cards',
+  'checkin-coupons': 'checkin-coupon',
+};
+
 export default function MarketingCenter() {
-  const [activeGroup, setActiveGroup] = useState<ActivityGroup | 'all'>('all');
-  const [activeModule, setActiveModule] = useState<string | 'all'>('all');
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const urlKey = location.pathname.split('/m/')[1] || '';
+  const targetModule = URL_KEY_TO_MODULE[urlKey] || 'campaigns';
+
+  const initialGroup = useMemo(() => getGroupOfModule(targetModule), [targetModule]);
+
+  const [activeGroup, setActiveGroup] = useState<ActivityGroup | 'all'>(initialGroup);
+  const [activeModule, setActiveModule] = useState<string | 'all'>(targetModule);
   const [loading, setLoading] = useState(false);
   const [dataMap, setDataMap] = useState<Record<string, ActivityItem[]>>({});
   const [searchKeyword, setSearchKeyword] = useState('');
@@ -329,6 +361,16 @@ export default function MarketingCenter() {
   }, [activeGroup, activeModule, searchKeyword]);
 
   useEffect(() => { loadAll(); }, [loadAll]);
+
+  useEffect(() => {
+    const key = location.pathname.split('/m/')[1] || '';
+    const mod = URL_KEY_TO_MODULE[key];
+    if (mod) {
+      const g = getGroupOfModule(mod);
+      setActiveGroup(g);
+      setActiveModule(mod);
+    }
+  }, [location.pathname]);
 
   // ---------- 统计 ----------
   const allItems = Object.values(dataMap).flat();
