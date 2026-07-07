@@ -38,6 +38,7 @@ export default function ShopHomeConfig() {
   const [selectedConfig, setSelectedConfig] = useState<HomeConfig | null>(null);
   const [components, setComponents] = useState<ComponentItem[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
+  const [isEditingConfig, setIsEditingConfig] = useState(false);
   const [componentModalOpen, setComponentModalOpen] = useState(false);
   const [editingComponent, setEditingComponent] = useState<ComponentItem | null>(null);
   const [form] = Form.useForm();
@@ -65,24 +66,41 @@ export default function ShopHomeConfig() {
   const handleAddConfig = () => {
     form.resetFields();
     form.setFieldsValue({ status: 'enabled', pageType: 'home' });
+    setSelectedConfig(null);
+    setComponents([]);
+    setIsEditingConfig(false);
     setModalOpen(true);
   };
 
   const handleSubmitConfig = async () => {
     const values = await form.validateFields();
-    values.components = JSON.stringify(components);
-    if (selectedConfig) {
+    if (isEditingConfig && selectedConfig) {
+      values.components = JSON.stringify(components);
       await updateItemData('shop/home-config', selectedConfig.id, values);
-      setConfigs(configs.map(c => c.id === selectedConfig.id ? { ...c, ...values } : c));
+      setConfigs(prev => prev.map(c => c.id === selectedConfig.id ? { ...c, ...values } : c));
       setSelectedConfig({ ...selectedConfig, ...values });
+      setModalOpen(false);
+      message.success('编辑成功');
     } else {
-      await createItemData('shop/home-config', values);
-      fetchListData('shop/home-config').then((res: any) => {
-        setConfigs(res.list || []);
-      });
+      values.components = '[]';
+      const created = await createItemData('shop/home-config', values);
+      const newConfig: HomeConfig = { ...created, components: '[]' } as HomeConfig;
+      setConfigs(prev => [...prev, newConfig]);
+      setSelectedConfig(newConfig);
+      setComponents([]);
+      setModalOpen(false);
+      message.success('新增成功');
     }
-    setModalOpen(false);
-    message.success(selectedConfig ? '编辑成功' : '新增成功');
+  };
+
+  const handleDeleteConfig = async (id: number) => {
+    await deleteItemData('shop/home-config', id);
+    setConfigs(prev => prev.filter(c => c.id !== id));
+    if (selectedConfig?.id === id) {
+      setSelectedConfig(null);
+      setComponents([]);
+    }
+    message.success('删除成功');
   };
 
   const handleAddComponent = (type: string) => {
@@ -169,29 +187,32 @@ export default function ShopHomeConfig() {
   const handleSaveComponent = async () => {
     if (!editingComponent) return;
     const values = await componentForm.validateFields();
-    const index = components.findIndex(c => c.id === editingComponent.id);
-    if (index !== -1) {
-      const newComponents = [...components];
-      newComponents[index] = { ...newComponents[index], config: values };
-      setComponents(newComponents);
-    }
+    setComponents(prev => {
+      const idx = prev.findIndex(c => c.id === editingComponent.id);
+      if (idx === -1) return prev;
+      const next = [...prev];
+      next[idx] = { ...next[idx], config: values };
+      return next;
+    });
     setComponentModalOpen(false);
     message.success('保存成功');
   };
 
   const handleDeleteComponent = (id: string) => {
-    setComponents(components.filter(c => c.id !== id));
+    setComponents(prev => prev.filter(c => c.id !== id));
     message.success('删除成功');
   };
 
   const moveComponent = (index: number, direction: 'up' | 'down') => {
-    const newComponents = [...components];
-    if (direction === 'up' && index > 0) {
-      [newComponents[index], newComponents[index - 1]] = [newComponents[index - 1], newComponents[index]];
-    } else if (direction === 'down' && index < newComponents.length - 1) {
-      [newComponents[index], newComponents[index + 1]] = [newComponents[index + 1], newComponents[index]];
-    }
-    setComponents(newComponents.map((c, i) => ({ ...c, sort: i + 1 })));
+    setComponents(prev => {
+      const next = [...prev];
+      if (direction === 'up' && index > 0) {
+        [next[index], next[index - 1]] = [next[index - 1], next[index]];
+      } else if (direction === 'down' && index < next.length - 1) {
+        [next[index], next[index + 1]] = [next[index + 1], next[index]];
+      }
+      return next.map((c, i) => ({ ...c, sort: i + 1 }));
+    });
   };
 
   const renderComponentPreview = (comp: ComponentItem) => {
@@ -331,6 +352,10 @@ export default function ShopHomeConfig() {
                   <div style={{ fontWeight: '600' }}>{config.name}</div>
                   <div style={{ fontSize: '12px', color: '#6B7280' }}>{config.pageType === 'home' ? '首页' : config.pageType}</div>
                   <div style={{ fontSize: '12px', color: config.status === 'enabled' ? '#10B981' : '#9CA3AF' }}>{config.status === 'enabled' ? '已启用' : '未启用'}</div>
+                  <Space style={{ marginTop: 4 }}>
+                    <Button size="small" icon={<EditOutlined />} onClick={(e) => { e.stopPropagation(); selectConfig(config); form.setFieldsValue(config); setIsEditingConfig(true); setModalOpen(true); }}>编辑</Button>
+                    <Button size="small" danger icon={<DeleteOutlined />} onClick={(e) => { e.stopPropagation(); handleDeleteConfig(config.id); }}>删除</Button>
+                  </Space>
                 </div>
               ))}
             </div>
@@ -395,7 +420,7 @@ export default function ShopHomeConfig() {
       </Row>
 
       <Modal
-        title={selectedConfig ? '编辑页面配置' : '新增页面配置'}
+        title={isEditingConfig ? '编辑页面配置' : '新增页面配置'}
         open={modalOpen}
         onOk={handleSubmitConfig}
         onCancel={() => setModalOpen(false)}

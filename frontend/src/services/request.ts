@@ -29,7 +29,7 @@ export async function updateItemData(module: string, id: number, body: Record<st
 }
 
 export async function deleteItemData(module: string, id: number) {
-  deleteItem(module, id);
+  return deleteItem(module, id);
 }
 
 export async function toggleStatusData(module: string, id: number) {

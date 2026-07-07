@@ -1508,8 +1508,8 @@ export const MODULES: ModuleConfig[] = [
       { title: '被推荐人奖励', dataIndex: 'inviteeReward' }
     ],
     fields: [
-      { name: 'referrer', label: '推荐人', type: 'text', required: true },
-      { name: 'invitee', label: '被推荐人', type: 'text', required: true },
+      { name: 'referrer', label: '推荐人', type: 'select', required: true, source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
+      { name: 'invitee', label: '被推荐人', type: 'select', required: true, source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
       { name: 'time', label: '推荐时间', type: 'date' },
       { name: 'channel', label: '推荐渠道', type: 'select', options: [
         { label: '分享', value: 'share' }, { label: '二维码', value: 'qr' }, { label: '链接', value: 'link' }
@@ -1517,8 +1517,8 @@ export const MODULES: ModuleConfig[] = [
       { name: 'rewardStatus', label: '奖励状态', type: 'select', options: [
         { label: '待发放', value: 'pending' }, { label: '已发放', value: 'done' }
       ] },
-      { name: 'referrerReward', label: '推荐人奖励', type: 'text' },
-      { name: 'inviteeReward', label: '被推荐人奖励', type: 'text' }
+      { name: 'referrerReward', label: '推荐人奖励', type: 'select', source: { path: 'marketing/prizes', labelField: 'name', valueField: 'name' } },
+      { name: 'inviteeReward', label: '被推荐人奖励', type: 'select', source: { path: 'marketing/prizes', labelField: 'name', valueField: 'name' } }
     ],
     doc: {
       overview: '会员推荐关系是社交裂变获客的核心数据模块，记录推荐人与被推荐人的关系链，追踪推荐渠道和奖励发放情况。是老带新、口碑营销的重要数据支撑，可有效降低获客成本。',
