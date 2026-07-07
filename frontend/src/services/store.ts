@@ -14,26 +14,31 @@ function initModule(name: string, fields: string[], seedData: any[] = []) {
   modules[name] = { fields, data, nextId: data.length + 1 };
 }
 
-initModule('member/level', ['name', 'code', 'minPoints', 'discount', 'status'], [
-  { name: '普通会员', code: 'NORMAL', minPoints: 0, discount: 1, status: 'enabled' },
-  { name: '银卡会员', code: 'SILVER', minPoints: 1000, discount: 0.95, status: 'enabled' },
-  { name: '金卡会员', code: 'GOLD', minPoints: 5000, discount: 0.9, status: 'enabled' },
-  { name: '钻石会员', code: 'DIAMOND', minPoints: 20000, discount: 0.85, status: 'enabled' }
+initModule('member/level', ['name', 'code', 'icon', 'upgradeType', 'minPoints', 'keepCondition', 'downgradeRule', 'validDays', 'discount', 'upgradeGift', 'status'], [
+  { name: '普通会员', code: 'NORMAL', icon: '🥉', upgradeType: 'points', minPoints: 0, keepCondition: '无', downgradeRule: 'none', validDays: 0, discount: 1, upgradeGift: '新人券', status: 'enabled' },
+  { name: '银卡会员', code: 'SILVER', icon: '🥈', upgradeType: 'points', minPoints: 1000, keepCondition: '年消费满1000元', downgradeRule: 'auto', validDays: 365, discount: 0.95, upgradeGift: '银卡礼包', status: 'enabled' },
+  { name: '金卡会员', code: 'GOLD', icon: '🥇', upgradeType: 'growth', minPoints: 5000, keepCondition: '年消费满5000元', downgradeRule: 'auto', validDays: 365, discount: 0.9, upgradeGift: '金卡礼包', status: 'enabled' },
+  { name: '钻石会员', code: 'DIAMOND', icon: '💎', upgradeType: 'spent', minPoints: 20000, keepCondition: '年消费满20000元', downgradeRule: 'manual', validDays: 730, discount: 0.85, upgradeGift: '钻石礼包', status: 'enabled' }
 ]);
 
-initModule('member/list', ['name', 'phone', 'level', 'points', 'status'], [
-  { name: '张三', phone: '13800138001', level: 'GOLD', points: 6200, status: 'enabled' },
-  { name: '李四', phone: '13900139002', level: 'SILVER', points: 1500, status: 'enabled' },
-  { name: '王五', phone: '13700137003', level: 'NORMAL', points: 500, status: 'enabled' }
+initModule('member/list', ['name', 'phone', 'wxNickname', 'avatar', 'openid', 'cardNo', 'gender', 'birthday', 'age', 'address', 'occupation', 'hobby', 'email', 'level', 'growthValue', 'points', 'balance', 'totalSpent', 'orderCount', 'avgAmount', 'source', 'registerTime', 'lastLogin', 'lastConsume', 'remark', 'status'], [
+  { name: '张三', phone: '13800138001', wxNickname: '张三的微信', avatar: '', openid: 'oX123456789', cardNo: 'VIP20240001', gender: 'male', birthday: '1990-01-01', age: 34, address: '北京市朝阳区', occupation: '工程师', hobby: '旅游', email: 'zhangsan@example.com', level: 'GOLD', growthValue: 6200, points: 6200, balance: 500, totalSpent: 12000, orderCount: 24, avgAmount: 500, source: 'miniapp', registerTime: '2023-01-15', lastLogin: '2024-06-05', lastConsume: '2024-06-01', remark: '高价值会员', status: 'enabled' },
+  { name: '李四', phone: '13900139002', wxNickname: '李四', avatar: '', openid: 'oX987654321', cardNo: 'VIP20240002', gender: 'female', birthday: '1992-05-20', age: 32, address: '上海市浦东新区', occupation: '设计师', hobby: '购物', email: 'lisi@example.com', level: 'SILVER', growthValue: 1500, points: 1500, balance: 100, totalSpent: 3000, orderCount: 8, avgAmount: 375, source: 'wxapp', registerTime: '2023-05-10', lastLogin: '2024-06-04', lastConsume: '2024-05-28', remark: '', status: 'enabled' },
+  { name: '王五', phone: '13700137003', wxNickname: '王五同学', avatar: '', openid: 'oX555555555', cardNo: 'VIP20240003', gender: 'male', birthday: '1995-09-15', age: 28, address: '广州市天河区', occupation: '学生', hobby: '游戏', email: 'wangwu@example.com', level: 'NORMAL', growthValue: 500, points: 500, balance: 0, totalSpent: 800, orderCount: 3, avgAmount: 267, source: 'activity', registerTime: '2023-11-20', lastLogin: '2024-06-03', lastConsume: '2024-05-20', remark: '新会员', status: 'enabled' }
 ]);
 
-initModule('member/tags', ['name', 'category', 'rule', 'count', 'status'], [
-  { name: '高消费客户', category: '消费', rule: '消费金额>5000', count: 120, status: 'enabled' },
-  { name: '活跃会员', category: '活跃', rule: '30天内有消费', count: 580, status: 'enabled' }
+initModule('member/tags', ['name', 'tagType', 'category', 'rule', 'condition', 'color', 'count', 'updatedAt', 'status'], [
+  { name: '高消费客户', tagType: 'auto', category: '消费', rule: '消费金额>5000', condition: '累计消费金额大于5000元，自动打标', color: '#FF5722', count: 120, updatedAt: '2024-06-01', status: 'enabled' },
+  { name: '活跃会员', tagType: 'auto', category: '活跃', rule: '30天内有消费', condition: '近30天内有任意一笔消费记录', color: '#4CAF50', count: 580, updatedAt: '2024-06-02', status: 'enabled' },
+  { name: '流失预警', tagType: 'system', category: '活跃', rule: '90天未消费', condition: '近90天无消费记录的会员', color: '#F44336', count: 86, updatedAt: '2024-06-03', status: 'enabled' },
+  { name: 'VIP手工标记', tagType: 'manual', category: '属性', rule: '人工标记', condition: '运营人员手工添加的VIP标记', color: '#9C27B0', count: 15, updatedAt: '2024-06-04', status: 'enabled' }
 ]);
 
-initModule('member/benefits', ['name', 'levels', 'type', 'value', 'status'], [
-  { name: '金卡免费停车2小时', levels: 'GOLD,DIAMOND', type: 'parking', value: '2小时', status: 'enabled' }
+initModule('member/benefits', ['name', 'levels', 'type', 'value', 'shops', 'validDays', 'description', 'status'], [
+  { name: '金卡免费停车2小时', levels: 'GOLD,DIAMOND', type: 'parking', value: '2小时', shops: '全部门店', validDays: 365, description: '金卡及以上会员每日免费停车2小时', status: 'enabled' },
+  { name: '生日双倍积分', levels: 'NORMAL,SILVER,GOLD,DIAMOND', type: 'birthday', value: '2倍', shops: '全部门店', validDays: 30, description: '生日当月消费享双倍积分', status: 'enabled' },
+  { name: '钻石专属客服', levels: 'DIAMOND', type: 'service', value: '专属客服', shops: '全部门店', validDays: 730, description: '钻石会员专属客服一对一服务', status: 'enabled' },
+  { name: '金卡专属优惠券', levels: 'GOLD,DIAMOND', type: 'coupon', value: '满200减50', shops: '总店,分店A', validDays: 60, description: '每月发放专属优惠券', status: 'enabled' }
 ]);
 
 initModule('member/profiles', ['member', 'tags', 'consumeTag', 'brandTag', 'pointsTag', 'lastActive'], [
@@ -42,6 +47,37 @@ initModule('member/profiles', ['member', 'tags', 'consumeTag', 'brandTag', 'poin
 
 initModule('member/tag-relations', ['member', 'tag', 'source', 'time'], [
   { member: '张三', tag: '高消费客户', source: 'auto', time: '2024-06-01' }
+]);
+
+initModule('member/groups', ['name', 'type', 'condition', 'count', 'remark', 'status'], [
+  { name: '高价值会员', type: 'smart', condition: '消费总额>5000且订单数>10', count: 86, remark: '用于精准营销推送', status: 'enabled' },
+  { name: '待唤醒会员', type: 'smart', condition: '90天未消费且等级>=SILVER', count: 42, remark: '发送唤醒优惠券', status: 'enabled' },
+  { name: '试用新品名单', type: 'custom', condition: '手工选择', count: 20, remark: '新品试用活动名单', status: 'enabled' }
+]);
+
+initModule('member/cards', ['cardNo', 'member', 'cardType', 'cardStyle', 'balance', 'points', 'status', 'issueTime', 'validUntil'], [
+  { cardNo: 'VIP20240001', member: '张三', cardType: 'entity', cardStyle: '金卡样式', balance: 500, points: 6200, status: 'normal', issueTime: '2023-01-15', validUntil: '2026-01-15' },
+  { cardNo: 'VIP20240002', member: '李四', cardType: 'electronic', cardStyle: '银卡样式', balance: 100, points: 1500, status: 'normal', issueTime: '2023-05-10', validUntil: '2026-05-10' },
+  { cardNo: 'VIP20240003', member: '王五', cardType: 'virtual', cardStyle: '普通样式', balance: 0, points: 500, status: 'normal', issueTime: '2023-11-20', validUntil: '2026-11-20' },
+  { cardNo: 'VIP20239999', member: '赵六', cardType: 'entity', cardStyle: '老版金卡', balance: 200, points: 3200, status: 'locked', issueTime: '2022-03-01', validUntil: '2025-03-01' }
+]);
+
+initModule('member/growth', ['member', 'currentValue', 'level', 'taskGrowth', 'spendGrowth', 'validUntil'], [
+  { member: '张三', currentValue: 6200, level: 'GOLD', taskGrowth: 1200, spendGrowth: 5000, validUntil: '2025-12-31' },
+  { member: '李四', currentValue: 1500, level: 'SILVER', taskGrowth: 300, spendGrowth: 1200, validUntil: '2025-12-31' },
+  { member: '王五', currentValue: 500, level: 'NORMAL', taskGrowth: 100, spendGrowth: 400, validUntil: '2025-12-31' }
+]);
+
+initModule('member/assets', ['member', 'balance', 'points', 'couponCount', 'benefitCount', 'totalValue'], [
+  { member: '张三', balance: 500, points: 6200, couponCount: 8, benefitCount: 3, totalValue: 1500 },
+  { member: '李四', balance: 100, points: 1500, couponCount: 3, benefitCount: 1, totalValue: 320 },
+  { member: '王五', balance: 0, points: 500, couponCount: 1, benefitCount: 0, totalValue: 50 }
+]);
+
+initModule('member/referrals', ['referrer', 'invitee', 'time', 'channel', 'rewardStatus', 'referrerReward', 'inviteeReward'], [
+  { referrer: '张三', invitee: '李四', time: '2023-05-10', channel: 'share', rewardStatus: 'done', referrerReward: '100积分', inviteeReward: '50积分' },
+  { referrer: '张三', invitee: '王五', time: '2023-11-20', channel: 'qr', rewardStatus: 'done', referrerReward: '100积分', inviteeReward: '50积分' },
+  { referrer: '李四', invitee: '赵六', time: '2024-03-15', channel: 'link', rewardStatus: 'pending', referrerReward: '100积分', inviteeReward: '50积分' }
 ]);
 
 initModule('points/rules', ['name', 'type', 'points', 'condition', 'status'], [
@@ -205,18 +241,23 @@ initModule('merchant/coupon-issue', ['merchant', 'template', 'member', 'count', 
   { merchant: '海底捞', template: '满200减30', member: '张三', count: 1, time: '2024-06-01' }
 ]);
 
-initModule('shop/goods', ['name', 'category', 'price', 'stock', 'sales', 'status'], [
-  { name: '纯棉T恤', category: '服装', price: 99, stock: 200, sales: 50, status: 'enabled' },
-  { name: '蓝牙耳机', category: '数码', price: 299, stock: 100, sales: 30, status: 'enabled' }
+initModule('shop/goods', ['name', 'spuCode', 'subtitle', 'mainImage', 'detailImages', 'category', 'specs', 'skuInfo', 'price', 'originalPrice', 'costPrice', 'stock', 'sales', 'tags', 'group', 'isVirtual', 'limitBuy', 'minBuy', 'weight', 'volume', 'views', 'favorites', 'sellingPoint', 'sort', 'status'], [
+  { name: '纯棉T恤', spuCode: 'SPU20240001', subtitle: '夏季纯棉透气T恤', mainImage: 'https://example.com/tshirt.jpg', detailImages: 'https://example.com/detail1.jpg', category: '服装', specs: '颜色:白色,黑色;尺寸:S,M,L', skuInfo: '白色/S:100;白色/M:50', price: 99, originalPrice: 129, costPrice: 40, stock: 200, sales: 50, tags: '新品,热销', group: '夏季新品', isVirtual: 'no', limitBuy: 5, minBuy: 1, weight: 0.3, volume: 0.01, views: 1200, favorites: 86, sellingPoint: '100%纯棉透气舒适', sort: 1, status: 'enabled' },
+  { name: '蓝牙耳机', spuCode: 'SPU20240002', subtitle: '无线降噪蓝牙耳机', mainImage: 'https://example.com/earphone.jpg', detailImages: 'https://example.com/detail2.jpg', category: '数码', specs: '颜色:白色,黑色', skuInfo: '白色:60;黑色:40', price: 299, originalPrice: 399, costPrice: 120, stock: 100, sales: 30, tags: '数码,降噪', group: '数码热卖', isVirtual: 'no', limitBuy: 2, minBuy: 1, weight: 0.2, volume: 0.005, views: 2300, favorites: 152, sellingPoint: '主动降噪长续航', sort: 2, status: 'enabled' },
+  { name: '视频会员月卡', spuCode: 'SPU20240003', subtitle: '视频网站月度会员', mainImage: 'https://example.com/vip.jpg', detailImages: '', category: '虚拟商品', specs: '', skuInfo: '默认', price: 25, originalPrice: 30, costPrice: 15, stock: 9999, sales: 120, tags: '虚拟', group: '虚拟商品', isVirtual: 'yes', limitBuy: 1, minBuy: 1, weight: 0, volume: 0, views: 580, favorites: 30, sellingPoint: '自动发货即时开通', sort: 3, status: 'enabled' }
 ]);
 
-initModule('shop/orders', ['orderNo', 'member', 'goods', 'amount', 'status', 'time'], [
-  { orderNo: 'O20240601001', member: '张三', goods: '纯棉T恤', amount: 99, status: 'paid', time: '2024-06-01' }
+initModule('shop/orders', ['orderNo', 'member', 'goods', 'quantity', 'items', 'amount', 'freight', 'actualAmount', 'receiverName', 'receiverPhone', 'receiverAddress', 'logisticsCompany', 'logisticsNo', 'payMethod', 'payTime', 'shipTime', 'doneTime', 'remark', 'tags', 'source', 'afterSaleStatus', 'status', 'time'], [
+  { orderNo: 'O20240601001', member: '张三', goods: '纯棉T恤', quantity: 1, items: '纯棉T恤 x1', amount: 99, freight: 0, actualAmount: 99, receiverName: '张三', receiverPhone: '13800138001', receiverAddress: '北京市朝阳区xx路xx号', logisticsCompany: '顺丰', logisticsNo: 'SF1234567890', payMethod: 'wechat', payTime: '2024-06-01 10:05', shipTime: '2024-06-01 15:00', doneTime: '2024-06-03 12:00', remark: '', tags: '正常订单', source: 'miniapp', afterSaleStatus: 'none', status: 'done', time: '2024-06-01 10:00' },
+  { orderNo: 'O20240601002', member: '李四', goods: '蓝牙耳机', quantity: 1, items: '蓝牙耳机 x1', amount: 299, freight: 10, actualAmount: 309, receiverName: '李四', receiverPhone: '13900139002', receiverAddress: '上海市浦东新区xx路xx号', logisticsCompany: '中通', logisticsNo: 'ZT9876543210', payMethod: 'alipay', payTime: '2024-06-01 11:00', shipTime: '2024-06-02 09:00', doneTime: '', remark: '请尽快发货', tags: 'VIP客户', source: 'wxapp', afterSaleStatus: 'none', status: 'shipped', time: '2024-06-01 10:55' },
+  { orderNo: 'O20240601003', member: '王五', goods: '视频会员月卡', quantity: 1, items: '视频会员月卡 x1', amount: 25, freight: 0, actualAmount: 25, receiverName: '王五', receiverPhone: '13700137003', receiverAddress: '', logisticsCompany: '', logisticsNo: '', payMethod: 'balance', payTime: '2024-06-01 12:00', shipTime: '', doneTime: '2024-06-01 12:00', remark: '虚拟商品自动发货', tags: '虚拟', source: 'miniapp', afterSaleStatus: 'none', status: 'done', time: '2024-06-01 11:55' }
 ]);
 
-initModule('shop/categories', ['name', 'sort', 'status'], [
-  { name: '服装', sort: 1, status: 'enabled' },
-  { name: '数码', sort: 2, status: 'enabled' }
+initModule('shop/categories', ['name', 'parentId', 'icon', 'image', 'description', 'showInNav', 'sort', 'status'], [
+  { name: '服装', parentId: 0, icon: '👕', image: 'https://example.com/cat-clothing.png', description: '各类服装商品', showInNav: 'yes', sort: 1, status: 'enabled' },
+  { name: '数码', parentId: 0, icon: '📱', image: 'https://example.com/cat-digital.png', description: '数码电子产品', showInNav: 'yes', sort: 2, status: 'enabled' },
+  { name: '男装', parentId: 1, icon: '👨', image: 'https://example.com/cat-men.png', description: '男士服装', showInNav: 'no', sort: 1, status: 'enabled' },
+  { name: '女装', parentId: 1, icon: '👩', image: 'https://example.com/cat-women.png', description: '女士服装', showInNav: 'no', sort: 2, status: 'enabled' }
 ]);
 
 initModule('shop/home-config', ['name', 'pageType', 'components', 'sort', 'status'], [
@@ -233,6 +274,48 @@ initModule('shop/brands', ['name', 'logo', 'category', 'phone', 'status'], [
 
 initModule('shop/returns', ['returnNo', 'orderNo', 'member', 'amount', 'status', 'time'], [
   { returnNo: 'R20240601001', orderNo: 'O20240601001', member: '张三', amount: 99, status: 'pending', time: '2024-06-02' }
+]);
+
+initModule('shop/specs', ['name', 'values', 'sort', 'status'], [
+  { name: '颜色', values: '红色,蓝色,白色,黑色', sort: 1, status: 'enabled' },
+  { name: '尺寸', values: 'S,M,L,XL,XXL', sort: 2, status: 'enabled' },
+  { name: '版本', values: '标准版,豪华版,尊享版', sort: 3, status: 'enabled' }
+]);
+
+initModule('shop/reviews', ['goods', 'member', 'score', 'content', 'images', 'reply', 'type', 'anonymous', 'status'], [
+  { goods: '纯棉T恤', member: '张三', score: 5, content: '质量很好，面料舒服，会回购！', images: 'https://example.com/r1.jpg', reply: '感谢支持！', type: 'good', anonymous: 'no', status: 'published' },
+  { goods: '蓝牙耳机', member: '李四', score: 4, content: '音质不错，降噪效果好，但续航一般。', images: '', reply: '', type: 'good', anonymous: 'no', status: 'published' },
+  { goods: '纯棉T恤', member: '王五', score: 2, content: '尺码偏小，颜色与图片有色差。', images: 'https://example.com/r2.jpg', reply: '已联系客服处理', type: 'bad', anonymous: 'yes', status: 'pending' }
+]);
+
+initModule('shop/shipping-templates', ['name', 'chargeType', 'firstNum', 'firstPrice', 'addNum', 'addPrice', 'freeCondition', 'status'], [
+  { name: '标准运费模板', chargeType: 'piece', firstNum: 1, firstPrice: 8, addNum: 1, addPrice: 2, freeCondition: '满99包邮', status: 'enabled' },
+  { name: '按重计费模板', chargeType: 'weight', firstNum: 1, firstPrice: 10, addNum: 1, addPrice: 3, freeCondition: '满199包邮', status: 'enabled' },
+  { name: '大件物流模板', chargeType: 'volume', firstNum: 1, firstPrice: 30, addNum: 1, addPrice: 10, freeCondition: '不包邮', status: 'enabled' }
+]);
+
+initModule('shop/addresses', ['member', 'receiver', 'phone', 'province', 'city', 'district', 'detail', 'isDefault', 'label'], [
+  { member: '张三', receiver: '张三', phone: '13800138001', province: '北京市', city: '北京市', district: '朝阳区', detail: '建国路88号SOHO现代城A座1001', isDefault: 'yes', label: '家' },
+  { member: '张三', receiver: '张三', phone: '13800138001', province: '北京市', city: '北京市', district: '海淀区', detail: '中关村大街1号', isDefault: 'no', label: '公司' },
+  { member: '李四', receiver: '李四', phone: '13900139002', province: '上海市', city: '上海市', district: '浦东新区', detail: '张江高科技园区博云路2号', isDefault: 'yes', label: '公司' }
+]);
+
+initModule('shop/delivery', ['name', 'type', 'description', 'fee', 'status'], [
+  { name: '快递配送', type: 'express', description: '全国快递配送，3-5天到达', fee: 8, status: 'enabled' },
+  { name: '门店自提', type: 'selfpick', description: '下单后到指定门店自提', fee: 0, status: 'enabled' },
+  { name: '同城配送', type: 'local', description: '同城2小时送达', fee: 15, status: 'enabled' }
+]);
+
+initModule('shop/groups', ['name', 'description', 'sort', 'status'], [
+  { name: '夏季新品', description: '夏季新品推荐分组', sort: 1, status: 'enabled' },
+  { name: '数码热卖', description: '数码热销商品分组', sort: 2, status: 'enabled' },
+  { name: '虚拟商品', description: '虚拟商品自动发货分组', sort: 3, status: 'enabled' }
+]);
+
+initModule('shop/aftersale', ['aftersaleNo', 'orderNo', 'member', 'goods', 'type', 'reason', 'amount', 'status', 'applyTime', 'processTime', 'handler', 'processRemark'], [
+  { aftersaleNo: 'AS20240601001', orderNo: 'O20240601001', member: '张三', goods: '纯棉T恤', type: 'return', reason: '尺码偏小，希望换大一号', amount: 99, status: 'approved', applyTime: '2024-06-03', processTime: '2024-06-04', handler: '客服小王', processRemark: '同意换货，已通知仓库发货' },
+  { aftersaleNo: 'AS20240601002', orderNo: 'O20240601002', member: '李四', goods: '蓝牙耳机', type: 'refund', reason: '收到商品有划痕', amount: 309, status: 'applying', applyTime: '2024-06-05', processTime: '', handler: '', processRemark: '' },
+  { aftersaleNo: 'AS20240601003', orderNo: 'O20240601003', member: '王五', goods: '视频会员月卡', type: 'refund', reason: '不需要了', amount: 25, status: 'refunded', applyTime: '2024-06-02', processTime: '2024-06-02', handler: '系统自动', processRemark: '虚拟商品自动退款' }
 ]);
 
 initModule('analytics/dashboards', ['name', 'type', 'config', 'status'], [

@@ -44,22 +44,34 @@ export const MODULES: ModuleConfig[] = [
       { title: 'ID', dataIndex: 'id', width: 60 },
       { title: '等级名称', dataIndex: 'name' },
       { title: '等级编码', dataIndex: 'code' },
-      { title: '升级所需积分', dataIndex: 'minPoints' },
+      { title: '升级条件类型', dataIndex: 'upgradeType', render: (v) => ({ points: '积分', spent: '消费金额', growth: '成长值' }[v] || v) },
+      { title: '升级所需值', dataIndex: 'minPoints' },
       { title: '折扣率', dataIndex: 'discount', render: (v) => (v != null ? v : '') },
+      { title: '等级有效期(天)', dataIndex: 'validDays' },
       { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') },
       { title: '创建时间', dataIndex: 'createdAt' }
     ],
     fields: [
       { name: 'name', label: '等级名称', type: 'text', required: true },
       { name: 'code', label: '等级编码', type: 'text', required: true },
-      { name: 'minPoints', label: '升级所需积分', type: 'number' },
+      { name: 'icon', label: '等级图标', type: 'text' },
+      { name: 'upgradeType', label: '升级条件类型', type: 'select', options: [
+        { label: '积分', value: 'points' }, { label: '消费金额', value: 'spent' }, { label: '成长值', value: 'growth' }
+      ] },
+      { name: 'minPoints', label: '升级所需值', type: 'number' },
+      { name: 'keepCondition', label: '保级要求', type: 'text' },
+      { name: 'downgradeRule', label: '降级规则', type: 'select', options: [
+        { label: '不降级', value: 'none' }, { label: '自动降级', value: 'auto' }, { label: '手动降级', value: 'manual' }
+      ] },
+      { name: 'validDays', label: '等级有效期(天)', type: 'number' },
       { name: 'discount', label: '折扣率(0-1)', type: 'number' },
+      { name: 'upgradeGift', label: '升级礼包', type: 'text' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
     doc: {
-      overview: '管理会员等级体系，配置不同等级的升级条件、折扣权益等。会员根据积分自动升级。',
-      features: ['新增/编辑/删除会员等级', '配置升级所需积分门槛', '配置等级专属折扣率', '启用/禁用等级'],
-      tips: ['等级编码不可重复', '折扣率范围0-1，如0.9表示9折']
+      overview: '管理会员等级体系，配置不同等级的升级条件（积分/消费/成长值）、降级规则、有效期、折扣权益等。会员根据条件自动升级。',
+      features: ['新增/编辑/删除会员等级', '配置升级条件类型（积分/消费/成长值）', '配置保级要求和降级规则', '设置等级有效期和升级礼包', '配置等级专属折扣率', '启用/禁用等级'],
+      tips: ['等级编码不可重复', '折扣率范围0-1，如0.9表示9折', '保级要求如"年消费满1000元"']
     }
   },
   {
@@ -68,13 +80,23 @@ export const MODULES: ModuleConfig[] = [
       { title: 'ID', dataIndex: 'id', width: 60 },
       { title: '姓名', dataIndex: 'name' },
       { title: '手机号', dataIndex: 'phone' },
+      { title: '会员卡号', dataIndex: 'cardNo' },
       { title: '会员等级', dataIndex: 'level', render: (v) => ({ NORMAL: '普通', SILVER: '银卡', GOLD: '金卡', DIAMOND: '钻石' }[v] || v) },
+      { title: '成长值', dataIndex: 'growthValue' },
       { title: '积分', dataIndex: 'points' },
+      { title: '储值余额', dataIndex: 'balance' },
+      { title: '消费总额', dataIndex: 'totalSpent' },
+      { title: '订单数', dataIndex: 'orderCount' },
+      { title: '注册来源', dataIndex: 'source', render: (v) => ({ miniapp: '小程序', wxapp: '微信', shop: '门店', activity: '活动' }[v] || v) },
       { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
     ],
     fields: [
       { name: 'name', label: '姓名', type: 'text', required: true },
       { name: 'phone', label: '手机号', type: 'text', required: true },
+      { name: 'wxNickname', label: '微信昵称', type: 'text' },
+      { name: 'avatar', label: '头像', type: 'text' },
+      { name: 'openid', label: 'OpenID', type: 'text' },
+      { name: 'cardNo', label: '会员卡号', type: 'text' },
       { name: 'gender', label: '性别', type: 'select', options: [
         { label: '男', value: 'male' }, { label: '女', value: 'female' }, { label: '保密', value: 'unknown' }
       ] },
@@ -88,13 +110,25 @@ export const MODULES: ModuleConfig[] = [
         { label: '普通会员', value: 'NORMAL' }, { label: '银卡会员', value: 'SILVER' },
         { label: '金卡会员', value: 'GOLD' }, { label: '钻石会员', value: 'DIAMOND' }
       ] },
+      { name: 'growthValue', label: '成长值', type: 'number' },
       { name: 'points', label: '积分', type: 'number' },
+      { name: 'balance', label: '储值余额', type: 'number' },
+      { name: 'totalSpent', label: '消费总额', type: 'number' },
+      { name: 'orderCount', label: '订单数', type: 'number' },
+      { name: 'avgAmount', label: '客单价', type: 'number' },
+      { name: 'source', label: '注册来源', type: 'select', options: [
+        { label: '小程序', value: 'miniapp' }, { label: '微信', value: 'wxapp' }, { label: '门店', value: 'shop' }, { label: '活动', value: 'activity' }
+      ] },
+      { name: 'registerTime', label: '注册时间', type: 'text' },
+      { name: 'lastLogin', label: '最近登录', type: 'text' },
+      { name: 'lastConsume', label: '最近消费', type: 'text' },
+      { name: 'remark', label: '备注', type: 'textarea' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
     doc: {
-      overview: '会员档案管理，记录会员基本信息、等级、积分、生日、地址、职业、爱好等，是会员营销和画像的基础数据。',
-      features: ['新增/编辑/删除会员', '完善会员资料', '查看会员积分余额', '管理会员等级', '启用/禁用会员'],
-      tips: ['手机号作为会员唯一标识', '删除会员不影响历史订单记录']
+      overview: '会员档案管理，记录会员基本信息、微信资料、会员卡号、成长值、储值余额、消费统计等，是会员营销和画像的基础数据。',
+      features: ['新增/编辑/删除会员', '完善会员资料（含微信资料）', '查看会员成长值、积分、储值余额', '消费统计（总额、订单数、客单价）', '注册来源追踪', '启用/禁用会员'],
+      tips: ['手机号作为会员唯一标识', '删除会员不影响历史订单记录', '成长值用于会员等级升级']
     }
   },
   {
@@ -102,24 +136,32 @@ export const MODULES: ModuleConfig[] = [
     columns: [
       { title: 'ID', dataIndex: 'id', width: 60 },
       { title: '标签名称', dataIndex: 'name' },
+      { title: '标签类型', dataIndex: 'tagType', render: (v) => ({ auto: '自动', manual: '手动', system: '系统' }[v] || v) },
       { title: '分类', dataIndex: 'category' },
       { title: '规则', dataIndex: 'rule' },
       { title: '覆盖人数', dataIndex: 'count' },
+      { title: '更新时间', dataIndex: 'updatedAt' },
       { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
     ],
     fields: [
       { name: 'name', label: '标签名称', type: 'text', required: true },
+      { name: 'tagType', label: '标签类型', type: 'select', options: [
+        { label: '自动', value: 'auto' }, { label: '手动', value: 'manual' }, { label: '系统', value: 'system' }
+      ] },
       { name: 'category', label: '分类', type: 'select', options: [
         { label: '消费', value: '消费' }, { label: '活跃', value: '活跃' }, { label: '属性', value: '属性' }
       ] },
       { name: 'rule', label: '规则', type: 'text' },
+      { name: 'condition', label: '触发条件', type: 'textarea' },
+      { name: 'color', label: '标签颜色', type: 'text' },
       { name: 'count', label: '覆盖人数', type: 'number' },
+      { name: 'updatedAt', label: '更新时间', type: 'text' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
     doc: {
-      overview: '会员标签管理，通过规则自动圈选会员群体，用于精准营销触达。',
-      features: ['新增/编辑/删除标签', '配置标签圈选规则', '查看标签覆盖人数'],
-      tips: ['标签用于营销活动的人群定向']
+      overview: '会员标签管理，支持自动/手动/系统标签，通过规则自动圈选会员群体，用于精准营销触达。',
+      features: ['新增/编辑/删除标签', '配置标签圈选规则和触发条件', '自动/手动/系统标签管理', '标签颜色配置', '查看标签覆盖人数'],
+      tips: ['标签用于营销活动的人群定向', '自动标签根据触发条件自动更新人群']
     }
   },
   // ===== 积分中心 =====
@@ -538,24 +580,50 @@ export const MODULES: ModuleConfig[] = [
     key: 'shop-goods', path: 'shop/goods', name: '商城商品', category: '在线商城',
     columns: [
       { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '商品图片', dataIndex: 'mainImage' },
       { title: '商品名称', dataIndex: 'name' },
+      { title: '商品编码', dataIndex: 'spuCode' },
       { title: '分类', dataIndex: 'category' },
       { title: '价格', dataIndex: 'price' },
+      { title: '原价', dataIndex: 'originalPrice' },
       { title: '库存', dataIndex: 'stock' },
       { title: '销量', dataIndex: 'sales' },
-      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '上架' : '下架') }
+      { title: '浏览量', dataIndex: 'views' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '上架' : '下架') },
+      { title: '排序', dataIndex: 'sort' }
     ],
     fields: [
       { name: 'name', label: '商品名称', type: 'text', required: true },
+      { name: 'spuCode', label: '商品编码', type: 'text' },
+      { name: 'subtitle', label: '副标题', type: 'text' },
+      { name: 'mainImage', label: '主图', type: 'text' },
+      { name: 'detailImages', label: '详情图', type: 'textarea' },
       { name: 'category', label: '分类', type: 'text' },
+      { name: 'specs', label: '商品规格', type: 'textarea', placeholder: '颜色:红色,蓝色;尺寸:S,M,L' },
+      { name: 'skuInfo', label: 'SKU信息', type: 'textarea' },
       { name: 'price', label: '价格', type: 'number' },
+      { name: 'originalPrice', label: '原价', type: 'number' },
+      { name: 'costPrice', label: '成本价', type: 'number' },
       { name: 'stock', label: '库存', type: 'number' },
       { name: 'sales', label: '销量', type: 'number' },
+      { name: 'tags', label: '商品标签', type: 'text' },
+      { name: 'group', label: '商品分组', type: 'text' },
+      { name: 'isVirtual', label: '虚拟商品', type: 'select', options: [
+        { label: '是', value: 'yes' }, { label: '否', value: 'no' }
+      ] },
+      { name: 'limitBuy', label: '限购数量', type: 'number' },
+      { name: 'minBuy', label: '起售数量', type: 'number' },
+      { name: 'weight', label: '重量', type: 'number' },
+      { name: 'volume', label: '体积', type: 'number' },
+      { name: 'views', label: '浏览量', type: 'number' },
+      { name: 'favorites', label: '收藏数', type: 'number' },
+      { name: 'sellingPoint', label: '卖点', type: 'text' },
+      { name: 'sort', label: '排序', type: 'number' },
       { name: 'status', label: '状态', type: 'select', options: [
         { label: '上架', value: 'enabled' }, { label: '下架', value: 'disabled' }
       ] }
     ],
-    doc: { overview: '在线商城商品管理，配置小程序商城展示的商品。', features: ['新增/编辑/删除商品', '上下架管理', '库存销量管理'] }
+    doc: { overview: '在线商城商品管理，配置小程序商城展示的商品，支持规格、SKU、价格、库存、虚拟商品等。', features: ['新增/编辑/删除商品', '上下架管理', '库存销量管理', '商品规格和SKU配置', '虚拟商品支持', '限购起售设置', '浏览收藏统计'] }
   },
   {
     key: 'shop-orders', path: 'shop/orders', name: '商城订单', category: '在线商城',
@@ -564,36 +632,76 @@ export const MODULES: ModuleConfig[] = [
       { title: '订单号', dataIndex: 'orderNo' },
       { title: '会员', dataIndex: 'member' },
       { title: '商品', dataIndex: 'goods' },
-      { title: '金额', dataIndex: 'amount' },
-      { title: '状态', dataIndex: 'status', render: (v) => ({ pending: '待付款', paid: '已付款', shipped: '已发货', done: '已完成' }[v] || v) },
-      { title: '时间', dataIndex: 'time' }
+      { title: '数量', dataIndex: 'quantity' },
+      { title: '实付金额', dataIndex: 'actualAmount' },
+      { title: '运费', dataIndex: 'freight' },
+      { title: '支付方式', dataIndex: 'payMethod', render: (v) => ({ wechat: '微信', alipay: '支付宝', balance: '余额', points: '积分' }[v] || v) },
+      { title: '订单状态', dataIndex: 'status', render: (v) => ({ pending: '待付款', paid: '已付款', shipped: '已发货', done: '已完成', cancelled: '已取消' }[v] || v) },
+      { title: '售后状态', dataIndex: 'afterSaleStatus', render: (v) => ({ none: '无', applying: '申请中', approved: '已通过', rejected: '已拒绝' }[v] || v) },
+      { title: '来源', dataIndex: 'source', render: (v) => ({ miniapp: '小程序', wxapp: '微信', shop: '门店' }[v] || v) },
+      { title: '下单时间', dataIndex: 'time' }
     ],
     fields: [
       { name: 'orderNo', label: '订单号', type: 'text', required: true },
       { name: 'member', label: '会员', type: 'text' },
       { name: 'goods', label: '商品', type: 'text' },
+      { name: 'quantity', label: '商品总数', type: 'number' },
+      { name: 'items', label: '商品明细', type: 'textarea' },
       { name: 'amount', label: '金额', type: 'number' },
-      { name: 'status', label: '状态', type: 'select', options: [
-        { label: '待付款', value: 'pending' }, { label: '已付款', value: 'paid' }, { label: '已发货', value: 'shipped' }, { label: '已完成', value: 'done' }
+      { name: 'freight', label: '运费', type: 'number' },
+      { name: 'actualAmount', label: '实付金额', type: 'number' },
+      { name: 'receiverName', label: '收货人', type: 'text' },
+      { name: 'receiverPhone', label: '收货电话', type: 'text' },
+      { name: 'receiverAddress', label: '收货地址', type: 'text' },
+      { name: 'logisticsCompany', label: '物流公司', type: 'text' },
+      { name: 'logisticsNo', label: '物流单号', type: 'text' },
+      { name: 'payMethod', label: '支付方式', type: 'select', options: [
+        { label: '微信', value: 'wechat' }, { label: '支付宝', value: 'alipay' }, { label: '余额', value: 'balance' }, { label: '积分', value: 'points' }
       ] },
-      { name: 'time', label: '时间', type: 'text' }
+      { name: 'payTime', label: '支付时间', type: 'text' },
+      { name: 'shipTime', label: '发货时间', type: 'text' },
+      { name: 'doneTime', label: '完成时间', type: 'text' },
+      { name: 'remark', label: '订单备注', type: 'textarea' },
+      { name: 'tags', label: '订单标签', type: 'text' },
+      { name: 'source', label: '来源', type: 'select', options: [
+        { label: '小程序', value: 'miniapp' }, { label: '微信', value: 'wxapp' }, { label: '门店', value: 'shop' }
+      ] },
+      { name: 'afterSaleStatus', label: '售后状态', type: 'select', options: [
+        { label: '无', value: 'none' }, { label: '申请中', value: 'applying' }, { label: '已通过', value: 'approved' }, { label: '已拒绝', value: 'rejected' }
+      ] },
+      { name: 'status', label: '订单状态', type: 'select', options: [
+        { label: '待付款', value: 'pending' }, { label: '已付款', value: 'paid' }, { label: '已发货', value: 'shipped' }, { label: '已完成', value: 'done' }, { label: '已取消', value: 'cancelled' }
+      ] },
+      { name: 'time', label: '下单时间', type: 'text' }
     ],
-    doc: { overview: '在线商城订单管理，记录会员在商城的购买订单。', features: ['新增/编辑/删除订单', '订单状态流转'] }
+    doc: { overview: '在线商城订单管理，记录会员在商城的购买订单，含收货、物流、支付、售后等信息。', features: ['新增/编辑/删除订单', '订单状态流转', '收货物流管理', '多支付方式', '售后状态追踪'] }
   },
   {
     key: 'shop-categories', path: 'shop/categories', name: '商品分类', category: '在线商城',
     columns: [
       { title: 'ID', dataIndex: 'id', width: 60 },
       { title: '分类名称', dataIndex: 'name' },
+      { title: '父分类', dataIndex: 'parentId' },
+      { title: '分类图标', dataIndex: 'icon' },
+      { title: '分类图片', dataIndex: 'image' },
+      { title: '描述', dataIndex: 'description' },
+      { title: '导航显示', dataIndex: 'showInNav', render: (v) => (v === 'yes' ? '是' : '否') },
       { title: '排序', dataIndex: 'sort' },
       { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
     ],
     fields: [
       { name: 'name', label: '分类名称', type: 'text', required: true },
+      { name: 'parentId', label: '父分类ID', type: 'number' },
+      { name: 'icon', label: '分类图标', type: 'text' },
+      { name: 'image', label: '分类图片', type: 'text' },
+      { name: 'description', label: '分类描述', type: 'textarea' },
+      { name: 'showInNav', label: '是否显示在导航', type: 'select', options: [
+        { label: '是', value: 'yes' }, { label: '否', value: 'no' }
+      ] },
       { name: 'sort', label: '排序', type: 'number' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
-    doc: { overview: '商城商品分类管理，用于商品归类展示。', features: ['新增/编辑/删除分类', '排序管理'] }
+    doc: { overview: '商城商品分类管理，支持多级分类、图标、图片、导航显示等，用于商品归类展示。', features: ['新增/编辑/删除分类', '多级分类（父分类）', '分类图标和图片', '导航显示控制', '排序管理'] }
   },
   // ===== 配置中心 =====
   {
@@ -903,20 +1011,25 @@ export const MODULES: ModuleConfig[] = [
       { title: 'ID', dataIndex: 'id', width: 60 },
       { title: '权益名称', dataIndex: 'name' },
       { title: '适用等级', dataIndex: 'levels' },
-      { title: '权益类型', dataIndex: 'type', render: (v) => ({ discount: '折扣', points: '积分倍率', parking: '停车', service: '服务', gift: '礼品' }[v] || v) },
+      { title: '权益类型', dataIndex: 'type', render: (v) => ({ discount: '折扣', points: '积分倍率', parking: '停车', service: '专属客服', gift: '礼品', birthday: '生日特权', priority: '优先购买', experience: '免费体验', coupon: '专属券' }[v] || v) },
       { title: '权益值', dataIndex: 'value' },
+      { title: '适用门店', dataIndex: 'shops' },
+      { title: '有效期(天)', dataIndex: 'validDays' },
       { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
     ],
     fields: [
       { name: 'name', label: '权益名称', type: 'text', required: true },
       { name: 'levels', label: '适用等级', type: 'text' },
       { name: 'type', label: '权益类型', type: 'select', options: [
-        { label: '折扣', value: 'discount' }, { label: '积分倍率', value: 'points' }, { label: '停车', value: 'parking' }, { label: '服务', value: 'service' }, { label: '礼品', value: 'gift' }
+        { label: '折扣', value: 'discount' }, { label: '积分倍率', value: 'points' }, { label: '停车', value: 'parking' }, { label: '专属客服', value: 'service' }, { label: '礼品', value: 'gift' }, { label: '生日特权', value: 'birthday' }, { label: '优先购买', value: 'priority' }, { label: '免费体验', value: 'experience' }, { label: '专属券', value: 'coupon' }
       ] },
       { name: 'value', label: '权益值', type: 'text' },
+      { name: 'shops', label: '适用门店', type: 'text' },
+      { name: 'validDays', label: '有效期(天)', type: 'number' },
+      { name: 'description', label: '说明', type: 'textarea' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
-    doc: { overview: '会员权益管理，为不同等级会员配置差异化权益，用于小程序展示。', features: ['新增/编辑/删除权益', '按等级配置权益', '权益类型多样化'] }
+    doc: { overview: '会员权益管理，为不同等级会员配置差异化权益（折扣、积分倍率、停车、专属客服、礼品、生日特权、优先购买、免费体验、专属券等），用于小程序展示。', features: ['新增/编辑/删除权益', '按等级配置权益', '权益类型多样化', '适用门店和有效期配置'] }
   },
   {
     key: 'member-profiles', path: 'member/profiles', name: '会员画像', category: '会员数字化',
@@ -957,6 +1070,132 @@ export const MODULES: ModuleConfig[] = [
       { name: 'time', label: '时间', type: 'text' }
     ],
     doc: { overview: '会员与标签的关联管理，支持手动打标和规则自动打标。', features: ['新增/编辑/删除标签关系', '手动/自动打标'] }
+  },
+  {
+    key: 'member-groups', path: 'member/groups', name: '会员分组', category: '会员数字化',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '分组名称', dataIndex: 'name' },
+      { title: '分组类型', dataIndex: 'type', render: (v) => ({ custom: '自定义', smart: '智能' }[v] || v) },
+      { title: '条件', dataIndex: 'condition' },
+      { title: '人数', dataIndex: 'count' },
+      { title: '说明', dataIndex: 'remark' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '分组名称', type: 'text', required: true },
+      { name: 'type', label: '分组类型', type: 'select', options: [
+        { label: '自定义', value: 'custom' }, { label: '智能', value: 'smart' }
+      ] },
+      { name: 'condition', label: '条件', type: 'textarea' },
+      { name: 'count', label: '人数', type: 'number' },
+      { name: 'remark', label: '说明', type: 'textarea' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '自定义分组和智能分组（基于条件自动圈选），用于精准营销。', features: ['新增/编辑/删除分组', '自定义/智能分组', '条件自动圈选会员'] }
+  },
+  {
+    key: 'member-cards', path: 'member/cards', name: '会员卡管理', category: '会员数字化',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '卡号', dataIndex: 'cardNo' },
+      { title: '会员', dataIndex: 'member' },
+      { title: '卡类型', dataIndex: 'cardType', render: (v) => ({ entity: '实体卡', electronic: '电子卡', virtual: '虚拟卡' }[v] || v) },
+      { title: '卡面样式', dataIndex: 'cardStyle' },
+      { title: '余额', dataIndex: 'balance' },
+      { title: '积分', dataIndex: 'points' },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ normal: '正常', locked: '锁定', loss: '挂失' }[v] || v) },
+      { title: '发卡时间', dataIndex: 'issueTime' },
+      { title: '有效期', dataIndex: 'validUntil' }
+    ],
+    fields: [
+      { name: 'cardNo', label: '卡号', type: 'text', required: true },
+      { name: 'member', label: '会员', type: 'text', required: true },
+      { name: 'cardType', label: '卡类型', type: 'select', options: [
+        { label: '实体卡', value: 'entity' }, { label: '电子卡', value: 'electronic' }, { label: '虚拟卡', value: 'virtual' }
+      ] },
+      { name: 'cardStyle', label: '卡面样式', type: 'text' },
+      { name: 'balance', label: '余额', type: 'number' },
+      { name: 'points', label: '积分', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '正常', value: 'normal' }, { label: '锁定', value: 'locked' }, { label: '挂失', value: 'loss' }
+      ] },
+      { name: 'issueTime', label: '发卡时间', type: 'text' },
+      { name: 'validUntil', label: '有效期', type: 'text' }
+    ],
+    doc: { overview: '会员卡管理，支持实体卡、电子卡、虚拟卡，管理卡面样式、余额、状态。', features: ['新增/编辑/删除会员卡', '实体/电子/虚拟卡管理', '卡面样式配置', '卡状态管理（正常/锁定/挂失）'] }
+  },
+  {
+    key: 'member-growth', path: 'member/growth', name: '会员成长值', category: '会员数字化',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '会员', dataIndex: 'member' },
+      { title: '当前成长值', dataIndex: 'currentValue' },
+      { title: '等级', dataIndex: 'level' },
+      { title: '任务成长', dataIndex: 'taskGrowth' },
+      { title: '消费成长', dataIndex: 'spendGrowth' },
+      { title: '有效期', dataIndex: 'validUntil' }
+    ],
+    fields: [
+      { name: 'member', label: '会员', type: 'text', required: true },
+      { name: 'currentValue', label: '当前成长值', type: 'number' },
+      { name: 'level', label: '等级', type: 'select', options: [
+        { label: '普通会员', value: 'NORMAL' }, { label: '银卡会员', value: 'SILVER' },
+        { label: '金卡会员', value: 'GOLD' }, { label: '钻石会员', value: 'DIAMOND' }
+      ] },
+      { name: 'taskGrowth', label: '任务成长', type: 'number' },
+      { name: 'spendGrowth', label: '消费成长', type: 'number' },
+      { name: 'validUntil', label: '有效期', type: 'text' }
+    ],
+    doc: { overview: '会员成长值体系，通过消费、任务等行为获取成长值，用于会员等级升级。', features: ['新增/编辑/删除成长值', '消费/任务成长值记录', '成长值有效期管理'] }
+  },
+  {
+    key: 'member-assets', path: 'member/assets', name: '会员资产', category: '会员数字化',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '会员', dataIndex: 'member' },
+      { title: '储值余额', dataIndex: 'balance' },
+      { title: '积分', dataIndex: 'points' },
+      { title: '优惠券数', dataIndex: 'couponCount' },
+      { title: '权益卡数', dataIndex: 'benefitCount' },
+      { title: '总价值', dataIndex: 'totalValue' }
+    ],
+    fields: [
+      { name: 'member', label: '会员', type: 'text', required: true },
+      { name: 'balance', label: '储值余额', type: 'number' },
+      { name: 'points', label: '积分', type: 'number' },
+      { name: 'couponCount', label: '优惠券数', type: 'number' },
+      { name: 'benefitCount', label: '权益卡数', type: 'number' },
+      { name: 'totalValue', label: '总价值', type: 'number' }
+    ],
+    doc: { overview: '会员资产汇总，查看会员的储值、积分、券、权益卡等全部资产。', features: ['新增/编辑/删除资产', '储值/积分/券/权益卡汇总', '总价值核算'] }
+  },
+  {
+    key: 'member-referrals', path: 'member/referrals', name: '会员推荐关系', category: '会员数字化',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '推荐人', dataIndex: 'referrer' },
+      { title: '被推荐人', dataIndex: 'invitee' },
+      { title: '推荐时间', dataIndex: 'time' },
+      { title: '推荐渠道', dataIndex: 'channel', render: (v) => ({ share: '分享', qr: '二维码', link: '链接' }[v] || v) },
+      { title: '奖励状态', dataIndex: 'rewardStatus', render: (v) => ({ pending: '待发放', done: '已发放' }[v] || v) },
+      { title: '推荐人奖励', dataIndex: 'referrerReward' },
+      { title: '被推荐人奖励', dataIndex: 'inviteeReward' }
+    ],
+    fields: [
+      { name: 'referrer', label: '推荐人', type: 'text', required: true },
+      { name: 'invitee', label: '被推荐人', type: 'text', required: true },
+      { name: 'time', label: '推荐时间', type: 'text' },
+      { name: 'channel', label: '推荐渠道', type: 'select', options: [
+        { label: '分享', value: 'share' }, { label: '二维码', value: 'qr' }, { label: '链接', value: 'link' }
+      ] },
+      { name: 'rewardStatus', label: '奖励状态', type: 'select', options: [
+        { label: '待发放', value: 'pending' }, { label: '已发放', value: 'done' }
+      ] },
+      { name: 'referrerReward', label: '推荐人奖励', type: 'text' },
+      { name: 'inviteeReward', label: '被推荐人奖励', type: 'text' }
+    ],
+    doc: { overview: '会员推荐关系链，记录推荐人与被推荐人的关系及奖励发放情况。', features: ['新增/编辑/删除推荐关系', '多渠道推荐追踪', '双向奖励发放'] }
   },
   // ===== 积分中心（补充）=====
   {
@@ -1146,6 +1385,184 @@ export const MODULES: ModuleConfig[] = [
       { name: 'time', label: '申请时间', type: 'text' }
     ],
     doc: { overview: '线上商城订单退货/退款管理，会员发起退款后，后台审核并原路退回。', features: ['新增/编辑/删除退货单', '退款审核', '状态流转'] }
+  },
+  {
+    key: 'shop-specs', path: 'shop/specs', name: '商品规格', category: '在线商城',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '规格名称', dataIndex: 'name' },
+      { title: '规格值', dataIndex: 'values' },
+      { title: '排序', dataIndex: 'sort' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '规格名称', type: 'text', required: true, placeholder: '如：颜色' },
+      { name: 'values', label: '规格值', type: 'text', required: true, placeholder: '如：红色,蓝色,黄色' },
+      { name: 'sort', label: '排序', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '商品规格管理，统一管理颜色、尺寸、版本等规格属性。', features: ['新增/编辑/删除规格', '规格值管理', '排序与启停'] }
+  },
+  {
+    key: 'shop-reviews', path: 'shop/reviews', name: '商品评价', category: '在线商城',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '商品', dataIndex: 'goods' },
+      { title: '会员', dataIndex: 'member' },
+      { title: '评分', dataIndex: 'score' },
+      { title: '评价内容', dataIndex: 'content' },
+      { title: '评价类型', dataIndex: 'type', render: (v) => ({ all: '全部', good: '好评', medium: '中评', bad: '差评' }[v] || v) },
+      { title: '匿名', dataIndex: 'anonymous', render: (v) => (v === 'yes' ? '是' : '否') },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ pending: '待审核', published: '已发布', hidden: '已隐藏' }[v] || v) }
+    ],
+    fields: [
+      { name: 'goods', label: '商品', type: 'text', required: true },
+      { name: 'member', label: '会员', type: 'text' },
+      { name: 'score', label: '评分(1-5)', type: 'number' },
+      { name: 'content', label: '评价内容', type: 'textarea' },
+      { name: 'images', label: '评价图片', type: 'text' },
+      { name: 'reply', label: '回复', type: 'textarea' },
+      { name: 'type', label: '评价类型', type: 'select', options: [
+        { label: '全部', value: 'all' }, { label: '好评', value: 'good' }, { label: '中评', value: 'medium' }, { label: '差评', value: 'bad' }
+      ] },
+      { name: 'anonymous', label: '是否匿名', type: 'select', options: [
+        { label: '是', value: 'yes' }, { label: '否', value: 'no' }
+      ] },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '待审核', value: 'pending' }, { label: '已发布', value: 'published' }, { label: '已隐藏', value: 'hidden' }
+      ] }
+    ],
+    doc: { overview: '商品评价管理，支持评分筛选、评价回复、评价审核。', features: ['新增/编辑/删除评价', '评分筛选', '评价回复', '审核与显隐'] }
+  },
+  {
+    key: 'shop-shipping-templates', path: 'shop/shipping-templates', name: '物流模板', category: '在线商城',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '模板名称', dataIndex: 'name' },
+      { title: '计价方式', dataIndex: 'chargeType', render: (v) => ({ piece: '按件', weight: '按重', volume: '按体积' }[v] || v) },
+      { title: '首件', dataIndex: 'firstNum' },
+      { title: '首费', dataIndex: 'firstPrice' },
+      { title: '续件', dataIndex: 'addNum' },
+      { title: '续费', dataIndex: 'addPrice' },
+      { title: '包邮条件', dataIndex: 'freeCondition' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '模板名称', type: 'text', required: true },
+      { name: 'chargeType', label: '计价方式', type: 'select', options: [
+        { label: '按件', value: 'piece' }, { label: '按重', value: 'weight' }, { label: '按体积', value: 'volume' }
+      ] },
+      { name: 'firstNum', label: '首件', type: 'number' },
+      { name: 'firstPrice', label: '首费', type: 'number' },
+      { name: 'addNum', label: '续件', type: 'number' },
+      { name: 'addPrice', label: '续费', type: 'number' },
+      { name: 'freeCondition', label: '包邮条件', type: 'text' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '运费模板配置，支持按件/按重/按体积计费，设置首件续件及包邮规则。', features: ['新增/编辑/删除模板', '多种计价方式', '首件续件配置', '包邮条件设置'] }
+  },
+  {
+    key: 'shop-addresses', path: 'shop/addresses', name: '收货地址', category: '在线商城',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '会员', dataIndex: 'member' },
+      { title: '收货人', dataIndex: 'receiver' },
+      { title: '电话', dataIndex: 'phone' },
+      { title: '省份', dataIndex: 'province' },
+      { title: '城市', dataIndex: 'city' },
+      { title: '区县', dataIndex: 'district' },
+      { title: '详细地址', dataIndex: 'detail' },
+      { title: '默认', dataIndex: 'isDefault', render: (v) => (v === 'yes' ? '是' : '否') },
+      { title: '标签', dataIndex: 'label' }
+    ],
+    fields: [
+      { name: 'member', label: '会员', type: 'text', required: true },
+      { name: 'receiver', label: '收货人', type: 'text', required: true },
+      { name: 'phone', label: '电话', type: 'text' },
+      { name: 'province', label: '省份', type: 'text' },
+      { name: 'city', label: '城市', type: 'text' },
+      { name: 'district', label: '区县', type: 'text' },
+      { name: 'detail', label: '详细地址', type: 'text' },
+      { name: 'isDefault', label: '是否默认', type: 'select', options: [
+        { label: '是', value: 'yes' }, { label: '否', value: 'no' }
+      ] },
+      { name: 'label', label: '标签', type: 'text' }
+    ],
+    doc: { overview: '会员收货地址管理，支持多地址及默认地址设置。', features: ['新增/编辑/删除地址', '多地址管理', '默认地址设置', '地址标签'] }
+  },
+  {
+    key: 'shop-delivery', path: 'shop/delivery', name: '配送方式', category: '在线商城',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '配送方式名称', dataIndex: 'name' },
+      { title: '类型', dataIndex: 'type', render: (v) => ({ express: '快递', selfpick: '自提', local: '同城配送' }[v] || v) },
+      { title: '描述', dataIndex: 'description' },
+      { title: '运费', dataIndex: 'fee' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '配送方式名称', type: 'text', required: true },
+      { name: 'type', label: '类型', type: 'select', options: [
+        { label: '快递', value: 'express' }, { label: '自提', value: 'selfpick' }, { label: '同城配送', value: 'local' }
+      ] },
+      { name: 'description', label: '描述', type: 'textarea' },
+      { name: 'fee', label: '运费', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '配送方式管理，支持快递、自提、同城配送等方式。', features: ['新增/编辑/删除配送方式', '多种配送类型', '运费配置'] }
+  },
+  {
+    key: 'shop-groups', path: 'shop/groups', name: '商品分组', category: '在线商城',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '分组名称', dataIndex: 'name' },
+      { title: '描述', dataIndex: 'description' },
+      { title: '排序', dataIndex: 'sort' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '分组名称', type: 'text', required: true },
+      { name: 'description', label: '描述', type: 'textarea' },
+      { name: 'sort', label: '排序', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '商品分组管理，用于商品归类和首页推荐展示。', features: ['新增/编辑/删除分组', '商品归类', '首页推荐'] }
+  },
+  {
+    key: 'shop-aftersale', path: 'shop/aftersale', name: '售后管理', category: '在线商城',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '售后单号', dataIndex: 'aftersaleNo' },
+      { title: '订单号', dataIndex: 'orderNo' },
+      { title: '会员', dataIndex: 'member' },
+      { title: '商品', dataIndex: 'goods' },
+      { title: '类型', dataIndex: 'type', render: (v) => ({ refund: '仅退款', return: '退货退款', exchange: '换货' }[v] || v) },
+      { title: '原因', dataIndex: 'reason' },
+      { title: '退款金额', dataIndex: 'amount' },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ applying: '申请中', approved: '已通过', rejected: '已拒绝', refunded: '已退款' }[v] || v) },
+      { title: '申请时间', dataIndex: 'applyTime' },
+      { title: '处理时间', dataIndex: 'processTime' },
+      { title: '处理人', dataIndex: 'handler' }
+    ],
+    fields: [
+      { name: 'aftersaleNo', label: '售后单号', type: 'text', required: true },
+      { name: 'orderNo', label: '订单号', type: 'text', required: true },
+      { name: 'member', label: '会员', type: 'text' },
+      { name: 'goods', label: '商品', type: 'text' },
+      { name: 'type', label: '类型', type: 'select', options: [
+        { label: '仅退款', value: 'refund' }, { label: '退货退款', value: 'return' }, { label: '换货', value: 'exchange' }
+      ] },
+      { name: 'reason', label: '原因', type: 'textarea' },
+      { name: 'amount', label: '退款金额', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '申请中', value: 'applying' }, { label: '已通过', value: 'approved' }, { label: '已拒绝', value: 'rejected' }, { label: '已退款', value: 'refunded' }
+      ] },
+      { name: 'applyTime', label: '申请时间', type: 'text' },
+      { name: 'processTime', label: '处理时间', type: 'text' },
+      { name: 'handler', label: '处理人', type: 'text' },
+      { name: 'processRemark', label: '处理备注', type: 'textarea' }
+    ],
+    doc: { overview: '售后工单管理，处理退款、退货、换货等售后申请。', features: ['新增/编辑/删除售后单', '退款/退货/换货处理', '工单状态流转', '处理记录'] }
   },
   // ===== 营销中心（补充）=====
   {
