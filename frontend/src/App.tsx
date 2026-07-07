@@ -16,6 +16,9 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import GenericCRUD from './pages/GenericCRUD';
 import BusinessFlow from './pages/BusinessFlow';
+import MemberProfile from './pages/MemberProfile';
+import ShopGoods from './pages/ShopGoods';
+import ShopHomeConfig from './pages/ShopHomeConfig';
 
 const { Header, Sider, Content } = Layout;
 
@@ -129,6 +132,9 @@ export default function App() {
           <Routes>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/business-flow" element={<BusinessFlow />} />
+            <Route path="/m/member-profiles" element={<MemberProfile />} />
+            <Route path="/m/shop-goods" element={<ShopGoods />} />
+            <Route path="/m/shop-home-config" element={<ShopHomeConfig />} />
             <Route path="/m/:moduleKey" element={<GenericCRUDWrapper />} />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
