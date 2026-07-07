@@ -523,6 +523,12 @@ initModule('member/merge', ['mainAccount', 'mergedAccount', 'reason', 'pointsBef
   { mainAccount: '13800138001', mergedAccount: '13800138002', reason: 'duplicate', pointsBefore: 5000, pointsAfter: 7000, remark: '重复注册合并', operator: 'admin', mergedAt: '2024-06-01', status: 'done' }
 ]);
 
+initModule('member/upgrade-gift-log', ['member', 'phone', 'fromLevel', 'toLevel', 'points', 'coupons', 'parkingHours', 'triggerType', 'status', 'failReason', 'operator', 'remark', 'createdAt'], [
+  { member: '张三', phone: '13800138001', fromLevel: '普通会员', toLevel: '银卡会员', points: 200, coupons: '满50减10元券', parkingHours: 2, triggerType: 'auto', status: 'success', failReason: '', operator: 'system', remark: '成长值达标自动升级', createdAt: '2024-05-15 14:30' },
+  { member: '李四', phone: '13800138002', fromLevel: '银卡会员', toLevel: '金卡会员', points: 500, coupons: '满100减30元券,生日券', parkingHours: 4, triggerType: 'auto', status: 'success', failReason: '', operator: 'system', remark: '消费金额达标自动升级', createdAt: '2024-06-01 10:00' },
+  { member: '王五', phone: '13800138003', fromLevel: '金卡会员', toLevel: '钻石会员', points: 1000, coupons: '满200减50元券,专属权益券', parkingHours: 8, triggerType: 'manual', status: 'success', failReason: '', operator: 'admin', remark: '手动补发升级礼包', createdAt: '2024-06-05 16:20' }
+]);
+
 export function login(username: string, password: string) {
   if ((username === 'admin' && password === 'admin') || (username === 'admin' && password === 'admin')) {
     const token = 'mock-token-' + Date.now();
