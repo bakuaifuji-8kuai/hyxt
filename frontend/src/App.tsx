@@ -51,6 +51,8 @@ const CATEGORY_ICONS: Record<string, any> = {
   '地产积分': HomeOutlined,
   '物品租借': ReloadOutlined,
   '数据中心': BarChartOutlined,
+  '自助积分': CrownOutlined,
+  '在线客服': MessageOutlined,
 };
 
 export default function App() {

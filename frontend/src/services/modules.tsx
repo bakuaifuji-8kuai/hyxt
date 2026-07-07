@@ -2842,6 +2842,394 @@ export const MODULES: ModuleConfig[] = [
       features: ['销售数据上报记录', '商户信息关联', '上报日期管理', '销售金额统计', '订单数量统计', '产生积分统计', '上报人记录', '已提交状态', '已核实状态', '数据核实功能', '历史数据查询', '数据导出支持'],
       tips: ['商户应每日按时上报销售数据', '核实后的数据作为结算依据', '建议定期与POS数据对账确保准确性']
     }
+  },
+  // ===== 在线客服（新增）=====
+  {
+    key: 'customer-service-chats', path: 'service/chats', name: '在线客服会话', category: '在线客服',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '会员', dataIndex: 'member' },
+      { title: '会员昵称', dataIndex: 'memberNickname' },
+      { title: '问题类型', dataIndex: 'questionType' },
+      { title: '最新消息', dataIndex: 'lastMessage' },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ pending: '等待中', processing: '处理中', resolved: '已解决', closed: '已关闭' }[v] || v) },
+      { title: '客服人员', dataIndex: 'agent' },
+      { title: '开始时间', dataIndex: 'startTime' },
+      { title: '结束时间', dataIndex: 'endTime' }
+    ],
+    fields: [
+      { name: 'member', label: '会员', type: 'text', required: true },
+      { name: 'memberNickname', label: '会员昵称', type: 'text' },
+      { name: 'questionType', label: '问题类型', type: 'select', options: [
+        { label: '积分问题', value: 'points' }, { label: '优惠券问题', value: 'coupon' }, { label: '订单问题', value: 'order' },
+        { label: '商品问题', value: 'goods' }, { label: '停车问题', value: 'parking' }, { label: '其他', value: 'other' }
+      ] },
+      { name: 'lastMessage', label: '最新消息', type: 'textarea' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '等待中', value: 'pending' }, { label: '处理中', value: 'processing' },
+        { label: '已解决', value: 'resolved' }, { label: '已关闭', value: 'closed' }
+      ] },
+      { name: 'agent', label: '客服人员', type: 'text' },
+      { name: 'startTime', label: '开始时间', type: 'text' },
+      { name: 'endTime', label: '结束时间', type: 'text' },
+      { name: 'replyContent', label: '回复内容', type: 'textarea' }
+    ],
+    doc: {
+      overview: '在线客服会话管理是客服团队处理会员咨询的核心工作台，支持查看所有会话列表、实时响应会员问题、调用快捷回复、转接人工客服，以及管理会话生命周期。参考有赞客服管理设计，左侧会话列表、右侧聊天窗口的经典布局。',
+      features: ['会话列表实时刷新', '会员信息快速查看', '问题类型分类', '快捷回复调用', '人工客服转接', '会话状态管理', '聊天记录保存', '消息已读标记', '会话结束评价', '客服工作量统计', '会话标签管理', '敏感词过滤'],
+      tips: ['优先处理等待中的会话，提升会员体验', '使用快捷回复提高响应效率', '及时关闭已解决的会话', '定期统计客服工作量优化排班']
+    }
+  },
+  {
+    key: 'ai-knowledge-base', path: 'service/ai-kb', name: 'AI知识库', category: '在线客服',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '问题标题', dataIndex: 'title' },
+      { title: '问题分类', dataIndex: 'category' },
+      { title: '标准回答', dataIndex: 'answer', render: (v) => String(v).substring(0, 30) + '...' },
+      { title: '相似问法数量', dataIndex: 'similarCount' },
+      { title: '使用次数', dataIndex: 'usedCount' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'title', label: '问题标题', type: 'text', required: true },
+      { name: 'category', label: '问题分类', type: 'select', options: [
+        { label: '积分相关', value: 'points' }, { label: '优惠券相关', value: 'coupon' }, { label: '订单相关', value: 'order' },
+        { label: '商品相关', value: 'goods' }, { label: '停车相关', value: 'parking' }, { label: '会员相关', value: 'member' }
+      ] },
+      { name: 'answer', label: '标准回答', type: 'textarea', required: true },
+      { name: 'similarQuestions', label: '相似问法', type: 'textarea' },
+      { name: 'keywords', label: '关键词', type: 'text' },
+      { name: 'usedCount', label: '使用次数', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: {
+      overview: 'AI知识库是智能客服的核心组件，用于管理常见问题的标准回答和相似问法。通过训练大模型，让AI客服能够理解会员的自然语言提问，并匹配到最相关的知识条目进行自动回复。参考有赞智能客服知识库设计，支持问题分类、关键词匹配、相似问法扩展。',
+      features: ['问题分类管理', '标准回答配置', '相似问法扩展', '关键词标签', '知识条目搜索', '使用次数统计', '版本管理', 'AI训练触发', '回答效果评估', '批量导入导出', '知识推荐', '智能联想'],
+      tips: ['标准回答要简洁明了，避免冗长', '相似问法要覆盖常见表达方式', '定期根据实际对话补充新问题', '关注使用次数低的知识，优化回答质量']
+    }
+  },
+  // ===== 线上商城（新增）=====
+  {
+    key: 'shop-carts', path: 'shop/carts', name: '购物车管理', category: '在线商城',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '会员', dataIndex: 'member' },
+      { title: '商品', dataIndex: 'goods' },
+      { title: '规格', dataIndex: 'specs' },
+      { title: '数量', dataIndex: 'quantity' },
+      { title: '单价', dataIndex: 'price' },
+      { title: '优惠信息', dataIndex: 'discount' },
+      { title: '添加时间', dataIndex: 'addTime' },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ active: '有效', expired: '已失效', deleted: '已删除' }[v] || v) }
+    ],
+    fields: [
+      { name: 'member', label: '会员', type: 'text', required: true },
+      { name: 'goods', label: '商品', type: 'text', required: true },
+      { name: 'specs', label: '规格', type: 'text' },
+      { name: 'quantity', label: '数量', type: 'number', required: true },
+      { name: 'price', label: '单价', type: 'number' },
+      { name: 'discount', label: '优惠信息', type: 'text' },
+      { name: 'addTime', label: '添加时间', type: 'text' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '有效', value: 'active' }, { label: '已失效', value: 'expired' }, { label: '已删除', value: 'deleted' }
+      ] }
+    ],
+    doc: {
+      overview: '购物车管理是在线商城的核心功能，支持会员将商品加入购物车、管理购物车商品数量、查看优惠信息、批量结算。参考有赞商城购物车设计，支持商品失效处理、促销信息实时更新、多商品合并结算。',
+      features: ['商品加入购物车', '数量增减调整', '商品规格选择', '优惠信息展示', '失效商品处理', '批量结算', '购物车清空', '价格实时计算', '促销活动关联', '多门店购物车', '购物车有效期', '购物车营销'],
+      tips: ['购物车商品价格会实时同步商品最新价格', '商品下架或库存不足会自动标记为失效', '建议定期清理长时间未结算的购物车']
+    }
+  },
+  // ===== 地产积分（新增）=====
+  {
+    key: 'points-approval', path: 'property/points-approval', name: '积分审批', category: '地产积分',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '会员', dataIndex: 'member' },
+      { title: '任务类型', dataIndex: 'taskType' },
+      { title: '任务名称', dataIndex: 'taskName' },
+      { title: '申请积分', dataIndex: 'points' },
+      { title: '提交时间', dataIndex: 'submitTime' },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ pending: '待审核', approved: '已通过', rejected: '已驳回' }[v] || v) },
+      { title: '审核人', dataIndex: 'auditor' },
+      { title: '审核时间', dataIndex: 'auditTime' },
+      { title: '审核备注', dataIndex: 'remark' }
+    ],
+    fields: [
+      { name: 'member', label: '会员', type: 'text', required: true },
+      { name: 'taskType', label: '任务类型', type: 'select', options: [
+        { label: '发言建议', value: 'suggestion' }, { label: '朋友圈转发', value: 'share' }, { label: '关注官号', value: 'follow' },
+        { label: '暖场活动', value: 'warmup' }, { label: '圈层活动', value: 'circle' }, { label: '推荐到访', value: 'visit' },
+        { label: '推荐签约', value: 'sign' }, { label: '新房置业', value: 'purchase' }
+      ] },
+      { name: 'taskName', label: '任务名称', type: 'text' },
+      { name: 'points', label: '申请积分', type: 'number', required: true },
+      { name: 'submitTime', label: '提交时间', type: 'text' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '待审核', value: 'pending' }, { label: '已通过', value: 'approved' }, { label: '已驳回', value: 'rejected' }
+      ] },
+      { name: 'auditor', label: '审核人', type: 'text' },
+      { name: 'auditTime', label: '审核时间', type: 'text' },
+      { name: 'remark', label: '审核备注', type: 'textarea' }
+    ],
+    doc: {
+      overview: '积分审批是地产积分系统的核心功能，用于审核需要人工确认的积分任务申请，包括发言建议、朋友圈转发、暖场活动参与等8类任务。审批通过后积分自动发放，并通过微信公众号通知会员。',
+      features: ['任务类型分类', '积分申请列表', '审核流程管理', '批量审核', '审核备注', '审批日志', '公众号通知', '积分发放记录', '任务证明查看', '驳回原因记录', '审批统计', '超时提醒'],
+      tips: ['审核前请查看会员提交的任务证明材料', '驳回时请填写明确的驳回原因', '注意积分任务的上限规则', '建议设置审核时限避免会员等待']
+    }
+  },
+  // ===== 公域运营（新增）=====
+  {
+    key: 'douyin-member-pass', path: 'public-domain/douyin-pass', name: '抖音会员通', category: '公域运营',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '抖音用户', dataIndex: 'douyinUser' },
+      { title: '会员', dataIndex: 'member' },
+      { title: '绑定时间', dataIndex: 'bindTime' },
+      { title: '同步状态', dataIndex: 'syncStatus', render: (v) => ({ synced: '已同步', pending: '待同步', failed: '同步失败' }[v] || v) },
+      { title: '核销积分', dataIndex: 'verificationPoints' },
+      { title: '场景促销', dataIndex: 'promotion' },
+      { title: '操作', dataIndex: 'actions' }
+    ],
+    fields: [
+      { name: 'douyinUser', label: '抖音用户', type: 'text', required: true },
+      { name: 'member', label: '会员', type: 'text' },
+      { name: 'bindTime', label: '绑定时间', type: 'text' },
+      { name: 'syncStatus', label: '同步状态', type: 'select', options: [
+        { label: '已同步', value: 'synced' }, { label: '待同步', value: 'pending' }, { label: '同步失败', value: 'failed' }
+      ] },
+      { name: 'verificationPoints', label: '核销积分', type: 'number' },
+      { name: 'promotion', label: '场景促销', type: 'text' },
+      { name: 'remark', label: '备注', type: 'textarea' }
+    ],
+    doc: {
+      overview: '抖音会员通实现抖音平台与会员系统的打通，支持抖音用户注册成为会员、会员信息同步、抖音优惠券核销自动积分、场景促销活动推送。参考有赞抖音小程序设计，实现公域私域联动运营。',
+      features: ['抖音用户绑定', '会员信息同步', '券核销自动积分', '场景促销推送', '绑定记录管理', '同步状态监控', '数据统计分析', '解绑操作', '批量导入', '异常处理', '接口日志', '权限控制'],
+      tips: ['确保抖音开放平台配置正确', '关注同步状态及时处理失败记录', '核销积分规则需与抖音活动匹配']
+    }
+  },
+  {
+    key: 'xiaohongshu-operations', path: 'public-domain/xhs', name: '小红书运营', category: '公域运营',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '活动名称', dataIndex: 'name' },
+      { title: '活动类型', dataIndex: 'type', render: (v) => ({ register: '注册引流', coupon: '本地生活券', transaction: '交易打通' }[v] || v) },
+      { title: '发布时间', dataIndex: 'publishTime' },
+      { title: '参与人数', dataIndex: 'participantCount' },
+      { title: '引流注册数', dataIndex: 'registerCount' },
+      { title: '券核销数', dataIndex: 'verificationCount' },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ active: '进行中', ended: '已结束', draft: '草稿' }[v] || v) }
+    ],
+    fields: [
+      { name: 'name', label: '活动名称', type: 'text', required: true },
+      { name: 'type', label: '活动类型', type: 'select', options: [
+        { label: '注册引流', value: 'register' }, { label: '本地生活券', value: 'coupon' }, { label: '交易打通', value: 'transaction' }
+      ] },
+      { name: 'publishTime', label: '发布时间', type: 'text' },
+      { name: 'participantCount', label: '参与人数', type: 'number' },
+      { name: 'registerCount', label: '引流注册数', type: 'number' },
+      { name: 'verificationCount', label: '券核销数', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '进行中', value: 'active' }, { label: '已结束', value: 'ended' }, { label: '草稿', value: 'draft' }
+      ] },
+      { name: 'couponTemplate', label: '关联券模板', type: 'text' },
+      { name: 'remark', label: '备注', type: 'textarea' }
+    ],
+    doc: {
+      overview: '小红书运营管理实现小红书平台会员引流、本地生活券管理、交易系统打通，支持多入口卖券、商户端闭环核销。参考有赞小红书小程序设计，实现内容种草到交易转化的完整链路。',
+      features: ['注册引流活动', '本地生活券管理', '交易系统打通', '多入口卖券', '商户闭环核销', '活动数据统计', '引流效果分析', '内容同步', '粉丝运营', '数据报表', '对账管理', '异常处理'],
+      tips: ['活动名称要吸引眼球，便于传播', '券核销数据要及时核对', '关注引流注册转化率']
+    }
+  },
+  // ===== 商户营销（新增）=====
+  {
+    key: 'merchant-notifications', path: 'merchant/notifications', name: '商户通知', category: '商户营销',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '通知标题', dataIndex: 'title' },
+      { title: '通知类型', dataIndex: 'type', render: (v) => ({ system: '系统通知', activity: '活动通知', settlement: '结算通知', training: '培训通知' }[v] || v) },
+      { title: '目标商户', dataIndex: 'targetMerchant' },
+      { title: '发送时间', dataIndex: 'sendTime' },
+      { title: '阅读状态', dataIndex: 'readStatus', render: (v) => (v === 'read' ? '已读' : '未读') },
+      { title: '发送渠道', dataIndex: 'channel', render: (v) => ({ wechat: '微信', sms: '短信', app: '商户助手' }[v] || v) }
+    ],
+    fields: [
+      { name: 'title', label: '通知标题', type: 'text', required: true },
+      { name: 'type', label: '通知类型', type: 'select', options: [
+        { label: '系统通知', value: 'system' }, { label: '活动通知', value: 'activity' },
+        { label: '结算通知', value: 'settlement' }, { label: '培训通知', value: 'training' }
+      ] },
+      { name: 'content', label: '通知内容', type: 'textarea', required: true },
+      { name: 'targetMerchant', label: '目标商户', type: 'text' },
+      { name: 'sendTime', label: '发送时间', type: 'text' },
+      { name: 'channel', label: '发送渠道', type: 'select', options: [
+        { label: '微信', value: 'wechat' }, { label: '短信', value: 'sms' }, { label: '商户助手', value: 'app' }
+      ] },
+      { name: 'readStatus', label: '阅读状态', type: 'select', options: [
+        { label: '已读', value: 'read' }, { label: '未读', value: 'unread' }
+      ] }
+    ],
+    doc: {
+      overview: '商户通知管理用于向商户发送各类通知消息，包括系统公告、活动通知、结算通知、培训通知等，支持微信、短信、商户助手APP多渠道发送，并跟踪阅读状态。参考有赞店铺消息设计，实现商户信息触达闭环。',
+      features: ['通知模板管理', '多渠道发送', '商户定向发送', '阅读状态跟踪', '发送记录管理', '通知统计', '批量发送', '定时发送', '撤回功能', '附件支持', '消息分类', '权限控制'],
+      tips: ['重要通知建议多渠道发送', '发送前检查目标商户范围', '关注阅读率及时跟进未读商户']
+    }
+  },
+  {
+    key: 'merchant-training', path: 'merchant/training', name: '商户培训', category: '商户营销',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '培训标题', dataIndex: 'title' },
+      { title: '培训分类', dataIndex: 'category', render: (v) => ({ operation: '操作培训', policy: '政策解读', marketing: '营销培训', system: '系统培训' }[v] || v) },
+      { title: '培训形式', dataIndex: 'format', render: (v) => ({ online: '线上', offline: '线下', video: '视频' }[v] || v) },
+      { title: '培训时间', dataIndex: 'trainingTime' },
+      { title: '参与商户数', dataIndex: 'participantCount' },
+      { title: '完成率', dataIndex: 'completionRate', render: (v) => v + '%' },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ pending: '待发布', published: '已发布', ended: '已结束' }[v] || v) }
+    ],
+    fields: [
+      { name: 'title', label: '培训标题', type: 'text', required: true },
+      { name: 'category', label: '培训分类', type: 'select', options: [
+        { label: '操作培训', value: 'operation' }, { label: '政策解读', value: 'policy' },
+        { label: '营销培训', value: 'marketing' }, { label: '系统培训', value: 'system' }
+      ] },
+      { name: 'format', label: '培训形式', type: 'select', options: [
+        { label: '线上', value: 'online' }, { label: '线下', value: 'offline' }, { label: '视频', value: 'video' }
+      ] },
+      { name: 'content', label: '培训内容', type: 'textarea', required: true },
+      { name: 'trainingTime', label: '培训时间', type: 'text' },
+      { name: 'materials', label: '培训资料', type: 'text' },
+      { name: 'participantCount', label: '参与商户数', type: 'number' },
+      { name: 'completionRate', label: '完成率', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '待发布', value: 'pending' }, { label: '已发布', value: 'published' }, { label: '已结束', value: 'ended' }
+      ] }
+    ],
+    doc: {
+      overview: '商户培训管理用于创建和管理面向商户的培训内容，支持线上、线下、视频等多种培训形式，跟踪商户参与情况和完成率。参考有赞商家学院设计，帮助商户提升运营能力。',
+      features: ['培训内容管理', '培训分类', '多种培训形式', '培训资料上传', '商户报名', '参与统计', '完成率跟踪', '培训评价', '培训证书', '签到管理', '数据报表', '培训计划'],
+      tips: ['培训内容要实用，贴近商户实际操作', '定期开展培训提升商户能力', '关注完成率优化培训形式']
+    }
+  },
+  // ===== 内容管理（新增）=====
+  {
+    key: 'content-articles', path: 'content/articles', name: '图文资讯', category: '内容管理',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '资讯标题', dataIndex: 'title' },
+      { title: '资讯分类', dataIndex: 'category', render: (v) => ({ news: '商场资讯', activity: '活动预告', brand: '品牌动态', life: '生活方式' }[v] || v) },
+      { title: '封面图片', dataIndex: 'coverImage', render: (v) => v ? <img src={v} style={{ width: 50, height: 50 }} /> : '-' },
+      { title: '发布时间', dataIndex: 'publishTime' },
+      { title: '阅读量', dataIndex: 'readCount' },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ draft: '草稿', published: '已发布', offline: '已下线' }[v] || v) }
+    ],
+    fields: [
+      { name: 'title', label: '资讯标题', type: 'text', required: true },
+      { name: 'category', label: '资讯分类', type: 'select', options: [
+        { label: '商场资讯', value: 'news' }, { label: '活动预告', value: 'activity' },
+        { label: '品牌动态', value: 'brand' }, { label: '生活方式', value: 'life' }
+      ] },
+      { name: 'coverImage', label: '封面图片', type: 'text' },
+      { name: 'content', label: '资讯内容', type: 'textarea', required: true },
+      { name: 'publishTime', label: '发布时间', type: 'text' },
+      { name: 'readCount', label: '阅读量', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '草稿', value: 'draft' }, { label: '已发布', value: 'published' }, { label: '已下线', value: 'offline' }
+      ] }
+    ],
+    doc: {
+      overview: '图文资讯管理用于发布和管理商场的资讯内容，包括商场动态、活动预告、品牌资讯、生活方式等，支持富文本编辑、封面图上传、分类管理。参考有赞微页面设计，打造优质内容运营能力。',
+      features: ['资讯分类管理', '富文本编辑', '封面图上传', '发布时间设置', '阅读量统计', '状态管理', '内容审核', '版本管理', '分享功能', '数据统计', '批量操作', 'SEO优化'],
+      tips: ['封面图要吸引人，提高点击率', '资讯内容要优质，提升阅读体验', '定期更新保持内容新鲜感']
+    }
+  },
+  {
+    key: 'content-posters', path: 'content/posters', name: '海报管理', category: '内容管理',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '海报名称', dataIndex: 'name' },
+      { title: '海报分类', dataIndex: 'category', render: (v) => ({ activity: '活动海报', promotion: '促销海报', brand: '品牌海报', member: '会员海报' }[v] || v) },
+      { title: '海报图片', dataIndex: 'image', render: (v) => v ? <img src={v} style={{ width: 50, height: 50 }} /> : '-' },
+      { title: '关联活动', dataIndex: 'activity' },
+      { title: '创建时间', dataIndex: 'createTime' },
+      { title: '使用次数', dataIndex: 'usedCount' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '海报名称', type: 'text', required: true },
+      { name: 'category', label: '海报分类', type: 'select', options: [
+        { label: '活动海报', value: 'activity' }, { label: '促销海报', value: 'promotion' },
+        { label: '品牌海报', value: 'brand' }, { label: '会员海报', value: 'member' }
+      ] },
+      { name: 'image', label: '海报图片', type: 'text', required: true },
+      { name: 'activity', label: '关联活动', type: 'text' },
+      { name: 'createTime', label: '创建时间', type: 'text' },
+      { name: 'usedCount', label: '使用次数', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: {
+      overview: '海报管理用于管理活动海报、促销海报、品牌海报、会员海报等视觉物料，支持图片上传、分类管理、关联活动、使用统计。参考有赞海报中心设计，为营销活动提供专业视觉支持。',
+      features: ['海报模板库', '自定义设计', '图片上传', '分类管理', '活动关联', '使用统计', '海报下载', '二维码生成', '分享功能', '版本管理', '批量操作', '权限控制'],
+      tips: ['海报设计要符合品牌调性', '关联活动便于数据追踪', '定期清理过期海报']
+    }
+  },
+  // ===== 小程序运营（新增）=====
+  {
+    key: 'search-config', path: 'applet/search', name: '搜索管理', category: '内容管理',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '搜索关键词', dataIndex: 'keyword' },
+      { title: '搜索类型', dataIndex: 'type', render: (v) => ({ hot: '热门搜索', recommend: '推荐搜索', custom: '自定义' }[v] || v) },
+      { title: '关联内容', dataIndex: 'target' },
+      { title: '排序权重', dataIndex: 'weight' },
+      { title: '点击次数', dataIndex: 'clickCount' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'keyword', label: '搜索关键词', type: 'text', required: true },
+      { name: 'type', label: '搜索类型', type: 'select', options: [
+        { label: '热门搜索', value: 'hot' }, { label: '推荐搜索', value: 'recommend' }, { label: '自定义', value: 'custom' }
+      ] },
+      { name: 'target', label: '关联内容', type: 'text' },
+      { name: 'weight', label: '排序权重', type: 'number' },
+      { name: 'clickCount', label: '点击次数', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: {
+      overview: '搜索管理用于配置小程序的搜索功能，包括热门搜索词、推荐搜索词、自定义搜索词，支持排序权重设置和点击数据统计。参考有赞搜索管理设计，提升会员搜索体验和内容发现效率。',
+      features: ['关键词管理', '搜索类型分类', '关联内容配置', '排序权重', '点击数据统计', '热门词自动生成', '搜索联想', '搜索历史', '搜索统计', '批量导入', '权限控制', '数据导出'],
+      tips: ['定期更新热门搜索词', '设置合理的排序权重', '关注搜索转化率']
+    }
+  },
+  {
+    key: 'audience-segment', path: 'applet/audience', name: '人群定向', category: '内容管理',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '人群名称', dataIndex: 'name' },
+      { title: '人群类型', dataIndex: 'type', render: (v) => ({ tag: '标签人群', behavior: '行为人群', value: '价值人群', custom: '自定义人群' }[v] || v) },
+      { title: '人群规模', dataIndex: 'size' },
+      { title: '创建时间', dataIndex: 'createTime' },
+      { title: '更新时间', dataIndex: 'updateTime' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '人群名称', type: 'text', required: true },
+      { name: 'type', label: '人群类型', type: 'select', options: [
+        { label: '标签人群', value: 'tag' }, { label: '行为人群', value: 'behavior' },
+        { label: '价值人群', value: 'value' }, { label: '自定义人群', value: 'custom' }
+      ] },
+      { name: 'conditions', label: '筛选条件', type: 'textarea', required: true },
+      { name: 'size', label: '人群规模', type: 'number' },
+      { name: 'createTime', label: '创建时间', type: 'text' },
+      { name: 'updateTime', label: '更新时间', type: 'text' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: {
+      overview: '人群定向管理用于创建和管理不同类型的会员人群，支持标签人群、行为人群、价值人群、自定义人群，为广告推广、精准营销提供人群基础。参考有赞广告投放人群定向设计，实现千人千面的个性化运营。',
+      features: ['人群类型分类', '多维度筛选', '人群规模预估', '人群包管理', '人群交集并集', '人群更新', '人群导出', '人群标签', '行为分析', '价值分层', '自定义规则', '数据统计'],
+      tips: ['人群定义要清晰，便于运营使用', '定期更新人群数据', '结合营销活动使用人群定向']
+    }
   }
 ];
 
