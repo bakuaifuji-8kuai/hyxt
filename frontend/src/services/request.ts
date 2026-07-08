@@ -43,3 +43,19 @@ export async function fetchUserInfo() {
 export async function fetchDashboardSummary() {
   return fetchDashboard();
 }
+
+import axios from 'axios';
+
+export async function request(url: string, options: Record<string, any> = {}) {
+  const token = localStorage.getItem('token');
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: token ? `Bearer ${token}` : ''
+  };
+  const response = await axios({
+    url: `/api/v1/${url}`,
+    headers,
+    ...options
+  });
+  return response.data;
+}

@@ -555,6 +555,72 @@ defineModule('property/activities', ['name', 'owner', 'time', 'status'], [
   { name: '业主暖场活动', owner: '业主王先生', time: '2024-06-01 14:00', status: 'approved' }
 ]);
 
+// ===== 装修管理 =====
+defineModule('decoration/pages', ['name', 'pageType', 'components', 'status', 'publishedAt', 'previewToken'], [
+  { name: '商城首页', pageType: 'home', components: '[]', status: 'draft', publishedAt: null, previewToken: 'preview_abc123' }
+]);
+
+defineModule('decoration/versions', ['pageId', 'version', 'components', 'createdAt', 'operator'], [
+  { pageId: 1, version: 'v1.0', components: '[]', createdAt: '2024-06-01 10:00', operator: 'admin' }
+]);
+
+defineModule('decoration/templates', ['name', 'pageType', 'components', 'description'], [
+  { name: '商城首页模板', pageType: 'home', components: '[{"type":"banner","config":{"items":[]}},{"type":"navGrid","config":{"items":[]}},{"type":"goodsList","config":{}}]', description: '适合商城首页的标准布局模板' }
+]);
+
+defineModule('decoration/services', ['name', 'icon', 'link', 'sort', 'status'], [
+  { name: '停车缴费', icon: 'parking', link: '/pages/parking', sort: 1, status: 'enabled' },
+  { name: '快速积分', icon: 'points', link: '/pages/points', sort: 2, status: 'enabled' },
+  { name: '珑珠码', icon: 'code', link: '/pages/code', sort: 3, status: 'enabled' },
+  { name: '会员权益', icon: 'member', link: '/pages/member', sort: 4, status: 'enabled' },
+  { name: '联系客服', icon: 'service', link: '/pages/service', sort: 5, status: 'enabled' },
+  { name: '自助寻车', icon: 'findcar', link: '/pages/findcar', sort: 6, status: 'enabled' },
+  { name: '我要打车', icon: 'taxi', link: '/pages/taxi', sort: 7, status: 'enabled' },
+  { name: '我要充电', icon: 'charge', link: '/pages/charge', sort: 8, status: 'enabled' },
+  { name: '宠物服务', icon: 'pet', link: '/pages/pet', sort: 9, status: 'enabled' }
+]);
+
+defineModule('decoration/icons', ['name', 'icon', 'category'], [
+  { name: '停车', icon: '🚗', category: 'service' },
+  { name: '积分', icon: '⭐', category: 'service' },
+  { name: '码', icon: '🔢', category: 'service' },
+  { name: '会员', icon: '👤', category: 'service' },
+  { name: '客服', icon: '💬', category: 'service' },
+  { name: '寻车', icon: '🔍', category: 'service' },
+  { name: '打车', icon: '🚕', category: 'service' },
+  { name: '充电', icon: '⚡', category: 'service' },
+  { name: '宠物', icon: '🐾', category: 'service' },
+  { name: '全部', icon: '☰', category: 'service' }
+]);
+
+// ===== 千人千面 =====
+defineModule('decoration/audience', ['name', 'conditions', 'description'], [
+  { name: '金卡会员', conditions: '{"level":["GOLD","DIAMOND"]}', description: '金卡及以上会员' },
+  { name: '新用户', conditions: '{"daysSinceRegister":[0,30]}', description: '注册30天内的新用户' },
+  { name: '高消费人群', conditions: '{"totalConsume":[10000,"inf"]}', description: '累计消费1万以上' }
+]);
+
+defineModule('decoration/personalization', ['pageId', 'audienceId', 'components', 'status'], [
+  { pageId: 1, audienceId: 1, components: '[{"type":"banner","config":{"items":[{"image":"","link":"","title":"金卡专享"}]}}]', status: 'enabled' }
+]);
+
+// ===== 数据聚合 =====
+defineModule('decoration/events', ['name', 'type', 'date', 'location', 'image', 'status'], [
+  { name: 'For kids亲子运动会', type: 'activity', date: '2024-07-05', location: 'A区1-3门外广场', image: '', status: 'enabled' },
+  { name: '新店开业-魏斯理', type: 'opening', date: '2024-07-01', location: 'L1层', image: '', status: 'enabled' },
+  { name: '新店入驻-金粒门', type: 'opening', date: '2024-07-15', location: 'B2层', image: '', status: 'enabled' }
+]);
+
+defineModule('decoration/floors', ['name', 'code', 'sort', 'status'], [
+  { name: '全部楼层', code: 'ALL', sort: 0, status: 'enabled' },
+  { name: '1F', code: '1F', sort: 1, status: 'enabled' },
+  { name: '2F', code: '2F', sort: 2, status: 'enabled' },
+  { name: '3F', code: '3F', sort: 3, status: 'enabled' },
+  { name: '4F', code: '4F', sort: 4, status: 'enabled' },
+  { name: '5F', code: '5F', sort: 5, status: 'enabled' },
+  { name: 'B1', code: 'B1', sort: 6, status: 'enabled' }
+]);
+
 // ===== 内容管理（补充）=====
 defineModule('content/applet-decoration', ['name', 'pageKey', 'template', 'version', 'status'], [
   { name: '会员中心页', pageKey: 'member-center', template: '{"components":["banner","user-card","menu-grid"]}', version: 'v1.0', status: 'enabled' }
@@ -599,12 +665,151 @@ const moduleRoutes = [
   'content/banners', 'content/applet-decoration',
   'public-domain/ads',
   'property/points', 'property/tasks', 'property/activities',
-  'rental/items', 'rental/records'
+  'rental/items', 'rental/records',
+  'decoration/pages', 'decoration/versions', 'decoration/templates', 'decoration/services',
+  'decoration/icons', 'decoration/audience', 'decoration/personalization',
+  'decoration/events', 'decoration/floors'
 ];
 
 for (const route of moduleRoutes) {
   app.use(`/v1/${route}`, crudRouter(route));
 }
+
+// ============ Decoration special APIs ============
+
+app.post('/v1/decoration/pages/:id/publish', auth, (req, res) => {
+  const m = getModule('decoration/pages');
+  const idx = m.data.findIndex(x => x.id === parseInt(req.params.id));
+  if (idx === -1) return res.status(404).json({ code: 404, message: '页面不存在', data: null });
+  const page = m.data[idx];
+  const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  
+  const versionModule = getModule('decoration/versions');
+  const versions = versionModule.data.filter(v => v.pageId === page.id);
+  const nextVersion = `v${versions.length + 1}`;
+  versionModule.data.push({
+    id: versionModule.nextId++,
+    pageId: page.id,
+    version: nextVersion,
+    components: page.components,
+    createdAt: now,
+    operator: req.user.sub
+  });
+  
+  m.data[idx] = { ...page, status: 'published', publishedAt: now };
+  res.json({ code: 200, message: '发布成功', data: { ...m.data[idx], version: nextVersion } });
+});
+
+app.post('/v1/decoration/pages/:id/unpublish', auth, (req, res) => {
+  const m = getModule('decoration/pages');
+  const idx = m.data.findIndex(x => x.id === parseInt(req.params.id));
+  if (idx === -1) return res.status(404).json({ code: 404, message: '页面不存在', data: null });
+  m.data[idx] = { ...m.data[idx], status: 'draft', publishedAt: null };
+  res.json({ code: 200, message: '下架成功', data: m.data[idx] });
+});
+
+app.post('/v1/decoration/pages/:id/preview', auth, (req, res) => {
+  const m = getModule('decoration/pages');
+  const page = m.data.find(x => x.id === parseInt(req.params.id));
+  if (!page) return res.status(404).json({ code: 404, message: '页面不存在', data: null });
+  const token = `preview_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  page.previewToken = token;
+  res.json({ code: 200, message: 'success', data: { token, previewUrl: `https://preview.hengwei.com/${token}` } });
+});
+
+app.post('/v1/decoration/pages/:id/rollback', auth, (req, res) => {
+  const { version } = req.body;
+  const pageModule = getModule('decoration/pages');
+  const versionModule = getModule('decoration/versions');
+  const page = pageModule.data.find(x => x.id === parseInt(req.params.id));
+  if (!page) return res.status(404).json({ code: 404, message: '页面不存在', data: null });
+  const targetVersion = versionModule.data.find(v => v.pageId === page.id && v.version === version);
+  if (!targetVersion) return res.status(404).json({ code: 404, message: '版本不存在', data: null });
+  page.components = targetVersion.components;
+  res.json({ code: 200, message: '回滚成功', data: page });
+});
+
+app.get('/v1/decoration/pages/:id/versions', auth, (req, res) => {
+  const versionModule = getModule('decoration/versions');
+  const versions = versionModule.data.filter(v => v.pageId === parseInt(req.params.id));
+  res.json(versions);
+});
+
+app.get('/v1/decoration/aggregate/events', auth, (req, res) => {
+  const m = getModule('decoration/events');
+  const { type, limit = 10 } = req.query;
+  let list = m.data.filter(e => e.status === 'enabled');
+  if (type) list = list.filter(e => e.type === type);
+  list.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  res.json(list.slice(0, parseInt(limit)));
+});
+
+app.get('/v1/decoration/aggregate/merchants', auth, (req, res) => {
+  const merchantModule = getModule('merchant/list');
+  const brandModule = getModule('shop/brands');
+  const merchants = merchantModule.data.filter(m => m.status === 'enabled');
+  const brands = brandModule.data.filter(b => b.status === 'enabled');
+  const combined = merchants.map(m => ({
+    ...m,
+    isBrand: false
+  })).concat(brands.map(b => ({
+    ...b,
+    isBrand: true
+  })));
+  res.json(combined);
+});
+
+app.get('/v1/decoration/aggregate/categories', auth, (req, res) => {
+  const shopCatModule = getModule('shop/categories');
+  const categories = shopCatModule.data.filter(c => c.status === 'enabled');
+  const customCategories = [
+    { id: 999, name: '餐饮美食', sort: 1, count: 36, status: 'enabled' },
+    { id: 998, name: '服饰鞋包', sort: 2, count: 27, status: 'enabled' },
+    { id: 997, name: '儿童成长', sort: 3, count: 15, status: 'enabled' },
+    { id: 996, name: '生活服务', sort: 4, count: 20, status: 'enabled' },
+    { id: 995, name: '数码电器', sort: 5, count: 13, status: 'enabled' }
+  ];
+  res.json([...customCategories, ...categories]);
+});
+
+app.get('/v1/decoration/preview/:token', (req, res) => {
+  const m = getModule('decoration/pages');
+  const page = m.data.find(p => p.previewToken === req.params.token);
+  if (!page) return res.status(404).json({ code: 404, message: '预览链接不存在或已过期', data: null });
+  res.json({ code: 200, message: 'success', data: page });
+});
+
+app.get('/v1/decoration/render/:pageType', auth, (req, res) => {
+  const { pageType } = req.params;
+  const { audienceId } = req.query;
+  const pageModule = getModule('decoration/pages');
+  const personalizationModule = getModule('decoration/personalization');
+  
+  let page = pageModule.data.find(p => p.pageType === pageType && p.status === 'published');
+  if (!page) page = pageModule.data.find(p => p.pageType === pageType);
+  if (!page) return res.status(404).json({ code: 404, message: '页面不存在', data: null });
+  
+  let components = JSON.parse(page.components || '[]');
+  
+  if (audienceId) {
+    const personalization = personalizationModule.data.find(
+      p => p.pageId === page.id && p.audienceId === parseInt(audienceId) && p.status === 'enabled'
+    );
+    if (personalization) {
+      const customComponents = JSON.parse(personalization.components || '[]');
+      customComponents.forEach((custom) => {
+        const idx = components.findIndex((c) => c.type === custom.type);
+        if (idx !== -1) {
+          components[idx] = custom;
+        } else {
+          components.push(custom);
+        }
+      });
+    }
+  }
+  
+  res.json({ code: 200, message: 'success', data: { page, components } });
+});
 
 // ============ Dashboard summary ============
 app.get('/v1/dashboard/summary', auth, (req, res) => {
