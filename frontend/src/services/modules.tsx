@@ -616,54 +616,6 @@ export const MODULES: ModuleConfig[] = [
       tips: ['推送时间建议选择会员活跃时段，提升打开率', '推送频次不宜过高，避免引起用户反感退订', '重要推送建议先小范围测试，确认效果再全量发送']
     }
   },
-  // ===== 私域运营 =====
-  {
-    key: 'private-domain-groups', path: 'private-domain/groups', name: '社群管理', category: '私域运营',
-    columns: [
-      { title: 'ID', dataIndex: 'id', width: 60 },
-      { title: '群名称', dataIndex: 'name' },
-      { title: '类型', dataIndex: 'type' },
-      { title: '人数', dataIndex: 'memberCount' },
-      { title: '群主', dataIndex: 'owner' },
-      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
-    ],
-    fields: [
-      { name: 'name', label: '群名称', type: 'text', required: true },
-      { name: 'type', label: '类型', type: 'select', options: [
-        { label: '微信群', value: 'wechat' }, { label: '企微群', value: 'wecom' }
-      ] },
-      { name: 'memberCount', label: '人数', type: 'number', hidden: true },
-      { name: 'owner', label: '群主', type: 'text' },
-      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
-    ],
-    doc: {
-      overview: '社群管理是私域运营的基础工具，管理会员社群信息，进行精细化社群运营。通过社群运营提升会员粘性和活跃度，是私域流量运营的重要载体。',
-      features: ['支持新增、编辑、删除社群', '多社群类型：微信群、企微群', '社群人数统计，掌握社群规模', '群主管理，指定社群负责人', '社群状态管理：启用/禁用', '与会员档案联动，查看会员所在社群'],
-      tips: ['社群建议按兴趣或等级分类，便于精准运营', '社群人数建议控制在合理范围，保证活跃度', '建议设置社群规则，保持良好社群氛围']
-    }
-  },
-  // ===== 企微社群 =====
-  {
-    key: 'wecom-accounts', path: 'wecom/accounts', name: '企微账号', category: '企微社群',
-    columns: [
-      { title: 'ID', dataIndex: 'id', width: 60 },
-      { title: '姓名', dataIndex: 'name' },
-      { title: '账号', dataIndex: 'userid' },
-      { title: '部门', dataIndex: 'department' },
-      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
-    ],
-    fields: [
-      { name: 'name', label: '姓名', type: 'text', required: true },
-      { name: 'userid', label: '企微账号', type: 'text', required: true },
-      { name: 'department', label: '部门', type: 'select', source: { path: 'system/departments', labelField: 'name', valueField: 'name' } },
-      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
-    ],
-    doc: {
-      overview: '企微账号是企业微信员工账号的管理工具，管理用于社群运营和客户服务的企微账号。企微是私域运营和客户服务的重要渠道。',
-      features: ['支持新增、编辑、删除企微账号', '账号基本信息：姓名、企微账号', '部门归属管理，组织架构清晰', '账号状态管理：启用/禁用', '与社群管理联动，企微账号可担任群主', '客户服务记录，跟踪服务情况'],
-      tips: ['企微账号建议使用真实员工信息，增强信任感', '离职员工账号请及时禁用或交接，避免客户流失', '建议定期培训员工企微运营技巧，提升服务质量']
-    }
-  },
   // ===== 电子钱包 =====
   {
     key: 'wallet-accounts', path: 'wallet/accounts', name: '钱包账户', category: '电子钱包',
@@ -1032,84 +984,6 @@ export const MODULES: ModuleConfig[] = [
       overview: '核销员是门店核销人员的管理工具，管理各门店可执行核销操作的员工账号。是线下核销的权限控制入口，确保核销操作的安全性和可追溯性。',
       features: ['支持新增、编辑、删除核销员', '核销员基本信息：姓名、所属门店', '核销次数统计，记录核销业绩', '核销员状态管理：启用/禁用', '与门店管理联动，核销员归属于门店', '与核销记录联动，记录核销操作人'],
       tips: ['核销员账号建议一人一号，确保操作可追溯', '离职核销员账号请及时禁用，防止违规操作', '建议定期统计核销员业绩，作为绩效考核参考']
-    }
-  },
-  // ===== 开票管理 =====
-  {
-    key: 'invoice-records', path: 'invoice/records', name: '开票记录', category: '开票管理',
-    columns: [
-      { title: 'ID', dataIndex: 'id', width: 60 },
-      { title: '发票抬头', dataIndex: 'title' },
-      { title: '会员', dataIndex: 'member' },
-      { title: '金额', dataIndex: 'amount' },
-      { title: '类型', dataIndex: 'type', render: (v) => ({ normal: '普票', special: '专票', electronic: '电子' }[v] || v) },
-      { title: '状态', dataIndex: 'status', render: (v) => ({ pending: '待开', issued: '已开', void: '已作废' }[v] || v) }
-    ],
-    fields: [
-      { name: 'title', label: '发票抬头', type: 'text', required: true },
-      { name: 'member', label: '会员', type: 'select', source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
-      { name: 'amount', label: '金额', type: 'number' },
-      { name: 'type', label: '类型', type: 'select', options: [
-        { label: '普票', value: 'normal' }, { label: '专票', value: 'special' }, { label: '电子发票', value: 'electronic' }
-      ] },
-      { name: 'status', label: '状态', type: 'select', options: [
-        { label: '待开', value: 'pending' }, { label: '已开', value: 'issued' }, { label: '已作废', value: 'void' }
-      ] }
-    ],
-    doc: {
-      overview: '开票记录是会员消费开票的管理工具，管理会员的发票申请和开具记录。是财务管理的重要组成部分，也是会员服务的重要环节。',
-      features: ['支持新增、编辑、删除开票记录', '发票抬头管理，支持企业和个人抬头', '多种发票类型：普票、专票、电子发票', '开票状态流转：待开、已开、已作废', '开票金额记录，确保金额准确', '与会员档案联动，记录开票会员信息'],
-      tips: ['开票信息请仔细核对，避免开错发票导致作废', '专用发票请收集完整的开票信息，确保合规', '建议及时处理开票申请，提升会员满意度']
-    }
-  },
-  // ===== 财务凭证 =====
-  {
-    key: 'finance-vouchers', path: 'finance/vouchers', name: '财务凭证', category: '财务凭证',
-    columns: [
-      { title: 'ID', dataIndex: 'id', width: 60 },
-      { title: '凭证号', dataIndex: 'voucherNo' },
-      { title: '科目', dataIndex: 'subject' },
-      { title: '收入', dataIndex: 'income' },
-      { title: '支出', dataIndex: 'expense' },
-      { title: '摘要', dataIndex: 'summary' },
-      { title: '时间', dataIndex: 'time' }
-    ],
-    fields: [
-      { name: 'voucherNo', label: '凭证号', type: 'text', required: true },
-      { name: 'subject', label: '科目', type: 'text' },
-      { name: 'income', label: '收入', type: 'number' },
-      { name: 'expense', label: '支出', type: 'number' },
-      { name: 'summary', label: '摘要', type: 'text' },
-      { name: 'time', label: '时间', type: 'date' }
-    ],
-    doc: {
-      overview: '财务凭证是平台收支的账务记录工具，记录平台所有收入和支出的凭证信息。是财务核算和审计的重要依据，确保平台资金账目清晰可查。',
-      features: ['支持新增、编辑、删除财务凭证', '凭证号管理，确保凭证唯一可查', '会计科目管理，规范财务核算', '收支金额记录，清晰反映资金流向', '摘要说明，记录业务背景', '凭证时间记录，精确到具体时间'],
-      tips: ['财务凭证为重要财务资料，请谨慎操作，确保数据准确', '凭证号建议按规则自动生成，避免重号或断号', '建议定期核对凭证与银行流水，确保账实相符']
-    }
-  },
-  // ===== 内容管理 =====
-  {
-    key: 'content-banners', path: 'content/banners', name: 'Banner管理', category: '内容管理',
-    columns: [
-      { title: 'ID', dataIndex: 'id', width: 60 },
-      { title: '标题', dataIndex: 'title' },
-      { title: '位置', dataIndex: 'position' },
-      { title: '排序', dataIndex: 'sort' },
-      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '显示' : '隐藏') }
-    ],
-    fields: [
-      { name: 'title', label: '标题', type: 'text', required: true },
-      { name: 'position', label: '位置', type: 'select', options: [
-        { label: '首页顶部', value: 'home_top' }, { label: '商城首页', value: 'shop_home' }, { label: '弹窗', value: 'popup' }
-      ] },
-      { name: 'sort', label: '排序', type: 'number' },
-      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
-    ],
-    doc: {
-      overview: 'Banner管理是小程序广告位的核心配置工具，管理首页顶部、商城首页、弹窗等位置的轮播图广告，是重要的营销展示入口，直接影响活动曝光和转化效果。内容管理整体定位为面向C端用户展示的富媒体内容中台，由运营人员维护，下游被小程序、商城、营销活动、推送消息等场景消费，上游与会员画像、营销活动、商品/商户等数据源联动，实现千人千面的内容展示。',
-      features: ['支持新增、编辑、删除Banner广告', '多种展示位置：首页顶部、商城首页、弹窗、启动页等', 'Banner排序管理，灵活调整展示顺序', '状态管理：显示/隐藏，支持定时上下架', 'Banner图片配置，支持跳转链接（商品/活动/商户/自定义H5）', '支持千人千面：根据会员标签/人群分组展示不同Banner内容', '与小程序装修联动，配合页面整体设计', '与营销活动联动，Banner可绑定优惠券/活动/秒杀/团购', '与会员画像联动，按等级/标签个性化推荐', '提供Banner点击统计和效果分析数据'],
-      tips: ['Banner图片建议使用高清素材，尺寸符合各位置要求', '重要活动Banner建议放在靠前位置，提升曝光', '建议定期更新Banner内容，保持新鲜感和吸引力', 'Banner跳转链接需配置正确，避免跳转404', '千人千面Banner需先配置人群定向规则']
     }
   },
   // ===== 公域运营 =====
@@ -2459,9 +2333,9 @@ export const MODULES: ModuleConfig[] = [
       tips: ['活动报名建议设置合理的报名截止时间，便于提前准备', '重要活动建议设置报名审核，确保参与人员符合要求', '活动结束后建议及时发放积分奖励，提升业主满意度']
     }
   },
-  // ===== 内容管理（补充）=====
+  // ===== 小程序装修 =====
   {
-    key: 'applet-decorations', path: 'content/applet-decoration', name: '小程序装修', category: '内容管理',
+    key: 'applet-decorations', path: 'content/applet-decoration', name: '小程序装修', category: '小程序营销平台',
     columns: [
       { title: 'ID', dataIndex: 'id', width: 60 },
       { title: '页面名称', dataIndex: 'name' },
@@ -3316,125 +3190,7 @@ export const MODULES: ModuleConfig[] = [
       tips: ['培训内容要实用，贴近商户实际操作', '定期开展培训提升商户能力', '关注完成率优化培训形式']
     }
   },
-  // ===== 内容管理（新增）=====
-  {
-    key: 'content-articles', path: 'content/articles', name: '图文资讯', category: '内容管理',
-    columns: [
-      { title: 'ID', dataIndex: 'id', width: 60 },
-      { title: '资讯标题', dataIndex: 'title' },
-      { title: '资讯分类', dataIndex: 'category', render: (v) => ({ news: '商场资讯', activity: '活动预告', brand: '品牌动态', life: '生活方式' }[v] || v) },
-      { title: '封面图片', dataIndex: 'coverImage', render: (v) => v ? <img src={v} style={{ width: 50, height: 50 }} /> : '-' },
-      { title: '发布时间', dataIndex: 'publishTime' },
-      { title: '阅读量', dataIndex: 'readCount' },
-      { title: '状态', dataIndex: 'status', render: (v) => ({ draft: '草稿', published: '已发布', offline: '已下线' }[v] || v) }
-    ],
-    fields: [
-      { name: 'title', label: '资讯标题', type: 'text', required: true },
-      { name: 'category', label: '资讯分类', type: 'select', options: [
-        { label: '商场资讯', value: 'news' }, { label: '活动预告', value: 'activity' },
-        { label: '品牌动态', value: 'brand' }, { label: '生活方式', value: 'life' }
-      ] },
-      { name: 'coverImage', label: '封面图片', type: 'text' },
-      { name: 'content', label: '资讯内容', type: 'textarea', required: true },
-      { name: 'publishTime', label: '发布时间', type: 'date' },
-      { name: 'readCount', label: '阅读量', type: 'number', hidden: true },
-      { name: 'status', label: '状态', type: 'select', options: [
-        { label: '草稿', value: 'draft' }, { label: '已发布', value: 'published' }, { label: '已下线', value: 'offline' }
-      ] }
-    ],
-    doc: {
-      overview: '图文资讯管理用于发布和管理商场的资讯内容，包括商场动态、活动预告、品牌资讯、生活方式等，支持富文本编辑、封面图上传、分类管理。参考有赞微页面设计，打造优质内容运营能力。',
-      features: ['资讯分类管理', '富文本编辑', '封面图上传', '发布时间设置', '阅读量统计', '状态管理', '内容审核', '版本管理', '分享功能', '数据统计', '批量操作', 'SEO优化'],
-      tips: ['封面图要吸引人，提高点击率', '资讯内容要优质，提升阅读体验', '定期更新保持内容新鲜感']
-    }
-  },
-  {
-    key: 'content-posters', path: 'content/posters', name: '海报管理', category: '内容管理',
-    columns: [
-      { title: 'ID', dataIndex: 'id', width: 60 },
-      { title: '海报名称', dataIndex: 'name' },
-      { title: '海报分类', dataIndex: 'category', render: (v) => ({ activity: '活动海报', promotion: '促销海报', brand: '品牌海报', member: '会员海报' }[v] || v) },
-      { title: '海报图片', dataIndex: 'image', render: (v) => v ? <img src={v} style={{ width: 50, height: 50 }} /> : '-' },
-      { title: '关联活动', dataIndex: 'activity' },
-      { title: '创建时间', dataIndex: 'createTime' },
-      { title: '使用次数', dataIndex: 'usedCount' },
-      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
-    ],
-    fields: [
-      { name: 'name', label: '海报名称', type: 'text', required: true },
-      { name: 'category', label: '海报分类', type: 'select', options: [
-        { label: '活动海报', value: 'activity' }, { label: '促销海报', value: 'promotion' },
-        { label: '品牌海报', value: 'brand' }, { label: '会员海报', value: 'member' }
-      ] },
-      { name: 'image', label: '海报图片', type: 'text', required: true },
-      { name: 'activity', label: '关联活动', type: 'select', source: { path: 'marketing/campaigns', labelField: 'name', valueField: 'name' } },
-      { name: 'createTime', label: '创建时间', type: 'date' },
-      { name: 'usedCount', label: '使用次数', type: 'number', hidden: true },
-      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
-    ],
-    doc: {
-      overview: '海报管理用于管理活动海报、促销海报、品牌海报、会员海报等视觉物料，支持图片上传、分类管理、关联活动、使用统计。参考有赞海报中心设计，为营销活动提供专业视觉支持。',
-      features: ['海报模板库', '自定义设计', '图片上传', '分类管理', '活动关联', '使用统计', '海报下载', '二维码生成', '分享功能', '版本管理', '批量操作', '权限控制'],
-      tips: ['海报设计要符合品牌调性', '关联活动便于数据追踪', '定期清理过期海报']
-    }
-  },
-  // ===== 小程序运营（新增）=====
-  {
-    key: 'search-config', path: 'applet/search', name: '搜索管理', category: '内容管理',
-    columns: [
-      { title: 'ID', dataIndex: 'id', width: 60 },
-      { title: '搜索关键词', dataIndex: 'keyword' },
-      { title: '搜索类型', dataIndex: 'type', render: (v) => ({ hot: '热门搜索', recommend: '推荐搜索', custom: '自定义' }[v] || v) },
-      { title: '关联内容', dataIndex: 'target' },
-      { title: '排序权重', dataIndex: 'weight' },
-      { title: '点击次数', dataIndex: 'clickCount' },
-      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
-    ],
-    fields: [
-      { name: 'keyword', label: '搜索关键词', type: 'text', required: true },
-      { name: 'type', label: '搜索类型', type: 'select', options: [
-        { label: '热门搜索', value: 'hot' }, { label: '推荐搜索', value: 'recommend' }, { label: '自定义', value: 'custom' }
-      ] },
-      { name: 'target', label: '关联内容', type: 'text' },
-      { name: 'weight', label: '排序权重', type: 'number' },
-      { name: 'clickCount', label: '点击次数', type: 'number', hidden: true },
-      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
-    ],
-    doc: {
-      overview: '搜索管理用于配置小程序的搜索功能，包括热门搜索词、推荐搜索词、自定义搜索词，支持排序权重设置和点击数据统计。参考有赞搜索管理设计，提升会员搜索体验和内容发现效率。',
-      features: ['关键词管理', '搜索类型分类', '关联内容配置', '排序权重', '点击数据统计', '热门词自动生成', '搜索联想', '搜索历史', '搜索统计', '批量导入', '权限控制', '数据导出'],
-      tips: ['定期更新热门搜索词', '设置合理的排序权重', '关注搜索转化率']
-    }
-  },
-  {
-    key: 'audience-segment', path: 'applet/audience', name: '人群定向', category: '内容管理',
-    columns: [
-      { title: 'ID', dataIndex: 'id', width: 60 },
-      { title: '人群名称', dataIndex: 'name' },
-      { title: '人群类型', dataIndex: 'type', render: (v) => ({ tag: '标签人群', behavior: '行为人群', value: '价值人群', custom: '自定义人群' }[v] || v) },
-      { title: '人群规模', dataIndex: 'size' },
-      { title: '创建时间', dataIndex: 'createTime' },
-      { title: '更新时间', dataIndex: 'updateTime' },
-      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
-    ],
-    fields: [
-      { name: 'name', label: '人群名称', type: 'text', required: true },
-      { name: 'type', label: '人群类型', type: 'select', options: [
-        { label: '标签人群', value: 'tag' }, { label: '行为人群', value: 'behavior' },
-        { label: '价值人群', value: 'value' }, { label: '自定义人群', value: 'custom' }
-      ] },
-      { name: 'conditions', label: '筛选条件', type: 'textarea', required: true },
-      { name: 'size', label: '人群规模', type: 'number' },
-      { name: 'createTime', label: '创建时间', type: 'date' },
-      { name: 'updateTime', label: '更新时间', type: 'date' },
-      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
-    ],
-    doc: {
-      overview: '人群定向管理用于创建和管理不同类型的会员人群，支持标签人群、行为人群、价值人群、自定义人群，为广告推广、精准营销提供人群基础。参考有赞广告投放人群定向设计，实现千人千面的个性化运营。',
-      features: ['人群类型分类', '多维度筛选', '人群规模预估', '人群包管理', '人群交集并集', '人群更新', '人群导出', '人群标签', '行为分析', '价值分层', '自定义规则', '数据统计'],
-      tips: ['人群定义要清晰，便于运营使用', '定期更新人群数据', '结合营销活动使用人群定向']
-    }
-  },
+
   {
     key: 'project-management', path: 'system/projects', name: '项目管理', category: '系统管理',
     columns: [
@@ -3488,67 +3244,7 @@ export const MODULES: ModuleConfig[] = [
       tips: ['新增项目前请确认项目编码唯一性，编码创建后不可修改', '数据隔离规则启用后不可随意关闭，关闭可能导致数据混淆', '禁用项目前请确认无正在进行的营销活动和待处理订单', '计费模式变更需与商务确认，避免产生计费争议', '建议为每个项目指定至少一名管理员，确保项目运营正常', '资源配额设置需根据项目规模合理规划，避免资源浪费或不足']
     }
   },
-  {
-    key: 'restaurant-cuisine', path: 'restaurant/cuisine', name: '餐饮菜系管理', category: '内容管理',
-    columns: [
-      { title: 'ID', dataIndex: 'id', width: 60 },
-      { title: '菜系名称', dataIndex: 'name' },
-      { title: '图标', dataIndex: 'icon' },
-      { title: '排序', dataIndex: 'sort' },
-      { title: '关联商户数', dataIndex: 'shopCount' },
-      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
-    ],
-    fields: [
-      { name: 'name', label: '菜系名称', type: 'text', required: true },
-      { name: 'icon', label: '菜系图标', type: 'text' },
-      { name: 'description', label: '菜系描述', type: 'textarea' },
-      { name: 'sort', label: '排序', type: 'number' },
-      { name: 'shopCount', label: '关联商户数', type: 'number' },
-      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
-    ],
-    doc: {
-      overview: '餐饮菜系管理用于维护商场餐饮商户的菜系分类体系，支持新增、编辑、删除菜系分类，为餐饮商户绑定对应菜系。菜系分类在小程序餐饮美食专区展示，帮助用户快速按菜系筛选餐厅。与商户管理、小程序餐饮导览深度联动，是餐饮美食导览功能的数据基础。',
-      features: ['支持新增、编辑、删除餐饮菜系分类', '配置菜系名称、图标、描述，提升小程序展示效果', '支持菜系排序，控制小程序端展示顺序', '统计关联商户数，掌握各菜系下的商户规模', '菜系启用/禁用管理，禁用后前端不再展示', '与商户管理联动，商户绑定菜系后自动更新统计', '与小程序餐饮导览联动，按菜系筛选展示餐厅'],
-      tips: ['菜系名称建议使用通用分类如湘菜、川菜、粤菜、日料等', '图标建议使用统一风格的SVG或PNG图片', '排序值越小越靠前展示']
-    }
-  },
-  {
-    key: 'restaurant-dishes', path: 'restaurant/dishes', name: '餐饮菜品管理', category: '内容管理',
-    columns: [
-      { title: 'ID', dataIndex: 'id', width: 60 },
-      { title: '菜品名称', dataIndex: 'name' },
-      { title: '所属商户', dataIndex: 'shopName' },
-      { title: '菜系', dataIndex: 'cuisine' },
-      { title: '价格(元)', dataIndex: 'price' },
-      { title: '推荐', dataIndex: 'isRecommend', render: (v) => (v === 'yes' ? '推荐' : '普通') },
-      { title: '排序', dataIndex: 'sort' },
-      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '上架' : '下架') }
-    ],
-    fields: [
-      { name: 'name', label: '菜品名称', type: 'text', required: true },
-      { name: 'shopName', label: '所属商户', type: 'text', required: true },
-      { name: 'cuisine', label: '所属菜系', type: 'select', source: { path: 'restaurant/cuisine', labelField: 'name', valueField: 'name' } },
-      { name: 'mainImage', label: '菜品主图', type: 'text' },
-      { name: 'price', label: '价格(元)', type: 'number' },
-      { name: 'description', label: '菜品介绍', type: 'textarea' },
-      { name: 'ingredients', label: '主要食材', type: 'text' },
-      { name: 'taste', label: '口味', type: 'select', options: [
-        { label: '不辣', value: 'mild' }, { label: '微辣', value: 'spicy' }, { label: '中辣', value: 'medium' }, { label: '特辣', value: 'hot' }
-      ] },
-      { name: 'isRecommend', label: '是否推荐', type: 'select', options: [
-        { label: '推荐', value: 'yes' }, { label: '普通', value: 'no' }
-      ] },
-      { name: 'sort', label: '排序', type: 'number' },
-      { name: 'status', label: '状态', type: 'select', options: [
-        { label: '上架', value: 'enabled' }, { label: '下架', value: 'disabled' }
-      ] }
-    ],
-    doc: {
-      overview: '餐饮菜品管理用于维护商场餐饮商户的推荐菜品信息，为每个商户配置推荐菜品、菜品图片、价格、介绍等内容。菜品信息在小程序商户详情页和餐饮美食专区展示，帮助用户了解商户特色和推荐菜。与商户管理、餐饮菜系管理深度联动，是餐饮美食导览功能的重要组成部分。',
-      features: ['支持新增、编辑、删除餐饮菜品信息', '配置菜品名称、主图、价格、介绍，提升展示效果', '关联所属商户和菜系，便于按商户和菜系分类展示', '支持口味标签：不辣、微辣、中辣、特辣', '支持推荐标记，推荐菜品在小程序端优先展示', '菜品上架/下架管理，灵活控制展示状态', '排序管理，控制同商户下菜品展示顺序', '与商户管理联动，从商户详情可查看和管理菜品', '与餐饮菜系联动，按菜系筛选展示菜品'],
-      tips: ['菜品主图建议使用高清实拍图片，提升展示效果和用户食欲', '推荐菜品建议选择商户招牌菜和人气菜', '价格建议标注实际售价，避免与线下价格不一致', '定期更新菜品信息，确保与商户实际菜单同步']
-    }
-  },
+
   {
     key: 'member-merge', path: 'member/merge', name: '会员合并', category: '会员数字化',
     columns: [

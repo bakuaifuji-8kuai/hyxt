@@ -282,16 +282,6 @@ defineModule('message/campaigns', ['name', 'template', 'channel', 'audience', 's
   { name: '618预热推送', template: '优惠券到账', channel: 'wechat', audience: 5000, sent: 5000, read: 2100, status: 'finished' }
 ]);
 
-// 私域运营
-defineModule('private-domain/groups', ['name', 'type', 'memberCount', 'owner', 'status'], [
-  { name: '金卡VIP群', type: 'wechat', memberCount: 200, owner: '客服小王', status: 'enabled' }
-]);
-
-// 企微社群
-defineModule('wecom/accounts', ['name', 'userid', 'department', 'status'], [
-  { name: '客服小王', userid: 'wang01', department: '客服部', status: 'enabled' }
-]);
-
 // 电子钱包
 defineModule('wallet/accounts', ['member', 'balance', 'points', 'status'], [
   { member: '张三', balance: 500.00, points: 6200, status: 'enabled' },
@@ -357,24 +347,6 @@ defineModule('verification/records', ['code', 'member', 'target', 'shop', 'statu
 
 defineModule('verification/staff', ['name', 'shop', 'count', 'status'], [
   { name: '收银员A', shop: '总店', count: 128, status: 'enabled' }
-]);
-
-// 开票管理
-defineModule('invoice/records', ['title', 'member', 'amount', 'type', 'status'], [
-  { title: '北京XX公司', member: '张三', amount: 500, type: 'normal', status: 'issued' },
-  { title: '个人', member: '李四', amount: 100, type: 'electronic', status: 'pending' }
-]);
-
-// 财务凭证
-defineModule('finance/vouchers', ['voucherNo', 'subject', 'income', 'expense', 'summary', 'time'], [
-  { voucherNo: 'FV20240601', subject: '会员充值', income: 500, expense: 0, summary: '张三充值', time: '2024-06-01' },
-  { voucherNo: 'FV20240602', subject: '积分兑换成本', income: 0, expense: 50, summary: '星巴克券兑换', time: '2024-06-01' }
-]);
-
-// 内容管理
-defineModule('content/banners', ['title', 'position', 'sort', 'status'], [
-  { title: '618大促首页banner', position: 'home_top', sort: 1, status: 'enabled' },
-  { title: '商城新上品', position: 'shop_home', sort: 1, status: 'enabled' }
 ]);
 
 // 公域运营
@@ -621,11 +593,6 @@ defineModule('decoration/floors', ['name', 'code', 'sort', 'status'], [
   { name: 'B1', code: 'B1', sort: 6, status: 'enabled' }
 ]);
 
-// ===== 内容管理（补充）=====
-defineModule('content/applet-decoration', ['name', 'pageKey', 'template', 'version', 'status'], [
-  { name: '会员中心页', pageKey: 'member-center', template: '{"components":["banner","user-card","menu-grid"]}', version: 'v1.0', status: 'enabled' }
-]);
-
 // ===== 系统管理（补充）=====
 defineModule('system/logs', ['operator', 'module', 'action', 'ip', 'time'], [
   { operator: 'admin', module: '会员档案', action: '新增', ip: '192.168.1.10', time: '2024-06-01 09:00' },
@@ -651,8 +618,6 @@ const moduleRoutes = [
   'activity/signups', 'activity/checkin',
   'service/orders',
   'message/templates', 'message/campaigns',
-  'private-domain/groups',
-  'wecom/accounts',
   'wallet/accounts', 'wallet/transactions',
   'merchant/list', 'merchant/verification', 'merchant/coupon-issue',
   'shop/goods', 'shop/orders', 'shop/categories', 'shop/home-config', 'shop/bottom-menu', 'shop/brands', 'shop/returns',
@@ -660,9 +625,6 @@ const moduleRoutes = [
   'config/shops', 'config/terminals',
   'system/users', 'system/roles', 'system/logs', 'system/menus',
   'verification/records', 'verification/staff',
-  'invoice/records',
-  'finance/vouchers',
-  'content/banners', 'content/applet-decoration',
   'public-domain/ads',
   'property/points', 'property/tasks', 'property/activities',
   'rental/items', 'rental/records',
