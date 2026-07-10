@@ -991,15 +991,17 @@ export const MODULES: ModuleConfig[] = [
     key: 'channel-configs', path: 'channel/configs', name: '渠道配置', category: '渠道核销管理',
     columns: [
       { title: 'ID', dataIndex: 'id', width: 60 },
-      { title: '渠道', dataIndex: 'channel', render: (v) => ({ douyin: '抖音', meituan: '美团' }[v] || v) },
+      { title: '渠道', dataIndex: 'channel', render: (v) => ({ douyin: '抖音', meituan: '美团', xiaohongshu: '小红书' }[v] || v) },
+      { title: '渠道名称', dataIndex: 'channelName' },
       { title: '应用ID', dataIndex: 'appId' },
       { title: '资质状态', dataIndex: 'qualificationStatus', render: (v) => ({ pending: '待审核', approved: '已通过', rejected: '已拒绝' }[v] || v) },
+      { title: 'POI状态', dataIndex: 'poiStatus', render: (v) => ({ pending: '待审核', approved: '已通过', rejected: '已拒绝', '-': '-' }[v] || v) },
       { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') },
       { title: '创建时间', dataIndex: 'createdAt' }
     ],
     fields: [
       { name: 'channel', label: '渠道', type: 'select', options: [
-        { label: '抖音', value: 'douyin' }, { label: '美团', value: 'meituan' }
+        { label: '抖音', value: 'douyin' }, { label: '美团', value: 'meituan' }, { label: '小红书', value: 'xiaohongshu' }
       ] },
       { name: 'channelName', label: '渠道名称', type: 'text' },
       { name: 'appId', label: '应用ID/ClientToken', type: 'text' },
@@ -1007,17 +1009,28 @@ export const MODULES: ModuleConfig[] = [
       { name: 'accessToken', label: '访问令牌', type: 'text', hidden: true },
       { name: 'tokenExpireTime', label: '令牌过期时间', type: 'date', hidden: true },
       { name: 'callbackUrl', label: '回调地址', type: 'text' },
+      { name: 'spiCallbackUrl', label: 'SPI回调地址', type: 'text' },
       { name: 'serverWhitelist', label: '服务器白名单', type: 'textarea' },
       { name: 'depositAmount', label: '类目保证金(元)', type: 'number' },
       { name: 'qualificationStatus', label: '资质状态', type: 'select', options: [
         { label: '待审核', value: 'pending' }, { label: '已通过', value: 'approved' }, { label: '已拒绝', value: 'rejected' }
       ] },
+      { name: 'accountType', label: '账号类型', type: 'select', options: [
+        { label: '企业号', value: 'enterprise' }, { label: '个人号', value: 'personal' }
+      ] },
+      { name: 'poiStatus', label: 'POI审核状态', type: 'select', options: [
+        { label: '待审核', value: 'pending' }, { label: '已通过', value: 'approved' }, { label: '已拒绝', value: 'rejected' }
+      ] },
+      { name: 'poiAuditReason', label: 'POI审核失败原因', type: 'textarea' },
+      { name: 'annualReviewDate', label: '企业号年审日期', type: 'date' },
+      { name: 'noteMountPermission', label: '笔记挂载权限', type: 'switch' },
+      { name: 'independentSwitch', label: '独立开关', type: 'switch' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
     doc: {
-      overview: '渠道配置是抖音、美团平台对接的基础配置工具，管理商场与抖音来客、美团开放平台的接口对接参数，包括应用密钥、令牌管理、回调地址等。是实现渠道券同步、核销、对账的基础前提。',
-      features: ['支持新增、编辑、删除渠道配置', '管理抖音/美团平台API对接参数', '令牌自动刷新和过期时间管理', '服务器白名单配置（抖音专属）', '资质状态管理：待审核/已通过/已拒绝', '类目保证金配置（抖音专属）', '回调地址配置，接收平台通知', '与商户授权联动，使用渠道配置完成授权'],
-      tips: ['应用密钥请妥善保管，避免泄露', '令牌过期前系统会自动刷新，确保对接正常', '抖音需配置服务器白名单才能调用核销接口', '资质审核通过后才能正式使用渠道功能']
+      overview: '渠道配置是抖音、小红书、美团三平台对接的基础配置工具，管理商场与各平台的接口对接参数，包括应用密钥、令牌管理、回调地址等。是实现渠道券同步、核销、对账的基础前提。',
+      features: ['支持抖音、小红书、美团三平台配置', '管理各平台API对接参数', '令牌自动刷新和过期时间管理', '服务器白名单配置（抖音专属）', '资质状态管理：待审核/已通过/已拒绝', '类目保证金配置（抖音专属）', '小红书POI审核状态管理', '小红书企业号年审管理', '笔记挂载权限配置', 'SPI回调地址配置，接收平台实时通知', '独立开关控制，各渠道互不干扰', '与商户授权联动，使用渠道配置完成授权'],
+      tips: ['应用密钥请妥善保管，避免泄露', '令牌过期前系统会自动刷新，确保对接正常', '抖音需配置服务器白名单才能调用核销接口', '小红书需完成企业号年审和POI审核', '资质审核通过后才能正式使用渠道功能', '各渠道可独立开关，互不影响']
     }
   },
   {
@@ -1281,6 +1294,252 @@ export const MODULES: ModuleConfig[] = [
       overview: '月度结算是财务主导的商户结算工具，根据每日对账数据计算商户应结金额，支持租金抵扣或对公转账两种兑付方式。是商场与商户资金结算的核心环节。',
       features: ['分渠道计算商户应结金额', '抖音结算公式：门店抖音券总抵扣额 − 商户承担营销成本 − 抖音平台服务费 − 达人佣金', '美团结算公式：门店美团券总抵扣额 − 商户承担营销成本 − 美团平台技术服务费', '结算方式：租金抵扣或对公转账', '结算状态管理：待结算/结算中/已完成/失败', '归档资料管理：平台账单、中台台账、银豹对账表、结算单', '与签约记录联动，使用合同约定的成本分摊比例', '与每日对账联动，使用对账数据作为结算依据'],
       tips: ['结算前需确保当月每日对账已完成', '抖音需额外扣除达人佣金', '租金抵扣需确认商户租金账户余额充足', '结算单需双方签字确认后存档']
+    }
+  },
+  {
+    key: 'coupon-code-pool', path: 'coupon/code-pool', name: '券码池管理', category: '渠道核销管理',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '券码', dataIndex: 'code' },
+      { title: '券模板', dataIndex: 'templateName' },
+      { title: '批次', dataIndex: 'batchId' },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ available: '可用', issued: '已发放', verified: '已核销', revoked: '已撤销', expired: '已过期' }[v] || v) },
+      { title: '发放渠道', dataIndex: 'issueChannel', render: (v) => ({ douyin: '抖音', xiaohongshu: '小红书', meituan: '美团', wechat: '微信' }[v] || v) },
+      { title: '发放时间', dataIndex: 'issueTime' },
+      { title: '核销时间', dataIndex: 'verifyTime' }
+    ],
+    fields: [
+      { name: 'code', label: '券码', type: 'text', required: true },
+      { name: 'templateId', label: '券模板ID', type: 'number' },
+      { name: 'templateName', label: '券模板名称', type: 'text' },
+      { name: 'batchId', label: '批次ID', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '可用', value: 'available' }, { label: '已发放', value: 'issued' },
+        { label: '已核销', value: 'verified' }, { label: '已撤销', value: 'revoked' },
+        { label: '已过期', value: 'expired' }
+      ] },
+      { name: 'issueTime', label: '发放时间', type: 'date' },
+      { name: 'issueChannel', label: '发放渠道', type: 'select', options: [
+        { label: '抖音', value: 'douyin' }, { label: '小红书', value: 'xiaohongshu' },
+        { label: '美团', value: 'meituan' }, { label: '微信', value: 'wechat' }
+      ] },
+      { name: 'issueOrderId', label: '渠道订单ID', type: 'text' },
+      { name: 'verifyTime', label: '核销时间', type: 'date' },
+      { name: 'verifyShopId', label: '核销门店ID', type: 'number' },
+      { name: 'revokeTime', label: '撤销时间', type: 'date' }
+    ],
+    doc: {
+      overview: '券码池管理是自研卡券中台的核心模块，管理全局唯一加密券码的生成、发放、核销全生命周期。券码池是实现全域券双向同步和统一核销的基础数据层。',
+      features: ['全局唯一加密券码生成（HW+日期+序号+校验位）', '券码状态管理：可用/已发放/已核销/已撤销/已过期', '批次管理，支持批量生成和发放', '发放渠道记录：抖音/小红书/美团/微信', '库存管控：Redis分布式锁，多平台共享库存', '防超卖：库存不足时拒绝发放', '与券模板管理联动，关联券模板信息', '与核销同步记录联动，记录核销详情'],
+      tips: ['券码生成后不可修改，请确保券模板配置正确', '库存扣减采用Redis分布式锁，确保原子性', '券码是对账唯一匹配主键，确保发放记录完整', '建议定期清理已过期券码，释放存储空间']
+    }
+  },
+  {
+    key: 'channel-order-sync', path: 'channel/order-sync', name: '订单同步记录', category: '渠道核销管理',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '渠道', dataIndex: 'channel', render: (v) => ({ douyin: '抖音', xiaohongshu: '小红书', meituan: '美团' }[v] || v) },
+      { title: '渠道订单ID', dataIndex: 'channelOrderId' },
+      { title: '渠道券码', dataIndex: 'channelCouponCode' },
+      { title: '自研券码', dataIndex: 'internalCouponCode' },
+      { title: '会员', dataIndex: 'memberName' },
+      { title: '金额', dataIndex: 'amount' },
+      { title: '同步状态', dataIndex: 'syncStatus', render: (v) => ({ pending: '待同步', processing: '同步中', succeeded: '已成功', failed: '失败' }[v] || v) },
+      { title: '微信卡包同步', dataIndex: 'wechatCardSync', render: (v) => (v ? '已同步' : '未同步') }
+    ],
+    fields: [
+      { name: 'channel', label: '渠道', type: 'select', options: [
+        { label: '抖音', value: 'douyin' }, { label: '小红书', value: 'xiaohongshu' }, { label: '美团', value: 'meituan' }
+      ] },
+      { name: 'channelOrderId', label: '渠道订单ID', type: 'text' },
+      { name: 'channelCouponCode', label: '渠道原始券码', type: 'text' },
+      { name: 'internalCouponCode', label: '自研券码', type: 'text' },
+      { name: 'templateId', label: '券模板ID', type: 'number' },
+      { name: 'memberId', label: '会员ID', type: 'number' },
+      { name: 'memberName', label: '会员名称', type: 'text' },
+      { name: 'phone', label: '顾客手机号', type: 'text' },
+      { name: 'openid', label: '渠道用户ID', type: 'text' },
+      { name: 'amount', label: '支付金额', type: 'number' },
+      { name: 'payTime', label: '支付时间', type: 'date' },
+      { name: 'syncStatus', label: '同步状态', type: 'select', options: [
+        { label: '待同步', value: 'pending' }, { label: '同步中', value: 'processing' },
+        { label: '已成功', value: 'succeeded' }, { label: '失败', value: 'failed' }
+      ] },
+      { name: 'syncTime', label: '同步时间', type: 'date' },
+      { name: 'failureReason', label: '同步失败原因', type: 'textarea' },
+      { name: 'wechatCardSync', label: '已同步至微信卡包', type: 'switch' }
+    ],
+    doc: {
+      overview: '订单同步记录是公域订单回流至自研中台的核心模块，记录顾客在抖音/小红书/美团下单购券后的订单信息、券码映射、会员匹配和微信卡包同步状态。是实现「任意公域买券、全渠道可视」的关键环节。',
+      features: ['接收三平台SPI回调通知', '订单有效性校验（签名验证）', '渠道券码→自研券码映射', 'OneID会员匹配', '微信小程序卡包同步', '同步状态管理：待同步/同步中/已成功/失败', '失败重试机制', '与券码池联动，更新券码状态', '与会员系统联动，创建/绑定会员'],
+      tips: ['订单同步依赖平台SPI回调，需确保回调地址可访问', '会员匹配以手机号为主键，确保顾客授权提供手机号', '微信卡包同步需确保小程序已开通卡券功能', '同步失败需及时排查，避免数据不一致']
+    }
+  },
+  {
+    key: 'member-oneid', path: 'member/oneid', name: 'OneID会员映射', category: '会员管理',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '会员ID', dataIndex: 'memberId' },
+      { title: '手机号', dataIndex: 'phone' },
+      { title: '抖音OpenID', dataIndex: 'douyinOpenid' },
+      { title: '小红书OpenID', dataIndex: 'xiaohongshuOpenid' },
+      { title: '美团OpenID', dataIndex: 'meituanOpenid' },
+      { title: '微信OpenID', dataIndex: 'wechatOpenid' },
+      { title: '创建时间', dataIndex: 'createdAt' }
+    ],
+    fields: [
+      { name: 'memberId', label: '会员ID', type: 'number' },
+      { name: 'phone', label: '手机号', type: 'text', required: true },
+      { name: 'douyinOpenid', label: '抖音OpenID', type: 'text' },
+      { name: 'xiaohongshuOpenid', label: '小红书OpenID', type: 'text' },
+      { name: 'meituanOpenid', label: '美团OpenID', type: 'text' },
+      { name: 'wechatOpenid', label: '微信OpenID', type: 'text' }
+    ],
+    doc: {
+      overview: 'OneID会员映射是全域会员资产沉淀的核心模块，通过手机号将顾客在各平台的账号统一绑定到商场自有会员ID下。实现「一次入会、全域通用」的会员体验，牢牢锁定私域资产。',
+      features: ['以手机号为主匹配键的OneID逻辑', '多平台OpenID绑定：抖音/小红书/美团/微信', '手机号无档案：自动创建商场自有会员', '手机号已存在：自动绑定至原有会员，权益合并', '全域积分、优惠券、会员等级自动互通', '用户取消授权时仅解绑对应渠道ID，主数据永久留存', '与入会场景配置联动，触发自动入会', '与订单同步记录联动，下单时自动匹配会员'],
+      tips: ['手机号是OneID核心匹配键，请确保顾客授权提供', '绑定关系建立后不可删除，仅可解绑', '解绑渠道ID不影响会员主数据和其他渠道绑定', '建议定期清理长期未活跃的绑定关系']
+    }
+  },
+  {
+    key: 'member-join-scenes', path: 'member/join-scenes', name: '入会场景配置', category: '会员管理',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '场景名称', dataIndex: 'name' },
+      { title: '适用渠道', dataIndex: 'channel', render: (v) => ({ douyin: '抖音', xiaohongshu: '小红书', meituan: '美团', wechat: '微信', all: '全部' }[v] || v) },
+      { title: '触发类型', dataIndex: 'triggerType', render: (v) => ({ enterPage: '进页弹窗', beforeOrder: '下单前置', afterPurchase: '购券完成', beforeActivity: '活动参与前置' }[v] || v) },
+      { title: '优先级', dataIndex: 'priority' },
+      { title: '状态', dataIndex: 'enabled', render: (v) => (v ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '场景名称', type: 'text', required: true },
+      { name: 'channel', label: '适用渠道', type: 'select', options: [
+        { label: '抖音', value: 'douyin' }, { label: '小红书', value: 'xiaohongshu' },
+        { label: '美团', value: 'meituan' }, { label: '微信', value: 'wechat' },
+        { label: '全部', value: 'all' }
+      ] },
+      { name: 'triggerType', label: '触发类型', type: 'select', options: [
+        { label: '进页弹窗', value: 'enterPage' }, { label: '下单前置', value: 'beforeOrder' },
+        { label: '购券完成', value: 'afterPurchase' }, { label: '活动参与前置', value: 'beforeActivity' }
+      ] },
+      { name: 'priority', label: '优先级', type: 'number' },
+      { name: 'enabled', label: '启用', type: 'switch' }
+    ],
+    doc: {
+      overview: '入会场景配置是公域一键入会的场景管理工具，配置顾客在各平台触发入会的时机和弹窗策略。无需第三方配置，自主管控入会转化。',
+      features: ['多场景入会配置：进页弹窗、下单前置、购券完成、活动参与前置', '支持按渠道配置不同入会策略', '优先级管理，同一顾客触发多个场景时按优先级展示', '开关控制，灵活启用/禁用', '与OneID会员映射联动，触发自动入会', '与权益配置联动，入会时自动发放新人券和积分', '自主配置，无需依赖第三方SaaS'],
+      tips: ['建议在购券完成后弹窗入会，转化率最高', '优先级数值越小越优先', '入会弹窗文案需简洁明了，突出权益价值', '定期分析各场景入会转化率，优化配置']
+    }
+  },
+  {
+    key: 'verification-terminals', path: 'verification/terminals', name: '核销终端管理', category: '核销中心',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '终端名称', dataIndex: 'name' },
+      { title: '设备ID', dataIndex: 'deviceId' },
+      { title: '类型', dataIndex: 'type', render: (v) => ({ tablet: '核销平板', miniProgram: '商户助手小程序' }[v] || v) },
+      { title: '所属门店', dataIndex: 'shopName' },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ online: '在线', offline: '离线', disabled: '禁用' }[v] || v) },
+      { title: '离线待同步', dataIndex: 'offlineRecords' },
+      { title: '最后同步', dataIndex: 'lastSyncTime' }
+    ],
+    fields: [
+      { name: 'name', label: '终端名称', type: 'text', required: true },
+      { name: 'deviceId', label: '设备ID', type: 'text' },
+      { name: 'type', label: '类型', type: 'select', options: [
+        { label: '核销平板', value: 'tablet' }, { label: '商户助手小程序', value: 'miniProgram' }
+      ] },
+      { name: 'shopId', label: '门店ID', type: 'number' },
+      { name: 'shopName', label: '门店名称', type: 'text' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '在线', value: 'online' }, { label: '离线', value: 'offline' },
+        { label: '禁用', value: 'disabled' }
+      ] },
+      { name: 'lastSyncTime', label: '最后同步时间', type: 'date' },
+      { name: 'offlineRecords', label: '离线待同步记录数', type: 'number' }
+    ],
+    doc: {
+      overview: '核销终端管理是商场自研核销设备的管理工具，管理核销平板和商户助手小程序的注册、状态和同步。是实现独立收银、统一核销的硬件基础。',
+      features: ['支持核销平板和商户助手小程序两种终端类型', '设备注册和绑定门店', '终端状态管理：在线/离线/禁用', '离线记录数统计', '最后同步时间追踪', '断网兜底：终端本地存储，联网后批量同步', '重复核销拦截：中台去重校验', '与核销同步记录联动，记录终端操作', '高客流门店可配置多终端'],
+      tips: ['高客流门店建议配备备用终端', '离线记录需及时同步，避免数据丢失', '禁用终端前需确保无待同步记录', '设备ID需唯一，避免重复注册']
+    }
+  },
+  {
+    key: 'route-short-url', path: 'route/short-url', name: '自研路由短链', category: '营销管理',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '短链码', dataIndex: 'shortCode' },
+      { title: '原始URL', dataIndex: 'originalUrl' },
+      { title: '渠道', dataIndex: 'channel', render: (v) => ({ douyin: '抖音', xiaohongshu: '小红书', meituan: '美团' }[v] || v) },
+      { title: '活动名称', dataIndex: 'campaignName' },
+      { title: '达人', dataIndex: '达人Name' },
+      { title: '点击次数', dataIndex: 'clickCount' },
+      { title: '转化次数', dataIndex: 'conversionCount' }
+    ],
+    fields: [
+      { name: 'shortCode', label: '短链码', type: 'text' },
+      { name: 'originalUrl', label: '原始跳转URL', type: 'text', required: true },
+      { name: 'channel', label: '渠道', type: 'select', options: [
+        { label: '抖音', value: 'douyin' }, { label: '小红书', value: 'xiaohongshu' },
+        { label: '美团', value: 'meituan' }
+      ] },
+      { name: 'campaignId', label: '活动ID', type: 'number' },
+      { name: 'campaignName', label: '活动名称', type: 'text' },
+      { name: 'activityId', label: '活动ID', type: 'number' },
+      { name: 'noteId', label: '笔记ID', type: 'text' },
+      { name: 'videoId', label: '视频ID', type: 'text' },
+      { name: '达人Id', label: '达人ID', type: 'text' },
+      { name: '达人Name', label: '达人名称', type: 'text' },
+      { name: 'utmSource', label: 'UTM来源', type: 'text' },
+      { name: 'utmMedium', label: 'UTM媒介', type: 'text' },
+      { name: 'utmCampaign', label: 'UTM活动', type: 'text' },
+      { name: 'utmContent', label: 'UTM内容', type: 'text' },
+      { name: 'clickCount', label: '点击次数', type: 'number' },
+      { name: 'conversionCount', label: '转化次数', type: 'number' }
+    ],
+    doc: {
+      overview: '自研路由短链是公域内容种草的核心工具，生成带专属埋点的短链，实现跨端跳转和引流归因统计。无需第三方跳转中转，自主掌控流量路径。',
+      features: ['6位随机字符短链生成', '专属埋点参数：渠道标识、达人ID、笔记ID、活动ID', '支持挂载至抖音短视频小风车、直播间卡片、小红书POI笔记、美团店铺活动页', '跨端跳转：自动跳转对应平台小程序', '兜底机制：平台限制跨生态跳转时生成兑换口令', '实时埋点回流至BI数据模块', '点击次数和转化次数统计', '投放ROI复盘数据支持', '与BI报表分析联动，提供归因数据'],
+      tips: ['短链码建议与活动/达人关联，便于追踪', 'UTM参数需规范填写，确保归因准确', '定期分析短链转化数据，优化投放策略', '跨平台跳转受平台规则限制，需准备兑换口令兜底']
+    }
+  },
+  {
+    key: 'analytics-bi', path: 'analytics/bi', name: 'BI报表分析', category: '数据中心',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '报表名称', dataIndex: 'name' },
+      { title: '类型', dataIndex: 'type', render: (v) => ({ overview: '渠道总览', member: '会员注册分析', behavior: '用户行为分析', transaction: '交易核销分析', marketing: '投放营销复盘' }[v] || v) },
+      { title: '周期', dataIndex: 'period', render: (v) => ({ day: '日报', week: '周报', month: '月报', quarter: '季报' }[v] || v) },
+      { title: '生成时间', dataIndex: 'generatedAt' },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ generated: '已生成', generating: '生成中', failed: '失败' }[v] || v) }
+    ],
+    fields: [
+      { name: 'name', label: '报表名称', type: 'text' },
+      { name: 'type', label: '报表类型', type: 'select', options: [
+        { label: '渠道总览', value: 'overview' }, { label: '会员注册分析', value: 'member' },
+        { label: '用户行为分析', value: 'behavior' }, { label: '交易核销分析', value: 'transaction' },
+        { label: '投放营销复盘', value: 'marketing' }
+      ] },
+      { name: 'period', label: '周期', type: 'select', options: [
+        { label: '日报', value: 'day' }, { label: '周报', value: 'week' },
+        { label: '月报', value: 'month' }, { label: '季报', value: 'quarter' }
+      ] },
+      { name: 'startDate', label: '开始日期', type: 'date' },
+      { name: 'endDate', label: '结束日期', type: 'date' },
+      { name: 'channels', label: '渠道筛选', type: 'select', multiple: true, options: [
+        { label: '抖音', value: 'douyin' }, { label: '小红书', value: 'xiaohongshu' },
+        { label: '美团', value: 'meituan' }, { label: '微信', value: 'wechat' }
+      ] },
+      { name: 'generatedAt', label: '生成时间', type: 'date' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '已生成', value: 'generated' }, { label: '生成中', value: 'generating' },
+        { label: '失败', value: 'failed' }
+      ] }
+    ],
+    doc: {
+      overview: 'BI报表分析是全域数据自主回流的核心展示模块，提供会员注册、用户行为、交易核销、投放营销四类数据的自主分析能力。所有数据私有化存储，自主清洗、统计、展示、导出。',
+      features: ['渠道总览：自主拆分抖音、小红书、美团访客、注册、成交数据', '会员注册分析：新客层级划分、复购率、生命周期价值', '用户行为分析：公域浏览、点击、领券、收藏、分享、活动参与全量埋点', '交易核销分析：分渠道下单金额、核销量、核销率、客单价、退款记录', '投放营销复盘：单条短视频、单篇笔记的曝光-点击-注册-核销全链路转化', '自定义筛选：按渠道、日期、门店等维度筛选', '数据导出：支持Excel、PDF格式导出', '实时数据回流：所有数据直接从公域平台回流至私有化数据仓库', '与路由短链联动，获取归因数据', '与核销同步记录联动，获取交易数据'],
+      tips: ['报表数据来源于各模块数据回流，需确保数据同步正常', '建议定期导出报表存档，作为财务审计依据', '投放营销复盘需结合短链归因数据', '会员生命周期价值分析可指导营销投放策略']
     }
   },
   // ===== 公域运营 =====
