@@ -986,6 +986,303 @@ export const MODULES: ModuleConfig[] = [
       tips: ['核销员账号建议一人一号，确保操作可追溯', '离职核销员账号请及时禁用，防止违规操作', '建议定期统计核销员业绩，作为绩效考核参考']
     }
   },
+  // ===== 渠道核销管理 =====
+  {
+    key: 'channel-configs', path: 'channel/configs', name: '渠道配置', category: '渠道核销管理',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '渠道', dataIndex: 'channel', render: (v) => ({ douyin: '抖音', meituan: '美团' }[v] || v) },
+      { title: '应用ID', dataIndex: 'appId' },
+      { title: '资质状态', dataIndex: 'qualificationStatus', render: (v) => ({ pending: '待审核', approved: '已通过', rejected: '已拒绝' }[v] || v) },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') },
+      { title: '创建时间', dataIndex: 'createdAt' }
+    ],
+    fields: [
+      { name: 'channel', label: '渠道', type: 'select', options: [
+        { label: '抖音', value: 'douyin' }, { label: '美团', value: 'meituan' }
+      ] },
+      { name: 'channelName', label: '渠道名称', type: 'text' },
+      { name: 'appId', label: '应用ID/ClientToken', type: 'text' },
+      { name: 'appSecret', label: '应用密钥', type: 'text' },
+      { name: 'accessToken', label: '访问令牌', type: 'text', hidden: true },
+      { name: 'tokenExpireTime', label: '令牌过期时间', type: 'date', hidden: true },
+      { name: 'callbackUrl', label: '回调地址', type: 'text' },
+      { name: 'serverWhitelist', label: '服务器白名单', type: 'textarea' },
+      { name: 'depositAmount', label: '类目保证金(元)', type: 'number' },
+      { name: 'qualificationStatus', label: '资质状态', type: 'select', options: [
+        { label: '待审核', value: 'pending' }, { label: '已通过', value: 'approved' }, { label: '已拒绝', value: 'rejected' }
+      ] },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: {
+      overview: '渠道配置是抖音、美团平台对接的基础配置工具，管理商场与抖音来客、美团开放平台的接口对接参数，包括应用密钥、令牌管理、回调地址等。是实现渠道券同步、核销、对账的基础前提。',
+      features: ['支持新增、编辑、删除渠道配置', '管理抖音/美团平台API对接参数', '令牌自动刷新和过期时间管理', '服务器白名单配置（抖音专属）', '资质状态管理：待审核/已通过/已拒绝', '类目保证金配置（抖音专属）', '回调地址配置，接收平台通知', '与商户授权联动，使用渠道配置完成授权'],
+      tips: ['应用密钥请妥善保管，避免泄露', '令牌过期前系统会自动刷新，确保对接正常', '抖音需配置服务器白名单才能调用核销接口', '资质审核通过后才能正式使用渠道功能']
+    }
+  },
+  {
+    key: 'merchant-contracts', path: 'merchant/contracts', name: '签约记录', category: '渠道核销管理',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '合同编号', dataIndex: 'contractNo' },
+      { title: '商户名称', dataIndex: 'merchantName' },
+      { title: '适用渠道', dataIndex: 'channelType', render: (v) => ({ douyin: '抖音', meituan: '美团', all: '全部' }[v] || v) },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ draft: '草稿', pendingSign: '待签署', signed: '已签署', authorized: '已授权', expired: '已过期', terminated: '已终止' }[v] || v) },
+      { title: '生效日期', dataIndex: 'startDate' },
+      { title: '到期日期', dataIndex: 'endDate' },
+      { title: '结算方式', dataIndex: 'settlementMethod', render: (v) => ({ rentDeduct: '租金抵扣', bankTransfer: '对公转账' }[v] || v) }
+    ],
+    fields: [
+      { name: 'merchantId', label: '商户', type: 'select', source: { path: 'merchant/list', labelField: 'name', valueField: 'id' } },
+      { name: 'merchantName', label: '商户名称', type: 'text' },
+      { name: 'contractNo', label: '合同编号', type: 'text' },
+      { name: 'contractType', label: '合同类型', type: 'select', options: [{ label: '抖音/美团通用券核销结算协议', value: 'channelCouponVerify' }] },
+      { name: 'channelType', label: '适用渠道', type: 'select', options: [
+        { label: '抖音', value: 'douyin' }, { label: '美团', value: 'meituan' }, { label: '全部', value: 'all' }
+      ] },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '草稿', value: 'draft' }, { label: '待签署', value: 'pendingSign' }, { label: '已签署', value: 'signed' },
+        { label: '已授权', value: 'authorized' }, { label: '已过期', value: 'expired' }, { label: '已终止', value: 'terminated' }
+      ] },
+      { name: 'signDate', label: '签署日期', type: 'date' },
+      { name: 'startDate', label: '生效日期', type: 'date' },
+      { name: 'endDate', label: '到期日期', type: 'date' },
+      { name: 'discountCostRatio', label: '折扣成本分摊比例(%)', type: 'number' },
+      { name: 'platformFeeRatio', label: '平台手续费分摊比例(%)', type: 'number' },
+      { name: 'settlementMethod', label: '结算方式', type: 'select', options: [
+        { label: '租金抵扣', value: 'rentDeduct' }, { label: '对公转账', value: 'bankTransfer' }
+      ] },
+      { name: 'settlementCycle', label: '结算周期', type: 'select', options: [
+        { label: '每日', value: 'daily' }, { label: '每周', value: 'weekly' }, { label: '每月', value: 'monthly' }
+      ] },
+      { name: 'bankName', label: '开户银行', type: 'text' },
+      { name: 'bankAccount', label: '银行账号', type: 'text' },
+      { name: 'accountName', label: '账户名称', type: 'text' },
+      { name: 'contactPerson', label: '联系人', type: 'text' },
+      { name: 'contactPhone', label: '联系电话', type: 'text' },
+      { name: 'remark', label: '备注', type: 'textarea' }
+    ],
+    doc: {
+      overview: '签约记录是商户与商场签署《抖音/美团通用券核销结算协议》的管理工具，记录合同条款、成本分摊比例、结算方式等关键信息。是商户授权商场代核销的法律基础，也是月度结算的依据。',
+      features: ['支持新增、编辑、删除签约记录', '合同编号自动生成，唯一标识', '选择适用渠道：抖音/美团/全部', '配置折扣成本和平台手续费分摊比例', '结算方式：租金抵扣或对公转账', '合同状态流转：草稿→待签署→已签署→已授权→已过期/已终止', '商户银行账户信息管理', '与商户授权联动，签署后可发起线上授权'],
+      tips: ['合同条款需与商户线下协商一致', '成本分摊比例设置需合理，确保商场和商户利益平衡', '合同到期前30天系统自动提醒续签', '终止合同前需完成当月结算']
+    }
+  },
+  {
+    key: 'merchant-authorizations', path: 'merchant/authorizations', name: '线上授权管理', category: '渠道核销管理',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '商户名称', dataIndex: 'merchantName' },
+      { title: '渠道', dataIndex: 'channel', render: (v) => ({ douyin: '抖音', meituan: '美团' }[v] || v) },
+      { title: '平台门店', dataIndex: 'platformShopName' },
+      { title: '授权类型', dataIndex: 'authorizationType', render: (v) => ({ serviceProvider: '服务商代理', oauth: 'OAuth授权' }[v] || v) },
+      { title: '授权状态', dataIndex: 'authorizationStatus', render: (v) => ({ pending: '待授权', processing: '授权中', completed: '已完成', failed: '失败', revoked: '已撤销' }[v] || v) },
+      { title: '授权时间', dataIndex: 'authorizationTime' }
+    ],
+    fields: [
+      { name: 'merchantId', label: '商户', type: 'select', source: { path: 'merchant/list', labelField: 'name', valueField: 'id' } },
+      { name: 'merchantName', label: '商户名称', type: 'text' },
+      { name: 'channel', label: '渠道', type: 'select', options: [
+        { label: '抖音', value: 'douyin' }, { label: '美团', value: 'meituan' }
+      ] },
+      { name: 'authorizationType', label: '授权类型', type: 'select', options: [
+        { label: '服务商代理（抖音）', value: 'serviceProvider' }, { label: 'OAuth授权（美团）', value: 'oauth' }
+      ] },
+      { name: 'platformShopId', label: '平台门店ID', type: 'text' },
+      { name: 'platformShopName', label: '平台门店名称', type: 'text' },
+      { name: 'authorizationStatus', label: '授权状态', type: 'select', options: [
+        { label: '待授权', value: 'pending' }, { label: '授权中', value: 'processing' },
+        { label: '已完成', value: 'completed' }, { label: '失败', value: 'failed' }, { label: '已撤销', value: 'revoked' }
+      ] },
+      { name: 'authorizationUrl', label: '授权链接', type: 'text' },
+      { name: 'authorizationCode', label: '授权码', type: 'text', hidden: true },
+      { name: 'shopAccessToken', label: '门店Access Token', type: 'text', hidden: true },
+      { name: 'authorizedPermissions', label: '授权权限', type: 'textarea' },
+      { name: 'failureReason', label: '失败原因', type: 'textarea' },
+      { name: 'contractId', label: '关联合同ID', type: 'number' }
+    ],
+    doc: {
+      overview: '线上授权管理是商户在抖音/美团平台授权商场中台代核销的核心工具，管理授权流程和授权状态。商户需完成线上授权后，商场中台才能合法核销商户在平台的券。',
+      features: ['支持新增、编辑、删除授权记录', '抖音授权：服务商代理模式，商户在抖音来客APP授权', '美团授权：OAuth网页授权模式，商户通过链接跳转授权', '生成授权链接，商户点击完成授权', '获取门店独立Access Token（美团专属）', '授权权限管理：团购核销、门店查询、对账查询', '授权状态流转：待授权→授权中→已完成/失败/已撤销', '与签约记录联动，必须先签署合同才能发起授权'],
+      tips: ['抖音授权：商户需在抖音来客APP搜索商场服务商名称进行授权', '美团授权：生成专属OAuth链接发给商户管理员', '授权完成后商场中台拥有该门店所有券的核销权限', '美团每家门店独立Access Token，不可跨门店复用', '撤销授权需商户在平台端操作']
+    }
+  },
+  {
+    key: 'channel-templates', path: 'channel/templates', name: '券模板管理', category: '渠道核销管理',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '渠道', dataIndex: 'channel', render: (v) => ({ douyin: '抖音', meituan: '美团' }[v] || v) },
+      { title: '券名称', dataIndex: 'templateName' },
+      { title: '券类型', dataIndex: 'couponType', render: (v) => ({ groupbuy: '团购券', couponDiscount: '满减券', couponPercent: '折扣券', voucher: '代金券', ticket: '门票', giftCard: '储值卡', package: '套餐券', exchange: '兑换券' }[v] || v) },
+      { title: '面值', dataIndex: 'faceValue' },
+      { title: '门槛', dataIndex: 'minConsume' },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ pending: '待同步', synced: '已同步', offline: '已下线', expired: '已过期' }[v] || v) }
+    ],
+    fields: [
+      { name: 'channel', label: '渠道', type: 'select', options: [
+        { label: '抖音', value: 'douyin' }, { label: '美团', value: 'meituan' }
+      ] },
+      { name: 'platformTemplateId', label: '平台券模板ID', type: 'text', hidden: true },
+      { name: 'templateName', label: '券名称', type: 'text', required: true },
+      { name: 'couponType', label: '券类型', type: 'select', options: [
+        { label: '团购券', value: 'groupbuy' }, { label: '满减券', value: 'couponDiscount' },
+        { label: '折扣券', value: 'couponPercent' }, { label: '代金券', value: 'voucher' },
+        { label: '门票', value: 'ticket' }, { label: '储值卡', value: 'giftCard' },
+        { label: '套餐券', value: 'package' }, { label: '兑换券', value: 'exchange' }
+      ] },
+      { name: 'faceValue', label: '面值(元)', type: 'number' },
+      { name: 'minConsume', label: '最低消费门槛(元)', type: 'number' },
+      { name: 'discountRate', label: '折扣率', type: 'number', placeholder: '0-1之间' },
+      { name: 'totalStock', label: '总库存', type: 'number' },
+      { name: 'soldCount', label: '已售数量', type: 'number', hidden: true },
+      { name: 'validStartTime', label: '有效期开始时间', type: 'date' },
+      { name: 'validEndTime', label: '有效期结束时间', type: 'date' },
+      { name: 'applicableShops', label: '适用门店', type: 'textarea' },
+      { name: 'merchantCostRatio', label: '商户成本分摊比例(%)', type: 'number' },
+      { name: 'platformFeeRatio', label: '平台手续费比例(%)', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '待同步', value: 'pending' }, { label: '已同步', value: 'synced' },
+        { label: '已下线', value: 'offline' }, { label: '已过期', value: 'expired' }
+      ] }
+    ],
+    doc: {
+      overview: '券模板管理是商场在抖音、美团平台上架全域通用券的核心工具，管理券的类型、面值、门槛、适用门店等信息，并同步到对应平台。是实现跨平台发券的关键环节。',
+      features: ['支持新增、编辑、删除券模板', '8种券类型：团购券、满减券、折扣券、代金券、门票、储值卡、套餐券、兑换券', '配置券面值、最低消费门槛、折扣率', '批量绑定已授权商户门店', '商户成本分摊比例配置', '同步到抖音/美团平台上架销售', '券状态管理：待同步/已同步/已下线/已过期', '与渠道配置联动，使用渠道参数完成同步'],
+      tips: ['券面值和门槛需合理设置，确保营销效果和成本平衡', '适用门店需选择已完成线上授权的商户', '同步前请确认渠道配置已生效', '券下线后需通知商户停止使用']
+    }
+  },
+  {
+    key: 'channel-redemptions', path: 'channel/redemptions', name: '核销同步记录', category: '渠道核销管理',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '渠道', dataIndex: 'channel', render: (v) => ({ douyin: '抖音', meituan: '美团' }[v] || v) },
+      { title: '券码', dataIndex: 'couponCode' },
+      { title: '商户名称', dataIndex: 'merchantName' },
+      { title: '核销门店', dataIndex: 'shopName' },
+      { title: '抵扣金额', dataIndex: 'discountAmount' },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ verified: '已核销', revoked: '已撤销', expired: '已过期' }[v] || v) },
+      { title: '撤销状态', dataIndex: 'revokeStatus', render: (v) => ({ none: '未撤销', pending: '撤销中', succeeded: '已成功', failed: '失败' }[v] || v) },
+      { title: '核销时间', dataIndex: 'redemptionTime' }
+    ],
+    fields: [
+      { name: 'channel', label: '渠道', type: 'select', options: [
+        { label: '抖音', value: 'douyin' }, { label: '美团', value: 'meituan' }
+      ] },
+      { name: 'channelRedemptionId', label: '渠道核销ID', type: 'text' },
+      { name: 'couponCode', label: '券码', type: 'text', required: true },
+      { name: 'platformTemplateId', label: '平台券模板ID', type: 'text' },
+      { name: 'merchantId', label: '商户ID', type: 'number' },
+      { name: 'merchantName', label: '商户名称', type: 'text' },
+      { name: 'shopId', label: '门店ID', type: 'number' },
+      { name: 'shopName', label: '门店名称', type: 'text' },
+      { name: 'platformShopId', label: '平台门店ID', type: 'text' },
+      { name: 'operator', label: '操作人', type: 'text' },
+      { name: 'redemptionTime', label: '核销时间', type: 'date' },
+      { name: 'originalAmount', label: '原消费金额', type: 'number' },
+      { name: 'discountAmount', label: '抵扣金额', type: 'number' },
+      { name: 'remainingAmount', label: '剩余应付金额', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '已核销', value: 'verified' }, { label: '已撤销', value: 'revoked' }, { label: '已过期', value: 'expired' }
+      ] },
+      { name: 'revokeStatus', label: '撤销状态', type: 'select', options: [
+        { label: '未撤销', value: 'none' }, { label: '撤销中', value: 'pending' },
+        { label: '已成功', value: 'succeeded' }, { label: '失败', value: 'failed' }
+      ] },
+      { name: 'revokeReason', label: '撤销原因', type: 'select', options: [
+        { label: '退款', value: 'refund' }, { label: '误操作', value: 'mistake' }, { label: '渠道退款', value: 'channelRefund' }
+      ] },
+      { name: 'revokeTime', label: '撤销时间', type: 'date' },
+      { name: 'revokeOperator', label: '撤销操作人', type: 'text' },
+      { name: 'revokeFailureReason', label: '撤销失败原因', type: 'textarea' },
+      { name: 'deviceId', label: '核销设备ID', type: 'text' },
+      { name: 'notes', label: '备注', type: 'textarea' }
+    ],
+    doc: {
+      overview: '核销同步记录是渠道券核销的核心数据模块，完整记录抖音、美团券的核销过程、撤销过程和状态变更。是财务结算和对账的唯一依据，确保核销数据真实可追溯。',
+      features: ['完整记录渠道券核销流水', '券码作为唯一匹配主键', '记录渠道、门店、抵扣金额、操作人等信息', '核销状态管理：已核销/已撤销/已过期', '撤销状态管理：未撤销/撤销中/已成功/失败', '撤销原因分类：退款/误操作/渠道退款', '记录撤销失败原因，便于异常处理', '与每日对账联动，作为对账数据来源', '与月度结算联动，作为结算依据'],
+      tips: ['券码是对账唯一匹配主键，确保录入准确', '抖音核销后5天内可接口撤销，美团当日可批量撤销', '撤销失败需人工跟进处理', '核销记录是财务结算的唯一依据，请勿随意删除']
+    }
+  },
+  {
+    key: 'daily-reconciliation', path: 'channel/reconciliation/daily', name: '每日对账', category: '渠道核销管理',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '对账日期', dataIndex: 'date' },
+      { title: '渠道', dataIndex: 'channel', render: (v) => ({ douyin: '抖音', meituan: '美团', all: '全部' }[v] || v) },
+      { title: '平台核销数', dataIndex: 'platformVerifyCount' },
+      { title: '平台核销金额', dataIndex: 'platformVerifyAmount' },
+      { title: '门店核销数', dataIndex: 'shopVerifyCount' },
+      { title: '门店核销金额', dataIndex: 'shopVerifyAmount' },
+      { title: '匹配状态', dataIndex: 'status', render: (v) => ({ processing: '核对中', matched: '一致', unmatched: '不一致' }[v] || v) },
+      { title: '未匹配数', dataIndex: 'unmatchedCount' }
+    ],
+    fields: [
+      { name: 'date', label: '对账日期', type: 'date', required: true },
+      { name: 'channel', label: '渠道', type: 'select', options: [
+        { label: '抖音', value: 'douyin' }, { label: '美团', value: 'meituan' }, { label: '全部', value: 'all' }
+      ] },
+      { name: 'platformVerifyCount', label: '平台核销数', type: 'number' },
+      { name: 'platformVerifyAmount', label: '平台核销金额', type: 'number' },
+      { name: 'shopVerifyCount', label: '门店核销数', type: 'number' },
+      { name: 'shopVerifyAmount', label: '门店核销金额', type: 'number' },
+      { name: 'matchedCount', label: '匹配成功数', type: 'number' },
+      { name: 'unmatchedCount', label: '未匹配数', type: 'number' },
+      { name: 'unmatchedDetails', label: '未匹配明细', type: 'textarea' },
+      { name: 'status', label: '匹配状态', type: 'select', options: [
+        { label: '核对中', value: 'processing' }, { label: '一致', value: 'matched' }, { label: '不一致', value: 'unmatched' }
+      ] },
+      { name: 'operator', label: '操作人', type: 'text' },
+      { name: 'reconcileTime', label: '对账时间', type: 'date' },
+      { name: 'remark', label: '备注', type: 'textarea' }
+    ],
+    doc: {
+      overview: '每日对账是商场运营每日核对中台核销数据与门店收银数据的工具，以券码为唯一匹配主键，确保两边数据一致。是发现异常、保证数据准确性的重要环节。',
+      features: ['支持手动执行每日对账', '分别导出抖音、美团核销明细', '门店导出银豹销售报表进行核对', '以券码为唯一匹配主键', '记录平台核销数与门店核销数差异', '未匹配明细登记，便于追溯', '对账状态：核对中/一致/不一致', '异常登记：中台有核销银豹无订单、银豹有备注中台无核销', '与核销记录联动，查询原始核销数据'],
+      tips: ['每日对账建议固定时间执行，确保当日问题当日解决', '券码是唯一匹配主键，确保银豹备注录入正确', '未匹配数据需当日同步门店修正', '对账结果需存档，作为财务审计依据']
+    }
+  },
+  {
+    key: 'monthly-settlement', path: 'channel/settlement/monthly', name: '月度结算', category: '渠道核销管理',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '商户名称', dataIndex: 'merchantName' },
+      { title: '渠道', dataIndex: 'channel', render: (v) => ({ douyin: '抖音', meituan: '美团', all: '全部' }[v] || v) },
+      { title: '结算月份', dataIndex: 'settlementMonth' },
+      { title: '总抵扣额', dataIndex: 'totalDiscountAmount' },
+      { title: '商户应结金额', dataIndex: 'settlementAmount' },
+      { title: '结算方式', dataIndex: 'settlementMethod', render: (v) => ({ rentDeduct: '租金抵扣', bankTransfer: '对公转账' }[v] || v) },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ pending: '待结算', processing: '结算中', completed: '已完成', failed: '失败' }[v] || v) }
+    ],
+    fields: [
+      { name: 'merchantId', label: '商户ID', type: 'number' },
+      { name: 'merchantName', label: '商户名称', type: 'text' },
+      { name: 'channel', label: '渠道', type: 'select', options: [
+        { label: '抖音', value: 'douyin' }, { label: '美团', value: 'meituan' }, { label: '全部', value: 'all' }
+      ] },
+      { name: 'settlementMonth', label: '结算月份', type: 'date', required: true },
+      { name: 'totalDiscountAmount', label: '券总抵扣额', type: 'number' },
+      { name: 'merchantCostAmount', label: '商户承担营销成本', type: 'number' },
+      { name: 'platformFeeAmount', label: '平台服务费', type: 'number' },
+      { name: 'daRenCommissionAmount', label: '达人佣金', type: 'number' },
+      { name: 'settlementAmount', label: '商户应结金额', type: 'number' },
+      { name: 'settlementMethod', label: '结算方式', type: 'select', options: [
+        { label: '租金抵扣', value: 'rentDeduct' }, { label: '对公转账', value: 'bankTransfer' }
+      ] },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '待结算', value: 'pending' }, { label: '结算中', value: 'processing' },
+        { label: '已完成', value: 'completed' }, { label: '失败', value: 'failed' }
+      ] },
+      { name: 'settlementTime', label: '结算时间', type: 'date' },
+      { name: 'operator', label: '操作人', type: 'text' },
+      { name: 'documents', label: '归档资料', type: 'textarea' },
+      { name: 'remark', label: '备注', type: 'textarea' }
+    ],
+    doc: {
+      overview: '月度结算是财务主导的商户结算工具，根据每日对账数据计算商户应结金额，支持租金抵扣或对公转账两种兑付方式。是商场与商户资金结算的核心环节。',
+      features: ['分渠道计算商户应结金额', '抖音结算公式：门店抖音券总抵扣额 − 商户承担营销成本 − 抖音平台服务费 − 达人佣金', '美团结算公式：门店美团券总抵扣额 − 商户承担营销成本 − 美团平台技术服务费', '结算方式：租金抵扣或对公转账', '结算状态管理：待结算/结算中/已完成/失败', '归档资料管理：平台账单、中台台账、银豹对账表、结算单', '与签约记录联动，使用合同约定的成本分摊比例', '与每日对账联动，使用对账数据作为结算依据'],
+      tips: ['结算前需确保当月每日对账已完成', '抖音需额外扣除达人佣金', '租金抵扣需确认商户租金账户余额充足', '结算单需双方签字确认后存档']
+    }
+  },
   // ===== 公域运营 =====
   {
     key: 'public-domain-ads', path: 'public-domain/ads', name: '公域投放', category: '公域运营',
