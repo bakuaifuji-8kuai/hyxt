@@ -713,13 +713,21 @@ const moduleRoutes = [
   'analytics/dashboards', 'analytics/reports', 'analytics/overview',
   'config/shops', 'config/terminals',
   'system/users', 'system/roles', 'system/logs', 'system/menus',
-  'verification/records', 'verification/staff',
+  'verification/records', 'verification/staff', 'verification/terminals',
   'public-domain/ads',
   'property/points', 'property/tasks', 'property/activities',
   'rental/items', 'rental/records',
   'decoration/pages', 'decoration/versions', 'decoration/templates', 'decoration/services',
   'decoration/icons', 'decoration/audience', 'decoration/personalization',
-  'decoration/events', 'decoration/floors'
+  'decoration/events', 'decoration/floors',
+  'channel/configs', 'channel/templates', 'channel/redemptions',
+  'channel/reconciliation/daily', 'channel/settlement/monthly',
+  'channel/order-sync',
+  'merchant/contracts', 'merchant/authorizations',
+  'coupon/code-pool',
+  'member/oneid', 'member/join-scenes',
+  'route/short-url',
+  'analytics/bi'
 ];
 
 for (const route of moduleRoutes) {
