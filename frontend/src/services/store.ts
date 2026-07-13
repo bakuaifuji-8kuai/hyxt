@@ -563,6 +563,22 @@ initModule('member/upgrade-gift-log', ['member', 'phone', 'fromLevel', 'toLevel'
   { member: '王五', phone: '13800138003', fromLevel: '金卡会员', toLevel: '钻石会员', points: 1000, coupons: '满200减50元券,专属权益券', parkingHours: 8, triggerType: 'manual', status: 'success', failReason: '', operator: 'admin', remark: '手动补发升级礼包', createdAt: '2024-06-05 16:20' }
 ]);
 
+initModule('channel/redemptions', ['channel', 'channelRedemptionId', 'couponCode', 'platformTemplateId', 'merchantId', 'merchantName', 'shopId', 'shopName', 'platformShopId', 'operator', 'redemptionTime', 'originalAmount', 'discountAmount', 'remainingAmount', 'status', 'revokeStatus', 'revokeReason', 'revokeTime', 'revokeOperator', 'revokeFailureReason', 'deviceId', 'notes'], [
+  { channel: 'douyin', channelRedemptionId: 'dy_red_001', couponCode: 'DY202407100001', platformTemplateId: 'dy_temp_001', merchantId: 1, merchantName: '星巴克', shopId: 1, shopName: '总店', platformShopId: 'poi_123', operator: '收银员A', redemptionTime: '2024-07-10 14:30:00', originalAmount: 150, discountAmount: 50, remainingAmount: 100, status: 'verified', revokeStatus: 'none', revokeReason: '', revokeTime: '', revokeOperator: '', revokeFailureReason: '', deviceId: 'pad_001', notes: '' },
+  { channel: 'meituan', channelRedemptionId: 'mt_red_001', couponCode: 'MT202407100001', platformTemplateId: 'mt_temp_001', merchantId: 1, merchantName: '星巴克', shopId: 1, shopName: '总店', platformShopId: 'mt_456', operator: '收银员A', redemptionTime: '2024-07-10 15:45:00', originalAmount: 250, discountAmount: 50, remainingAmount: 200, status: 'verified', revokeStatus: 'none', revokeReason: '', revokeTime: '', revokeOperator: '', revokeFailureReason: '', deviceId: 'pad_001', notes: '' },
+  { channel: 'douyin', channelRedemptionId: 'dy_red_002', couponCode: 'DY202407100002', platformTemplateId: 'dy_temp_001', merchantId: 2, merchantName: '海底捞', shopId: 2, shopName: '分店', platformShopId: 'poi_789', operator: '收银员B', redemptionTime: '2024-07-10 18:00:00', originalAmount: 300, discountAmount: 50, remainingAmount: 250, status: 'revoked', revokeStatus: 'succeeded', revokeReason: 'refund', revokeTime: '2024-07-10 18:30:00', revokeOperator: '店长', revokeFailureReason: '', deviceId: 'pad_002', notes: '顾客退款' }
+]);
+
+initModule('channel/reconciliation/daily', ['date', 'channel', 'platformVerifyCount', 'platformVerifyAmount', 'shopVerifyCount', 'shopVerifyAmount', 'matchedCount', 'unmatchedCount', 'unmatchedDetails', 'status', 'operator', 'reconcileTime', 'remark'], [
+  { date: '2024-07-09', channel: 'all', platformVerifyCount: 50, platformVerifyAmount: 5000, shopVerifyCount: 48, shopVerifyAmount: 4900, matchedCount: 48, unmatchedCount: 2, unmatchedDetails: '[{"couponCode":"DY202407090015","reason":"中台有核销银豹无订单"},{"couponCode":"DY202407090028","reason":"银豹有备注中台无核销"}]', status: 'unmatched', operator: '运营A', reconcileTime: '2024-07-10 09:00:00', remark: '待门店确认' },
+  { date: '2024-07-08', channel: 'all', platformVerifyCount: 35, platformVerifyAmount: 3500, shopVerifyCount: 35, shopVerifyAmount: 3500, matchedCount: 35, unmatchedCount: 0, unmatchedDetails: '[]', status: 'matched', operator: '运营A', reconcileTime: '2024-07-09 09:00:00', remark: '' }
+]);
+
+initModule('channel/settlement/monthly', ['merchantId', 'merchantName', 'channel', 'settlementMonth', 'totalDiscountAmount', 'merchantCostAmount', 'platformFeeAmount', 'daRenCommissionAmount', 'settlementAmount', 'settlementMethod', 'status', 'settlementTime', 'operator', 'documents', 'remark'], [
+  { merchantId: 1, merchantName: '星巴克', channel: 'all', settlementMonth: '2024-06', totalDiscountAmount: 10000, merchantCostAmount: 5000, platformFeeAmount: 800, daRenCommissionAmount: 500, settlementAmount: 3700, settlementMethod: 'rentDeduct', status: 'completed', settlementTime: '2024-07-05 10:00:00', operator: '财务A', documents: '["抖音结算账单.pdf", "美团结算账单.pdf", "中台核销台账.xlsx", "结算单.pdf"]', remark: '' },
+  { merchantId: 2, merchantName: '海底捞', channel: 'all', settlementMonth: '2024-06', totalDiscountAmount: 8000, merchantCostAmount: 3200, platformFeeAmount: 640, daRenCommissionAmount: 400, settlementAmount: 3760, settlementMethod: 'bankTransfer', status: 'processing', settlementTime: '', operator: '财务A', documents: '', remark: '待打款' }
+]);
+
 export function login(username: string, password: string) {
   if ((username === 'admin' && password === 'admin') || (username === 'admin' && password === 'admin')) {
     const token = 'mock-token-' + Date.now();
