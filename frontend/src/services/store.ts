@@ -644,6 +644,108 @@ export function toggleStatus(module: string, id: number) {
   return mod.data[idx];
 }
 
+// ============================================
+// 新增模块 - 商业体自研全域公域中台
+// ============================================
+
+// 渠道配置
+initModule('channel/configs', ['channel', 'channelName', 'appId', 'appSecret', 'callbackUrl', 'spiCallbackUrl', 'depositAmount', 'qualificationStatus', 'accountType', 'poiStatus', 'annualReviewDate', 'noteMountPermission', 'status', 'createdAt'], [
+  { channel: 'douyin', channelName: '抖音生活服务-商场官方号', appId: 'dy_app_7x8y9z', appSecret: 'dy_secret_xxxx', callbackUrl: 'https://api.hengwei.com/callback/douyin', spiCallbackUrl: 'https://api.hengwei.com/spi/douyin', depositAmount: 200000, qualificationStatus: 'approved', accountType: 'enterprise', poiStatus: 'approved', annualReviewDate: '2025-03-15', noteMountPermission: false, status: 'enabled', createdAt: '2024-03-01 10:00' },
+  { channel: 'meituan', channelName: '美团点评-商场官方店', appId: 'mt_client_abc123', appSecret: 'mt_secret_xxxx', callbackUrl: 'https://api.hengwei.com/callback/meituan', spiCallbackUrl: 'https://api.hengwei.com/spi/meituan', depositAmount: 100000, qualificationStatus: 'approved', accountType: 'enterprise', poiStatus: '-', annualReviewDate: '', noteMountPermission: false, status: 'enabled', createdAt: '2024-03-15 11:00' },
+  { channel: 'xiaohongshu', channelName: '小红书-商场企业号', appId: 'xhs_app_5t6y7u', appSecret: 'xhs_secret_xxxx', callbackUrl: 'https://api.hengwei.com/callback/xhs', spiCallbackUrl: 'https://api.hengwei.com/spi/xhs', depositAmount: 50000, qualificationStatus: 'approved', accountType: 'enterprise', poiStatus: 'approved', annualReviewDate: '2025-06-20', noteMountPermission: true, status: 'enabled', createdAt: '2024-04-10 12:00' },
+  { channel: 'xiaohongshu', channelName: '小红书-美妆探店号', appId: 'xhs_app_8i9o0p', appSecret: 'xhs_secret_yyyy', callbackUrl: 'https://api.hengwei.com/callback/xhs2', spiCallbackUrl: '', depositAmount: 0, qualificationStatus: 'pending', accountType: 'personal', poiStatus: 'pending', annualReviewDate: '', noteMountPermission: true, status: 'disabled', createdAt: '2024-07-01 14:00' }
+]);
+
+// 线上授权管理
+initModule('merchant/authorizations', ['merchantName', 'channel', 'platformShopName', 'authorizationType', 'authorizationStatus', 'authorizationTime'], [
+  { merchantName: '海底捞(商场店)', channel: 'douyin', platformShopName: '海底捞-商场店', authorizationType: 'serviceProvider', authorizationStatus: 'completed', authorizationTime: '2024-04-01 10:00' },
+  { merchantName: '海底捞(商场店)', channel: 'meituan', platformShopName: '海底捞-商场店', authorizationType: 'oauth', authorizationStatus: 'completed', authorizationTime: '2024-04-05 11:00' },
+  { merchantName: '丝芙兰(商场店)', channel: 'douyin', platformShopName: '丝芙兰-商场店', authorizationType: 'serviceProvider', authorizationStatus: 'completed', authorizationTime: '2024-04-10 14:00' },
+  { merchantName: '丝芙兰(商场店)', channel: 'meituan', platformShopName: '丝芙兰-商场店', authorizationType: 'oauth', authorizationStatus: 'processing', authorizationTime: '2024-07-10 16:00' },
+  { merchantName: '永辉超市(B1店)', channel: 'meituan', platformShopName: '永辉超市-B1店', authorizationType: 'oauth', authorizationStatus: 'completed', authorizationTime: '2024-05-15 10:00' },
+  { merchantName: '玩具反斗城', channel: 'douyin', platformShopName: '玩具反斗城-商场店', authorizationType: 'serviceProvider', authorizationStatus: 'pending', authorizationTime: '2024-07-10 17:00' },
+  { merchantName: '优衣库', channel: 'meituan', platformShopName: '优衣库-商场店', authorizationType: 'oauth', authorizationStatus: 'failed', authorizationTime: '2024-07-08 15:00' }
+]);
+
+// 券模板管理
+initModule('channel/templates', ['channel', 'templateName', 'couponType', 'faceValue', 'minConsume', 'totalStock', 'soldCount', 'validStartTime', 'validEndTime', 'status'], [
+  { channel: 'douyin', templateName: '50元代金券', couponType: 'voucher', faceValue: 50, minConsume: 100, totalStock: 5000, soldCount: 3200, validStartTime: '2024-07-01', validEndTime: '2024-12-31', status: 'synced' },
+  { channel: 'douyin', templateName: '满200减80券', couponType: 'couponDiscount', faceValue: 80, minConsume: 200, totalStock: 3000, soldCount: 1850, validStartTime: '2024-07-01', validEndTime: '2024-12-31', status: 'synced' },
+  { channel: 'douyin', templateName: '8.5折通用券', couponType: 'couponPercent', faceValue: 0, minConsume: 0, totalStock: 2000, soldCount: 950, validStartTime: '2024-06-01', validEndTime: '2024-08-31', status: 'synced' },
+  { channel: 'meituan', templateName: '美团50元代金券', couponType: 'voucher', faceValue: 50, minConsume: 100, totalStock: 5000, soldCount: 2800, validStartTime: '2024-07-01', validEndTime: '2024-12-31', status: 'synced' },
+  { channel: 'meituan', templateName: '美团满200减80', couponType: 'couponDiscount', faceValue: 80, minConsume: 200, totalStock: 3000, soldCount: 1620, validStartTime: '2024-07-01', validEndTime: '2024-12-31', status: 'synced' },
+  { channel: 'douyin', templateName: '暑期大促团购', couponType: 'groupbuy', faceValue: 188, minConsume: 0, totalStock: 1000, soldCount: 0, validStartTime: '2024-07-15', validEndTime: '2024-08-31', status: 'pending' },
+  { channel: 'meituan', templateName: '春节礼品套餐', couponType: 'package', faceValue: 298, minConsume: 0, totalStock: 500, soldCount: 500, validStartTime: '2024-01-01', validEndTime: '2024-02-29', status: 'expired' }
+]);
+
+// 券码池管理
+initModule('coupon/code-pool', ['code', 'templateId', 'templateName', 'batchId', 'status', 'issueTime', 'issueChannel', 'issueOrderId', 'verifyTime', 'verifyShopId', 'revokeTime'], [
+  { code: 'HW20240710000001AB', templateId: 1, templateName: '50元代金券', batchId: 1, status: 'available', issueTime: '', issueChannel: '', issueOrderId: '', verifyTime: '', verifyShopId: 0, revokeTime: '' },
+  { code: 'HW20240710000002CD', templateId: 1, templateName: '50元代金券', batchId: 1, status: 'issued', issueTime: '2024-07-10 10:30', issueChannel: 'douyin', issueOrderId: 'DY2024071000001', verifyTime: '', verifyShopId: 0, revokeTime: '' },
+  { code: 'HW20240710000003EF', templateId: 2, templateName: '满200减80券', batchId: 1, status: 'verified', issueTime: '2024-07-10 11:00', issueChannel: 'meituan', issueOrderId: 'MT2024071000002', verifyTime: '2024-07-10 14:30', verifyShopId: 1, revokeTime: '' },
+  { code: 'HW20240710000004GH', templateId: 2, templateName: '满200减80券', batchId: 1, status: 'verified', issueTime: '2024-07-10 11:15', issueChannel: 'xiaohongshu', issueOrderId: 'XHS2024071000003', verifyTime: '2024-07-10 16:00', verifyShopId: 2, revokeTime: '' },
+  { code: 'HW20240710000005IJ', templateId: 3, templateName: '新人见面礼券', batchId: 2, status: 'available', issueTime: '', issueChannel: '', issueOrderId: '', verifyTime: '', verifyShopId: 0, revokeTime: '' },
+  { code: 'HW20240710000006KL', templateId: 1, templateName: '50元代金券', batchId: 1, status: 'revoked', issueTime: '2024-07-10 12:00', issueChannel: 'douyin', issueOrderId: 'DY2024071000004', verifyTime: '', verifyShopId: 0, revokeTime: '2024-07-10 13:00' },
+  { code: 'HW20240710000007MN', templateId: 2, templateName: '满200减80券', batchId: 1, status: 'expired', issueTime: '2024-06-01 10:00', issueChannel: 'meituan', issueOrderId: 'MT2024060100001', verifyTime: '', verifyShopId: 0, revokeTime: '' },
+  { code: 'HW20240710000008OP', templateId: 3, templateName: '新人见面礼券', batchId: 2, status: 'issued', issueTime: '2024-07-10 15:00', issueChannel: 'wechat', issueOrderId: 'WX2024071000005', verifyTime: '', verifyShopId: 0, revokeTime: '' }
+]);
+
+// 订单同步记录
+initModule('channel/order-sync', ['channel', 'channelOrderId', 'channelCouponCode', 'internalCouponCode', 'memberName', 'amount', 'syncStatus', 'wechatCardSync', 'syncTime', 'failReason'], [
+  { channel: 'douyin', channelOrderId: 'DY2024071000001', channelCouponCode: 'DYABCD1234', internalCouponCode: 'HW20240710000002CD', memberName: '张三', amount: 50, syncStatus: 'succeeded', wechatCardSync: true, syncTime: '2024-07-10 10:35', failReason: '' },
+  { channel: 'meituan', channelOrderId: 'MT2024071000002', channelCouponCode: 'MT5678EFGH', internalCouponCode: 'HW20240710000003EF', memberName: '李四', amount: 80, syncStatus: 'succeeded', wechatCardSync: true, syncTime: '2024-07-10 11:05', failReason: '' },
+  { channel: 'xiaohongshu', channelOrderId: 'XHS2024071000003', channelCouponCode: 'XHS9012IJKL', internalCouponCode: 'HW20240710000004GH', memberName: '王五', amount: 80, syncStatus: 'succeeded', wechatCardSync: false, syncTime: '2024-07-10 11:20', failReason: '' },
+  { channel: 'douyin', channelOrderId: 'DY2024071000006', channelCouponCode: 'DYMNOP3456', internalCouponCode: '', memberName: '赵六', amount: 100, syncStatus: 'pending', wechatCardSync: false, syncTime: '2024-07-10 16:00', failReason: '' },
+  { channel: 'meituan', channelOrderId: 'MT2024071000007', channelCouponCode: 'MTQRST7890', internalCouponCode: '', memberName: '钱七', amount: 60, syncStatus: 'processing', wechatCardSync: false, syncTime: '2024-07-10 16:30', failReason: '' },
+  { channel: 'douyin', channelOrderId: 'DY2024071000008', channelCouponCode: 'DYUVWX1112', internalCouponCode: '', memberName: '孙八', amount: 200, syncStatus: 'failed', wechatCardSync: false, syncTime: '2024-07-10 17:00', failReason: '渠道订单超时未返回' }
+]);
+
+// OneID 会员映射
+initModule('member/oneid', ['memberId', 'phone', 'douyinOpenid', 'xiaohongshuOpenid', 'meituanOpenid', 'wechatOpenid', 'createdAt', 'lastSyncTime'], [
+  { memberId: 'M001', phone: '13800138001', douyinOpenid: 'dy_open_001', xiaohongshuOpenid: 'xhs_open_001', meituanOpenid: 'mt_open_001', wechatOpenid: 'wx_open_001', createdAt: '2024-01-15 10:00', lastSyncTime: '2024-07-10 14:30' },
+  { memberId: 'M002', phone: '13900139002', douyinOpenid: 'dy_open_002', xiaohongshuOpenid: '', meituanOpenid: 'mt_open_002', wechatOpenid: 'wx_open_002', createdAt: '2024-03-10 11:00', lastSyncTime: '2024-07-10 15:00' },
+  { memberId: 'M003', phone: '13700137003', douyinOpenid: 'dy_open_003', xiaohongshuOpenid: 'xhs_open_003', meituanOpenid: '', wechatOpenid: 'wx_open_003', createdAt: '2024-05-20 12:00', lastSyncTime: '2024-07-10 16:00' },
+  { memberId: 'M004', phone: '13600136004', douyinOpenid: '', xiaohongshuOpenid: '', meituanOpenid: 'mt_open_004', wechatOpenid: 'wx_open_004', createdAt: '2024-06-01 13:00', lastSyncTime: '2024-07-10 17:00' },
+  { memberId: 'M005', phone: '13500135005', douyinOpenid: 'dy_open_005', xiaohongshuOpenid: 'xhs_open_005', meituanOpenid: 'mt_open_005', wechatOpenid: 'wx_open_005', createdAt: '2024-07-01 14:00', lastSyncTime: '2024-07-10 18:00' }
+]);
+
+// 入会场景配置
+initModule('member/join-scenes', ['name', 'channel', 'triggerType', 'priority', 'enabled', 'welcomeCoupon', 'welcomePoints', 'createdAt'], [
+  { name: '抖音POI入会', channel: 'douyin', triggerType: 'enterPage', priority: 1, enabled: true, welcomeCoupon: '新人见面礼券', welcomePoints: 100, createdAt: '2024-05-01 10:00' },
+  { name: '美团店铺入会', channel: 'meituan', triggerType: 'enterPage', priority: 2, enabled: true, welcomeCoupon: '50元代金券', welcomePoints: 50, createdAt: '2024-05-15 11:00' },
+  { name: '小红书笔记入会', channel: 'xiaohongshu', triggerType: 'beforeOrder', priority: 3, enabled: true, welcomeCoupon: '满200减80券', welcomePoints: 80, createdAt: '2024-06-01 12:00' },
+  { name: '微信扫码入会', channel: 'wechat', triggerType: 'enterPage', priority: 4, enabled: true, welcomeCoupon: '新人见面礼券', welcomePoints: 100, createdAt: '2024-04-01 09:00' },
+  { name: '抖音直播间入会', channel: 'douyin', triggerType: 'beforeActivity', priority: 5, enabled: false, welcomeCoupon: '50元代金券', welcomePoints: 50, createdAt: '2024-06-15 14:00' },
+  { name: '购券完成后入会', channel: 'all', triggerType: 'afterPurchase', priority: 0, enabled: true, welcomeCoupon: '新人见面礼券', welcomePoints: 200, createdAt: '2024-07-01 10:00' }
+]);
+
+// 核销终端管理
+initModule('verification/terminals', ['name', 'deviceId', 'type', 'shopId', 'shopName', 'status', 'offlineRecords', 'lastSyncTime'], [
+  { name: '一楼服务台核销平板', deviceId: 'VT-AAB001', type: 'tablet', shopId: 1, shopName: '总服务台', status: 'online', offlineRecords: 0, lastSyncTime: '2024-07-10 18:00:00' },
+  { name: '餐饮区核销终端', deviceId: 'VT-AAB002', type: 'tablet', shopId: 2, shopName: '海底捞', status: 'online', offlineRecords: 0, lastSyncTime: '2024-07-10 18:00:30' },
+  { name: '美妆区商户助手', deviceId: 'MP-AAB003', type: 'miniProgram', shopId: 3, shopName: '丝芙兰', status: 'online', offlineRecords: 0, lastSyncTime: '2024-07-10 18:01:00' },
+  { name: '儿童区核销平板', deviceId: 'VT-AAB004', type: 'tablet', shopId: 4, shopName: '玩具反斗城', status: 'offline', offlineRecords: 12, lastSyncTime: '2024-07-10 12:00:00' },
+  { name: 'B1层核销终端', deviceId: 'VT-AAB005', type: 'tablet', shopId: 5, shopName: '永辉超市', status: 'disabled', offlineRecords: 0, lastSyncTime: '2024-07-09 22:00:00' }
+]);
+
+// 自研路由短链
+initModule('route/short-url', ['shortCode', 'originalUrl', 'channel', 'campaignName', '达人Name', 'clickCount', 'conversionCount', 'status', 'createdAt', 'expireTime'], [
+  { shortCode: 'aB3xY1', originalUrl: '/m/coupon-templates?tpl=50cash', channel: 'douyin', campaignName: '7月新人发券', 达人Name: '探店达人-小王', clickCount: 1280, conversionCount: 320, status: 'enabled', createdAt: '2024-06-01 10:00', expireTime: '2024-12-31 23:59' },
+  { shortCode: 'cD5zW2', originalUrl: '/m/marketing-campaigns?cid=202407', channel: 'meituan', campaignName: '暑期大促', 达人Name: '美团官方', clickCount: 856, conversionCount: 198, status: 'enabled', createdAt: '2024-07-01 11:00', expireTime: '2024-08-31 23:59' },
+  { shortCode: 'eF7uV3', originalUrl: '/m/coupon-templates?tpl=meet80', channel: 'xiaohongshu', campaignName: '探店笔记挂载', 达人Name: '小红薯_Lynn', clickCount: 642, conversionCount: 156, status: 'enabled', createdAt: '2024-07-05 12:00', expireTime: '2024-09-30 23:59' },
+  { shortCode: 'gH9tS4', originalUrl: '/m/member-list?src=qr', channel: 'meituan', campaignName: '扫码入会', 达人Name: '商场官方', clickCount: 432, conversionCount: 89, status: 'enabled', createdAt: '2024-05-15 13:00', expireTime: '2025-05-14 23:59' },
+  { shortCode: 'iJ1rQ5', originalUrl: '/m/marketing-campaigns?cid=oldsale', channel: 'douyin', campaignName: '直播预约', 达人Name: '探店达人-小王', clickCount: 215, conversionCount: 48, status: 'disabled', createdAt: '2024-07-08 14:00', expireTime: '2024-07-20 23:59' }
+]);
+
+// BI 报表分析
+initModule('analytics/bi', ['name', 'type', 'period', 'startDate', 'endDate', 'channels', 'generatedAt', 'status'], [
+  { name: '渠道总览日报', type: 'overview', period: 'day', startDate: '2024-07-10', endDate: '2024-07-10', channels: 'douyin,xiaohongshu,meituan', generatedAt: '2024-07-10 08:00', status: 'generated' },
+  { name: '会员注册趋势周报', type: 'member', period: 'week', startDate: '2024-07-04', endDate: '2024-07-10', channels: 'all', generatedAt: '2024-07-10 09:00', status: 'generated' },
+  { name: '用户行为漏斗月报', type: 'behavior', period: 'month', startDate: '2024-06-01', endDate: '2024-06-30', channels: 'douyin,meituan', generatedAt: '2024-07-01 10:00', status: 'generated' },
+  { name: '交易核销月报', type: 'transaction', period: 'month', startDate: '2024-06-01', endDate: '2024-06-30', channels: 'all', generatedAt: '2024-07-01 11:00', status: 'generated' },
+  { name: '投放营销复盘季报', type: 'marketing', period: 'quarter', startDate: '2024-04-01', endDate: '2024-06-30', channels: 'douyin,xiaohongshu', generatedAt: '2024-07-01 12:00', status: 'generating' }
+]);
+
 export function fetchDashboard() {
   const memberCount = modules['member/list']?.data.length || 0;
   const pointsIssued = (modules['points/logs']?.data.reduce((s, x) => s + (x.points || 0), 0)) || 0;
