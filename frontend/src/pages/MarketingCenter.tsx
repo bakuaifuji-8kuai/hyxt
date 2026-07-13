@@ -98,8 +98,8 @@ const MODULE_CONFIGS: ModuleConfig[] = [
     fields: [
       { name: 'name', label: '活动名称', type: 'input', required: true },
       { name: 'goods', label: '拼团商品', type: 'goods-select', required: true, selectMode: 'goods', multiple: true },
-      { name: 'price', label: '拼团价', type: 'number', required: true },
-      { name: 'originalPrice', label: '原价', type: 'number', required: true },
+      { name: 'payAmount', label: '支付金额', type: 'number', required: true },
+      { name: 'deductAmount', label: '抵扣金额', type: 'number', required: true },
       { name: 'minCount', label: '成团人数', type: 'number', required: true },
     ],
   },
@@ -191,6 +191,55 @@ const MODULE_CONFIGS: ModuleConfig[] = [
       { name: 'signupTime', label: '报名时间', type: 'date', required: true },
       { name: 'member', label: '报名会员', type: 'select', source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
       { name: 'count', label: '报名人数', type: 'number' },
+    ],
+  },
+  {
+    key: 'coupons', path: 'marketing/coupons', label: '活动发券', icon: <GiftOutlined />, group: 'promotion',
+    fields: [
+      { name: 'name', label: '名称', type: 'input', required: true },
+      { name: 'campaign', label: '所属活动', type: 'select', source: { path: 'marketing/campaigns', labelField: 'name', valueField: 'name' } },
+      { name: 'template', label: '券模板', type: 'input', required: true },
+      { name: 'count', label: '发行量', type: 'number', required: true },
+      { name: 'claimed', label: '已领取', type: 'number' },
+    ],
+  },
+  {
+    key: 'word-coupon', path: 'marketing/word-coupon', label: '口令领券', icon: <TagOutlined />, group: 'social',
+    fields: [
+      { name: 'name', label: '活动名称', type: 'input', required: true },
+      { name: 'word', label: '口令', type: 'input', required: true },
+      { name: 'template', label: '券模板', type: 'input', required: true },
+      { name: 'claimed', label: '已领取', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: [{ label: '启用', value: 'enabled' }, { label: '禁用', value: 'disabled' }] },
+    ],
+  },
+  {
+    key: 'surveys', path: 'marketing/surveys', label: '调查问卷', icon: <IdcardOutlined />, group: 'game',
+    fields: [
+      { name: 'title', label: '问卷标题', type: 'input', required: true },
+      { name: 'participants', label: '参与人数', type: 'number' },
+      { name: 'reward', label: '奖励', type: 'input' },
+      { name: 'status', label: '状态', type: 'select', options: [{ label: '启用', value: 'enabled' }, { label: '禁用', value: 'disabled' }] },
+    ],
+  },
+  {
+    key: 'votes', path: 'marketing/votes', label: '投票活动', icon: <ThunderboltOutlined />, group: 'game',
+    fields: [
+      { name: 'title', label: '投票标题', type: 'input', required: true },
+      { name: 'options', label: '选项', type: 'text', required: true },
+      { name: 'totalVotes', label: '总票数', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: [{ label: '启用', value: 'enabled' }, { label: '禁用', value: 'disabled' }] },
+    ],
+  },
+  {
+    key: 'pre-sale', path: 'marketing/pre-sale', label: '预售', icon: <ClockCircleOutlined />, group: 'promotion',
+    fields: [
+      { name: 'goods', label: '预售商品', type: 'goods-select', required: true, selectMode: 'goods', multiple: true },
+      { name: 'deposit', label: '定金', type: 'number', required: true },
+      { name: 'finalPayment', label: '尾款', type: 'number', required: true },
+      { name: 'preTime', label: '预售时间', type: 'date', required: true },
+      { name: 'deliveryTime', label: '发货时间', type: 'date', required: true },
+      { name: 'status', label: '状态', type: 'select', options: [{ label: '进行中', value: 'enabled' }, { label: '已结束', value: 'disabled' }] },
     ],
   },
 ];
@@ -487,7 +536,9 @@ function extractMetrics(config: ModuleConfig, item: ActivityItem): { label: stri
       }
       break;
     case 'groupbuy':
-      if (item.price != null) m.push({ label: '拼团价', value: `¥${item.price}` });
+      if (item.payAmount != null && item.deductAmount != null) {
+        m.push({ label: `团¥${item.payAmount}抵¥${item.deductAmount}`, value: '' });
+      }
       if (item.minCount != null) m.push({ label: '成团人数', value: String(item.minCount) });
       if (item.joined != null) m.push({ label: '已参与', value: String(item.joined) });
       if (item.goods) {
@@ -986,88 +1037,9 @@ export default function MarketingCenter() {
         </Row>
       </Card>
 
-      {/* ====== 活动类型导航 + 卡片区域 ====== */}
+      {/* ====== 活动卡片区域 ====== */}
       <Row gutter={16}>
-        {/* 左侧导航 */}
-        <Col span={5}>
-          <Card size="small" style={{ borderRadius: 8 }} styles={{ body: { padding: '8px 0' } }}>
-            <div style={{ fontSize: 12, fontWeight: 600, color: '#999', padding: '8px 16px', borderBottom: '1px solid #f0f0f0', marginBottom: 4 }}>
-              营销活动导航
-            </div>
-
-            <div
-              onClick={() => { setActiveGroup('all'); setActiveModule('all'); }}
-              style={{
-                padding: '12px 16px', cursor: 'pointer', fontWeight: activeGroup === 'all' && activeModule === 'all' ? 600 : 400,
-                color: activeGroup === 'all' && activeModule === 'all' ? '#1890ff' : '#333',
-                background: activeGroup === 'all' && activeModule === 'all' ? '#e6f7ff' : 'transparent',
-                borderRight: activeGroup === 'all' && activeModule === 'all' ? '3px solid #1890ff' : '3px solid transparent',
-                transition: 'all 0.2s',
-                display: 'flex', alignItems: 'center', gap: 8,
-              }}
-            >
-              <span style={{ width: 24, height: 24, borderRadius: 6, background: '#e6f7ff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, color: '#1890ff' }}>📊</span>
-              全部活动
-            </div>
-
-            {GROUP_ORDER.map(groupKey => {
-              const g = GROUP_MAP[groupKey];
-              const mods = MODULE_CONFIGS.filter(m => m.group === groupKey);
-              const groupCount = mods.reduce((sum, m) => sum + (dataMap[m.key]?.length || 0), 0);
-              
-              return (
-                <div key={groupKey}>
-                  <div
-                    onClick={() => { setActiveGroup(groupKey); setActiveModule('all'); }}
-                    style={{
-                      padding: '12px 16px', cursor: 'pointer', fontWeight: activeGroup === groupKey && activeModule === 'all' ? 600 : 400,
-                      color: g.color, display: 'flex', alignItems: 'center', gap: 8,
-                      background: activeGroup === groupKey ? g.color + '10' : 'transparent',
-                      borderRight: activeGroup === groupKey && activeModule === 'all' ? `3px solid ${g.color}` : '3px solid transparent',
-                      transition: 'all 0.2s',
-                    }}
-                  >
-                    <span style={{ width: 24, height: 24, borderRadius: 6, background: g.color + '15', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>
-                      {g.icon}
-                    </span>
-                    <span>{g.label}</span>
-                    <span style={{ marginLeft: 'auto', background: g.color + '20', color: g.color, padding: '2px 6px', borderRadius: 10, fontSize: 11 }}>
-                      {groupCount}
-                    </span>
-                  </div>
-                  
-                  <div style={{ background: activeGroup === groupKey ? g.color + '05' : 'transparent' }}>
-                    {mods.map(mod => (
-                      <div
-                        key={mod.key}
-                        onClick={() => { setActiveGroup(groupKey); setActiveModule(mod.key); }}
-                        style={{
-                          padding: '10px 16px 10px 56px', cursor: 'pointer', fontSize: 13,
-                          color: activeModule === mod.key ? g.color : '#666',
-                          background: activeModule === mod.key ? g.color + '15' : 'transparent',
-                          borderRight: activeModule === mod.key ? `3px solid ${g.color}` : '3px solid transparent',
-                          display: 'flex', alignItems: 'center', gap: 6,
-                          transition: 'all 0.15s',
-                        }}
-                      >
-                        <span style={{ fontSize: 12, opacity: 0.6 }}>{mod.icon}</span>
-                        <span>{mod.label}</span>
-                        {dataMap[mod.key]?.length > 0 && (
-                          <span style={{ marginLeft: 'auto', fontSize: 11, color: '#999' }}>
-                            ({dataMap[mod.key].length})
-                          </span>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
-          </Card>
-        </Col>
-
-        {/* 右侧卡片区域 */}
-        <Col span={19}>
+        <Col span={24}>
           <Spin spinning={loading}>
             {visibleModules.length === 0 ? (
               <Empty description="暂无活动" />

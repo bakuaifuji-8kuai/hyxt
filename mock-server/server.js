@@ -259,8 +259,8 @@ defineModule('marketing/coupons', ['name', 'campaign', 'template', 'count', 'cla
   { name: '618主券', campaign: '618大促', template: '满200减30', count: 500, claimed: 120 }
 ]);
 
-defineModule('marketing/groupbuy', ['name', 'price', 'originalPrice', 'minCount', 'joined', 'status'], [
-  { name: '海底捞双人套餐', price: 199, originalPrice: 299, minCount: 10, joined: 8, status: 'enabled' }
+defineModule('marketing/groupbuy', ['name', 'payAmount', 'deductAmount', 'minCount', 'joined', 'status'], [
+  { name: '海底捞双人套餐', payAmount: 50, deductAmount: 100, minCount: 3, joined: 8, status: 'enabled' }
 ]);
 
 defineModule('marketing/seckill', ['name', 'price', 'originalPrice', 'stock', 'sold', 'startTime', 'status'], [

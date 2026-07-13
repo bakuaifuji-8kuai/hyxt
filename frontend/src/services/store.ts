@@ -131,8 +131,8 @@ initModule('marketing/coupons', ['name', 'campaign', 'template', 'count', 'claim
   { name: '618发券', campaign: '618大促', template: '满200减30', count: 100, claimed: 45 }
 ]);
 
-initModule('marketing/groupbuy', ['name', 'price', 'originalPrice', 'minCount', 'joined', 'status'], [
-  { name: '三人拼团', price: 99, originalPrice: 199, minCount: 3, joined: 15, status: 'enabled' }
+initModule('marketing/groupbuy', ['name', 'payAmount', 'deductAmount', 'minCount', 'joined', 'status'], [
+  { name: '三人拼团', payAmount: 50, deductAmount: 100, minCount: 3, joined: 15, status: 'enabled' }
 ]);
 
 initModule('marketing/seckill', ['name', 'price', 'originalPrice', 'stock', 'sold', 'startTime', 'status'], [
