@@ -9,7 +9,25 @@ interface ModuleData {
 
 const modules: Record<string, ModuleData> = {};
 
+function saveToStorage() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(modules));
+}
+
+function loadFromStorage(): Record<string, ModuleData> | null {
+  try {
+    const data = localStorage.getItem(STORAGE_KEY);
+    return data ? JSON.parse(data) : null;
+  } catch {
+    return null;
+  }
+}
+
 function initModule(name: string, fields: string[], seedData: any[] = []) {
+  const stored = loadFromStorage();
+  if (stored && stored[name]) {
+    modules[name] = stored[name];
+    return;
+  }
   const data = seedData.map((item, idx) => ({ id: idx + 1, ...item }));
   modules[name] = { fields, data, nextId: data.length + 1 };
 }
@@ -632,6 +650,7 @@ export function createItem(module: string, body: Record<string, any>) {
   if (!mod) throw new Error(`模块不存在: ${module}`);
   const newItem = { id: mod.nextId++, ...body };
   mod.data.push(newItem);
+  saveToStorage();
   return newItem;
 }
 
@@ -641,6 +660,7 @@ export function updateItem(module: string, id: number, body: Record<string, any>
   const idx = mod.data.findIndex(d => d.id === id);
   if (idx === -1) throw new Error('数据不存在');
   mod.data[idx] = { ...mod.data[idx], ...body };
+  saveToStorage();
   return mod.data[idx];
 }
 
@@ -650,6 +670,7 @@ export function deleteItem(module: string, id: number) {
   const idx = mod.data.findIndex(d => d.id === id);
   if (idx === -1) throw new Error('数据不存在');
   mod.data.splice(idx, 1);
+  saveToStorage();
 }
 
 export function toggleStatus(module: string, id: number) {
@@ -658,6 +679,7 @@ export function toggleStatus(module: string, id: number) {
   const idx = mod.data.findIndex(d => d.id === id);
   if (idx === -1) throw new Error('数据不存在');
   mod.data[idx].status = mod.data[idx].status === 'enabled' ? 'disabled' : 'enabled';
+  saveToStorage();
   return mod.data[idx];
 }
 
