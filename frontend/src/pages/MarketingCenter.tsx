@@ -64,22 +64,6 @@ const GROUP_MAP: Record<ActivityGroup, { label: string; color: string; icon: Rea
 
 const MODULE_CONFIGS: ModuleConfig[] = [
   {
-    key: 'templates', path: 'marketing/templates', label: '券模板管理', icon: <TicketOutlined />, group: 'promotion',
-    fields: [
-      { name: 'name', label: '模板名称', type: 'input', required: true },
-      { name: 'type', label: '券类型', type: 'select', required: true, options: [
-        { label: '代金券', value: 'voucher' }, { label: '满减券', value: 'discount' }, { label: '折扣券', value: 'percent' }, { label: '礼品券', value: 'gift' },
-      ] },
-      { name: 'faceValue', label: '面额(元)', type: 'number', required: true },
-      { name: 'threshold', label: '门槛(元)', type: 'number' },
-      { name: 'discountRate', label: '折扣率(%)', type: 'number' },
-      { name: 'description', label: '使用说明', type: 'text' },
-      { name: 'validStart', label: '有效期开始', type: 'date', required: true },
-      { name: 'validEnd', label: '有效期结束', type: 'date', required: true },
-      { name: 'status', label: '状态', type: 'select', options: [{ label: '启用', value: 'enabled' }, { label: '禁用', value: 'disabled' }] },
-    ],
-  },
-  {
     key: 'campaigns', path: 'marketing/campaigns', label: '营销活动', icon: <TagOutlined />, group: 'promotion',
     fields: [
       { name: 'name', label: '活动名称', type: 'input', required: true },
@@ -88,7 +72,7 @@ const MODULE_CONFIGS: ModuleConfig[] = [
       ] },
       { name: 'goods', label: '适用商品', type: 'goods-select', required: true, selectMode: 'both', multiple: true },
       { name: 'groupbuyRules', label: '拼团规则', type: 'groupbuy-rules' },
-      { name: 'template', label: '券模板', type: 'select', source: { path: 'marketing/templates', labelField: 'name', valueField: 'name' } },
+      { name: 'template', label: '券模板', type: 'select', source: { path: 'coupon/templates', labelField: 'name', valueField: 'name' } },
       { name: 'startTime', label: '开始时间', type: 'date', required: true },
       { name: 'endTime', label: '结束时间', type: 'date', required: true },
       { name: 'budget', label: '预算(元)', type: 'number', required: true },
@@ -141,7 +125,7 @@ const MODULE_CONFIGS: ModuleConfig[] = [
     fields: [
       { name: 'name', label: '活动名称', type: 'input', required: true },
       { name: 'location', label: '地点', type: 'input' },
-      { name: 'template', label: '券模板', type: 'select', source: { path: 'marketing/templates', labelField: 'name', valueField: 'name' } },
+      { name: 'template', label: '券模板', type: 'select', source: { path: 'coupon/templates', labelField: 'name', valueField: 'name' } },
     ],
   },
   {
@@ -222,7 +206,7 @@ const MODULE_CONFIGS: ModuleConfig[] = [
     fields: [
       { name: 'name', label: '名称', type: 'input', required: true },
       { name: 'campaign', label: '所属活动', type: 'select', source: { path: 'marketing/campaigns', labelField: 'name', valueField: 'name' } },
-      { name: 'template', label: '券模板', type: 'select', source: { path: 'marketing/templates', labelField: 'name', valueField: 'name' }, required: true },
+      { name: 'template', label: '券模板', type: 'select', source: { path: 'coupon/templates', labelField: 'name', valueField: 'name' }, required: true },
       { name: 'count', label: '发行量', type: 'number', required: true },
       { name: 'claimed', label: '已领取', type: 'number' },
     ],
@@ -232,7 +216,7 @@ const MODULE_CONFIGS: ModuleConfig[] = [
     fields: [
       { name: 'name', label: '活动名称', type: 'input', required: true },
       { name: 'word', label: '口令', type: 'input', required: true },
-      { name: 'template', label: '券模板', type: 'select', source: { path: 'marketing/templates', labelField: 'name', valueField: 'name' }, required: true },
+      { name: 'template', label: '券模板', type: 'select', source: { path: 'coupon/templates', labelField: 'name', valueField: 'name' }, required: true },
       { name: 'claimed', label: '已领取', type: 'number' },
       { name: 'status', label: '状态', type: 'select', options: [{ label: '启用', value: 'enabled' }, { label: '禁用', value: 'disabled' }] },
     ],
