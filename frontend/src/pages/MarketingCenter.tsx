@@ -63,9 +63,11 @@ const MODULE_CONFIGS: ModuleConfig[] = [
     fields: [
       { name: 'name', label: '活动名称', type: 'input', required: true },
       { name: 'type', label: '活动类型', type: 'select', required: true, options: [
-        { label: '促销', value: 'promotion' }, { label: '会员日', value: 'memberday' }, { label: '节日', value: 'festival' },
+        { label: '促销', value: 'promotion' }, { label: '会员日', value: 'memberday' }, { label: '节日', value: 'festival' }, { label: '拼团', value: 'groupbuy' },
       ] },
       { name: 'goods', label: '适用商品', type: 'goods-select', required: true, selectMode: 'both', multiple: true },
+      { name: 'payAmount', label: '支付金额', type: 'number' },
+      { name: 'deductAmount', label: '抵扣金额', type: 'number' },
       { name: 'startTime', label: '开始时间', type: 'date', required: true },
       { name: 'endTime', label: '结束时间', type: 'date', required: true },
       { name: 'budget', label: '预算(元)', type: 'number', required: true },
@@ -530,6 +532,9 @@ function extractMetrics(config: ModuleConfig, item: ActivityItem): { label: stri
   switch (config.key) {
     case 'campaigns':
       if (item.budget != null) m.push({ label: '预算', value: `¥${item.budget}` });
+      if (item.type === 'groupbuy' && item.payAmount != null && item.deductAmount != null) {
+        m.push({ label: `团¥${item.payAmount}抵¥${item.deductAmount}`, value: '' });
+      }
       if (item.goods) {
         const goodsStr = formatGoods(item.goods);
         if (goodsStr) m.push({ label: '商品', value: goodsStr });

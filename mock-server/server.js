@@ -249,10 +249,10 @@ defineModule('parking/benefit', ['name', 'level', 'freeHours', 'pointsRate', 'st
   { name: '金卡会员停车权益', level: 'GOLD', freeHours: 2, pointsRate: 1, status: 'enabled' }
 ]);
 
-// 营销中心
-defineModule('marketing/campaigns', ['name', 'type', 'startTime', 'endTime', 'status', 'budget'], [
-  { name: '618大促', type: 'promotion', startTime: '2024-06-01', endTime: '2024-06-18', status: 'enabled', budget: 100000 },
-  { name: '会员日', type: 'memberday', startTime: '2024-06-20', endTime: '2024-06-20', status: 'enabled', budget: 20000 }
+defineModule('marketing/campaigns', ['name', 'type', 'startTime', 'endTime', 'status', 'budget', 'payAmount', 'deductAmount'], [
+  { id: 1, name: '618大促', type: 'promotion', startTime: '2024-06-18', endTime: '2024-06-20', status: 'enabled', budget: 50000 },
+  { id: 2, name: '会员日', type: 'memberday', startTime: '2024-06-20', endTime: '2024-06-20', status: 'enabled', budget: 20000 },
+  { id: 3, name: '三人拼团活动', type: 'groupbuy', startTime: '2024-07-15', endTime: '2024-07-30', status: 'enabled', budget: 10000, payAmount: 50, deductAmount: 100 }
 ]);
 
 defineModule('marketing/coupons', ['name', 'campaign', 'template', 'count', 'claimed'], [
