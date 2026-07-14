@@ -123,9 +123,9 @@ initModule('parking/rules', ['name', 'freeMinutes', 'pricePerHour', 'capAmount',
   { name: '标准计费', freeMinutes: 15, pricePerHour: 5, capAmount: 50, status: 'enabled' }
 ]);
 
-initModule('marketing/campaigns', ['name', 'type', 'startTime', 'endTime', 'status', 'budget', 'payAmount', 'deductAmount'], [
-  { name: '618大促', type: 'promotion', startTime: '2024-06-18', endTime: '2024-06-20', status: 'enabled', budget: 50000 },
-  { name: '三人拼团活动', type: 'groupbuy', startTime: '2024-07-15', endTime: '2024-07-30', status: 'enabled', budget: 10000, payAmount: 50, deductAmount: 100 }
+initModule('marketing/campaigns', ['name', 'type', 'startTime', 'endTime', 'status', 'budget', 'usedBudget', 'groupbuyRules'], [
+  { name: '618大促', type: 'promotion', startTime: '2024-06-18', endTime: '2024-06-20', status: 'enabled', budget: 50000, usedBudget: 0 },
+  { name: '三人拼团活动', type: 'groupbuy', startTime: '2024-07-15', endTime: '2024-07-30', status: 'enabled', budget: 10000, usedBudget: 3500, groupbuyRules: [{ payAmount: 50, deductAmount: 100 }, { payAmount: 200, deductAmount: 450 }] }
 ]);
 
 initModule('marketing/coupons', ['name', 'campaign', 'template', 'count', 'claimed'], [

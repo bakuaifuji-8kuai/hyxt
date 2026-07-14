@@ -28,7 +28,7 @@ interface ModuleConfig {
 interface FieldDef {
   name: string;
   label: string;
-  type: 'input' | 'number' | 'select' | 'date' | 'daterange' | 'text' | 'goods-select';
+  type: 'input' | 'number' | 'select' | 'date' | 'daterange' | 'text' | 'goods-select' | 'groupbuy-rules';
   options?: { label: string; value: string }[];
   required?: boolean;
   placeholder?: string;
@@ -39,6 +39,11 @@ interface FieldDef {
     labelField: string;
     valueField: string;
   };
+}
+
+interface GroupbuyRule {
+  payAmount: number;
+  deductAmount: number;
 }
 
 interface ActivityItem {
@@ -66,11 +71,11 @@ const MODULE_CONFIGS: ModuleConfig[] = [
         { label: '促销', value: 'promotion' }, { label: '会员日', value: 'memberday' }, { label: '节日', value: 'festival' }, { label: '拼团', value: 'groupbuy' },
       ] },
       { name: 'goods', label: '适用商品', type: 'goods-select', required: true, selectMode: 'both', multiple: true },
-      { name: 'payAmount', label: '支付金额', type: 'number' },
-      { name: 'deductAmount', label: '抵扣金额', type: 'number' },
+      { name: 'groupbuyRules', label: '拼团规则', type: 'groupbuy-rules' },
       { name: 'startTime', label: '开始时间', type: 'date', required: true },
       { name: 'endTime', label: '结束时间', type: 'date', required: true },
       { name: 'budget', label: '预算(元)', type: 'number', required: true },
+      { name: 'usedBudget', label: '已用预算(元)', type: 'number' },
     ],
   },
   {
@@ -498,6 +503,61 @@ const GoodsSelector: React.FC<{
   );
 };
 
+/** 拼团规则编辑器 - 支持多档位配置 */
+const GroupbuyRulesEditor: React.FC<{
+  value?: GroupbuyRule[];
+  onChange?: (value: GroupbuyRule[]) => void;
+}> = ({ value = [], onChange }) => {
+  const handleAdd = () => {
+    onChange?.([...value, { payAmount: 0, deductAmount: 0 }]);
+  };
+
+  const handleRemove = (index: number) => {
+    const newValue = value.filter((_, i) => i !== index);
+    onChange?.(newValue);
+  };
+
+  const handleChange = (index: number, field: keyof GroupbuyRule, val: number | null) => {
+    const newValue = value.map((item, i) =>
+      i === index ? { ...item, [field]: val ?? 0 } : item
+    );
+    onChange?.(newValue);
+  };
+
+  return (
+    <div>
+      {value.map((rule, index) => (
+        <div key={index} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+          <span style={{ fontSize: 12, color: '#999', width: 40 }}>档位{index + 1}</span>
+          <InputNumber
+            style={{ width: 120 }}
+            placeholder="支付金额"
+            value={rule.payAmount}
+            onChange={(val) => handleChange(index, 'payAmount', val)}
+            prefix="¥"
+            min={0}
+          />
+          <span style={{ color: '#999' }}>抵</span>
+          <InputNumber
+            style={{ width: 120 }}
+            placeholder="抵扣金额"
+            value={rule.deductAmount}
+            onChange={(val) => handleChange(index, 'deductAmount', val)}
+            prefix="¥"
+            min={0}
+          />
+          <Button type="link" danger size="small" onClick={() => handleRemove(index)}>
+            删除
+          </Button>
+        </div>
+      ))}
+      <Button type="dashed" size="small" icon={<PlusOutlined />} onClick={handleAdd}>
+        添加档位
+      </Button>
+    </div>
+  );
+};
+
 function getStatusBadge(status: string) {
   const cfg = STATUS_MAP[status] || { text: status, color: 'default' };
   return <Badge status={cfg.color as any} text={cfg.text} />;
@@ -532,8 +592,11 @@ function extractMetrics(config: ModuleConfig, item: ActivityItem): { label: stri
   switch (config.key) {
     case 'campaigns':
       if (item.budget != null) m.push({ label: '预算', value: `¥${item.budget}` });
-      if (item.type === 'groupbuy' && item.payAmount != null && item.deductAmount != null) {
-        m.push({ label: `团¥${item.payAmount}抵¥${item.deductAmount}`, value: '' });
+      if (item.usedBudget != null) m.push({ label: '已用', value: `¥${item.usedBudget}` });
+      if (item.type === 'groupbuy' && Array.isArray(item.groupbuyRules) && item.groupbuyRules.length > 0) {
+        item.groupbuyRules.forEach((rule: GroupbuyRule, idx: number) => {
+          m.push({ label: `档位${idx + 1}`, value: `团¥${rule.payAmount}抵¥${rule.deductAmount}` });
+        });
       }
       if (item.goods) {
         const goodsStr = formatGoods(item.goods);
@@ -819,6 +882,9 @@ export default function MarketingCenter() {
           placeholder={`请选择${field.label}`}
         />
       );
+    }
+    if (field.type === 'groupbuy-rules') {
+      return <GroupbuyRulesEditor />;
     }
     if (field.source) {
       return <SourceSelect source={field.source} placeholder={`请选择${field.label}`} multiple={field.multiple} />;

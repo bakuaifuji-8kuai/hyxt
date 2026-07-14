@@ -249,10 +249,10 @@ defineModule('parking/benefit', ['name', 'level', 'freeHours', 'pointsRate', 'st
   { name: '金卡会员停车权益', level: 'GOLD', freeHours: 2, pointsRate: 1, status: 'enabled' }
 ]);
 
-defineModule('marketing/campaigns', ['name', 'type', 'startTime', 'endTime', 'status', 'budget', 'payAmount', 'deductAmount'], [
-  { id: 1, name: '618大促', type: 'promotion', startTime: '2024-06-18', endTime: '2024-06-20', status: 'enabled', budget: 50000 },
-  { id: 2, name: '会员日', type: 'memberday', startTime: '2024-06-20', endTime: '2024-06-20', status: 'enabled', budget: 20000 },
-  { id: 3, name: '三人拼团活动', type: 'groupbuy', startTime: '2024-07-15', endTime: '2024-07-30', status: 'enabled', budget: 10000, payAmount: 50, deductAmount: 100 }
+defineModule('marketing/campaigns', ['name', 'type', 'startTime', 'endTime', 'status', 'budget', 'usedBudget', 'groupbuyRules'], [
+  { id: 1, name: '618大促', type: 'promotion', startTime: '2024-06-18', endTime: '2024-06-20', status: 'enabled', budget: 50000, usedBudget: 0 },
+  { id: 2, name: '会员日', type: 'memberday', startTime: '2024-06-20', endTime: '2024-06-20', status: 'enabled', budget: 20000, usedBudget: 0 },
+  { id: 3, name: '三人拼团活动', type: 'groupbuy', startTime: '2024-07-15', endTime: '2024-07-30', status: 'enabled', budget: 10000, usedBudget: 3500, groupbuyRules: [{ payAmount: 50, deductAmount: 100 }, { payAmount: 200, deductAmount: 450 }] }
 ]);
 
 defineModule('marketing/coupons', ['name', 'campaign', 'template', 'count', 'claimed'], [
