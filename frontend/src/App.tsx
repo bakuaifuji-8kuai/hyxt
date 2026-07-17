@@ -8,7 +8,7 @@ import {
   UserOutlined, LogoutOutlined, ApartmentOutlined as Flow,
   SafetyCertificateOutlined, FileTextOutlined, AccountBookOutlined,
   PictureOutlined, GlobalOutlined, HomeOutlined, ReloadOutlined,
-  BarChartOutlined, SearchOutlined
+  BarChartOutlined, SearchOutlined, MobileOutlined
 } from '@ant-design/icons';
 import { getMenuTree } from './services/modules';
 import { isAuthenticated, handleLogout } from './services/request';
@@ -59,6 +59,8 @@ const CATEGORY_ICONS: Record<string, any> = {
   '搜索管理': SearchOutlined,
   '小程序营销平台': PictureOutlined,
   '系统安全': SafetyCertificateOutlined,
+  'C端小程序': MobileOutlined,
+  '商家小程序': ShopOutlined,
 };
 
 export default function App() {

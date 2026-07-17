@@ -939,6 +939,72 @@ defineModule('security/audit', ['type', 'content', 'level', 'operator', 'ip', 't
   { type: 'event', content: 'SQL注入攻击被拦截', level: 'critical', operator: 'system', ip: '198.51.100.1', time: '2024-07-12' },
 ]);
 
+// ===== C端小程序模块 =====
+defineModule('capp/home', ['title', 'banner', 'notice', 'status'], []);
+defineModule('capp/member-register', ['phone', 'code', 'inviteCode', 'status'], []);
+defineModule('capp/member-profile', ['member', 'level', 'points', 'status'], []);
+defineModule('capp/search', ['keyword', 'type', 'result', 'status'], []);
+defineModule('capp/message', ['title', 'content', 'type', 'status', 'time'], []);
+defineModule('capp/points-query', ['member', 'points', 'balance', 'status'], []);
+defineModule('capp/shop-list', ['name', 'category', 'floor', 'status'], []);
+defineModule('capp/shop-detail', ['name', 'category', 'floor', 'phone', 'status'], []);
+defineModule('capp/restaurant-guide', ['name', 'cuisine', 'floor', 'avgCost', 'status'], []);
+defineModule('capp/shop-navigation', ['from', 'to', 'route', 'status'], []);
+defineModule('capp/banner-ad', ['title', 'image', 'link', 'sort', 'status'], []);
+defineModule('capp/popup-ad', ['title', 'image', 'link', 'showCount', 'status'], []);
+defineModule('capp/splash-ad', ['title', 'image', 'link', 'duration', 'status'], []);
+defineModule('capp/personalized-ad', ['title', 'targetGroup', 'image', 'link', 'status'], []);
+defineModule('capp/new-member-gift', ['member', 'giftName', 'claimed', 'status'], []);
+defineModule('capp/referral', ['referrer', 'invitee', 'reward', 'status'], []);
+defineModule('capp/help-coupon', ['member', 'couponName', 'needHelp', 'helped', 'status'], []);
+defineModule('capp/checkin', ['member', 'points', 'continuous', 'time', 'status'], []);
+defineModule('capp/game', ['name', 'type', 'reward', 'status'], []);
+defineModule('capp/survey', ['title', 'questions', 'reward', 'status'], []);
+defineModule('capp/vote', ['title', 'options', 'voted', 'status'], []);
+defineModule('capp/activity-signup', ['activity', 'member', 'time', 'status'], []);
+defineModule('capp/coupon-display', ['name', 'type', 'value', 'status'], []);
+defineModule('capp/coupon-claim', ['coupon', 'member', 'time', 'status'], []);
+defineModule('capp/coupon-package', ['name', 'coupons', 'price', 'status'], []);
+defineModule('capp/group-buy', ['name', 'price', 'minCount', 'joined', 'status'], []);
+defineModule('capp/count-card', ['name', 'times', 'price', 'validity', 'status'], []);
+defineModule('capp/points-mall-home', ['title', 'banner', 'categories', 'status'], []);
+defineModule('capp/points-goods', ['name', 'points', 'stock', 'status'], []);
+defineModule('capp/points-order', ['orderNo', 'member', 'goods', 'points', 'status'], []);
+defineModule('capp/mall-home', ['title', 'banner', 'categories', 'status'], []);
+defineModule('capp/goods-category', ['name', 'sort', 'status'], []);
+defineModule('capp/goods-detail', ['name', 'price', 'stock', 'status'], []);
+defineModule('capp/order-manage', ['orderNo', 'member', 'amount', 'status'], []);
+defineModule('capp/order-refund', ['orderNo', 'member', 'amount', 'reason', 'status'], []);
+defineModule('capp/mall-marketing', ['name', 'type', 'startTime', 'endTime', 'status'], []);
+defineModule('capp/photo-points', ['member', 'image', 'points', 'status'], []);
+defineModule('capp/ai-points', ['member', 'type', 'points', 'status'], []);
+defineModule('capp/pay-points', ['member', 'amount', 'points', 'status'], []);
+defineModule('capp/parking-pay', ['plate', 'fee', 'duration', 'status'], []);
+defineModule('capp/parking-combo', ['name', 'price', 'hours', 'status'], []);
+defineModule('capp/parking-stack', ['plate', 'inTime', 'outTime', 'status'], []);
+defineModule('capp/parking-senseless', ['plate', 'fee', 'status'], []);
+defineModule('capp/parking-no-plate', ['ticket', 'fee', 'status'], []);
+defineModule('capp/parking-exchange', ['member', 'hours', 'points', 'status'], []);
+defineModule('capp/online-service', ['member', 'type', 'content', 'status'], []);
+defineModule('capp/ai-service', ['member', 'question', 'answer', 'status'], []);
+defineModule('capp/rental', ['item', 'member', 'outTime', 'status'], []);
+defineModule('capp/rental-deposit', ['member', 'item', 'deposit', 'status'], []);
+defineModule('capp/douyin-exchange', ['member', 'code', 'reward', 'status'], []);
+
+// ===== 商家小程序模块 =====
+defineModule('bapp/coupon-issue', ['coupon', 'member', 'count', 'time', 'status'], []);
+defineModule('bapp/coupon-batch', ['name', 'count', 'issued', 'status'], []);
+defineModule('bapp/coupon-verify', ['code', 'member', 'time', 'status'], []);
+defineModule('bapp/parking-issue', ['plate', 'hours', 'reason', 'status'], []);
+defineModule('bapp/order-verify', ['orderNo', 'member', 'time', 'status'], []);
+defineModule('bapp/group-verify', ['code', 'member', 'time', 'status'], []);
+defineModule('bapp/activity-verify', ['activity', 'member', 'time', 'status'], []);
+defineModule('bapp/points-ledger', ['member', 'points', 'type', 'time', 'status'], []);
+defineModule('bapp/verify-stats', ['date', 'count', 'amount', 'status'], []);
+defineModule('bapp/sales-stats', ['date', 'revenue', 'orders', 'status'], []);
+defineModule('bapp/shop-info', ['name', 'phone', 'address', 'status'], []);
+defineModule('bapp/shop-notice', ['title', 'content', 'time', 'status'], []);
+
 // ============ Register CRUD routers ============
 const moduleRoutes = [
   'member/level', 'member/list', 'member/tags', 'member/benefits', 'member/profiles', 'member/tag-relations',
@@ -989,6 +1055,23 @@ const moduleRoutes = [
   'points/mall-decoration',
   'verification/export', 'verification/points-audit',
   'security/network', 'security/data', 'security/app', 'security/api', 'security/applet', 'security/compliance', 'security/audit',
+  // ===== C端小程序路由 =====
+  'capp/home', 'capp/member-register', 'capp/member-profile', 'capp/search', 'capp/message', 'capp/points-query',
+  'capp/shop-list', 'capp/shop-detail', 'capp/restaurant-guide', 'capp/shop-navigation',
+  'capp/banner-ad', 'capp/popup-ad', 'capp/splash-ad', 'capp/personalized-ad',
+  'capp/new-member-gift', 'capp/referral', 'capp/help-coupon', 'capp/checkin', 'capp/game', 'capp/survey', 'capp/vote', 'capp/activity-signup',
+  'capp/coupon-display', 'capp/coupon-claim', 'capp/coupon-package', 'capp/group-buy', 'capp/count-card',
+  'capp/points-mall-home', 'capp/points-goods', 'capp/points-order',
+  'capp/mall-home', 'capp/goods-category', 'capp/goods-detail', 'capp/order-manage', 'capp/order-refund', 'capp/mall-marketing',
+  'capp/photo-points', 'capp/ai-points', 'capp/pay-points',
+  'capp/parking-pay', 'capp/parking-combo', 'capp/parking-stack', 'capp/parking-senseless', 'capp/parking-no-plate', 'capp/parking-exchange',
+  'capp/online-service', 'capp/ai-service',
+  'capp/rental', 'capp/rental-deposit',
+  'capp/douyin-exchange',
+  // ===== 商家小程序路由 =====
+  'bapp/coupon-issue', 'bapp/coupon-batch', 'bapp/coupon-verify', 'bapp/parking-issue',
+  'bapp/order-verify', 'bapp/group-verify', 'bapp/activity-verify', 'bapp/points-ledger',
+  'bapp/verify-stats', 'bapp/sales-stats', 'bapp/shop-info', 'bapp/shop-notice',
 ];
 
 for (const route of moduleRoutes) {

@@ -1031,6 +1031,244 @@ initModule('verification/points-audit', ['merchant', 'verifyType', 'points', 'me
   { merchant: '优衣库', verifyType: 'goods', points: 500, member: '王五', auditStatus: 'rejected', verifyTime: '2024-07-11', auditRemark: '异常核销，积分退回' },
 ]);
 
+// ============================================
+// 商家小程序模块
+// ============================================
+
+// 商家-优惠券发放
+initModule('bapp/coupon-issue', ['shop', 'couponName', 'couponType', 'issueCount', 'issueTime'], [
+  { shop: '海底捞', couponName: '满200减50券', couponType: 'discount', issueCount: 156, issueTime: '2024-07-10 10:30' },
+  { shop: '星巴克', couponName: '买一送一券', couponType: 'gift', issueCount: 89, issueTime: '2024-07-11 14:00' },
+  { shop: '优衣库', couponName: '满300减100券', couponType: 'discount', issueCount: 45, issueTime: '2024-07-12 09:15' },
+]);
+
+// 商家-批量发放
+initModule('bapp/coupon-batch', ['shop', 'couponName', 'targets', 'issueCount', 'status'], [
+  { shop: '海底捞', couponName: '新客专享券', targets: '新注册会员', issueCount: 200, status: 'completed' },
+  { shop: '星巴克', couponName: '会员生日券', targets: '本月生日会员', issueCount: 58, status: 'processing' },
+  { shop: '优衣库', couponName: 'VIP专属券', targets: '金卡及以上会员', issueCount: 32, status: 'pending' },
+]);
+
+// 商家-优惠券核销
+initModule('bapp/coupon-verify', ['shop', 'couponCode', 'member', 'verifyTime', 'status'], [
+  { shop: '海底捞', couponCode: 'CP20240710001', member: '张三', verifyTime: '2024-07-10 12:30', status: 'verified' },
+  { shop: '星巴克', couponCode: 'CP20240710002', member: '李四', verifyTime: '2024-07-11 15:45', status: 'verified' },
+  { shop: '优衣库', couponCode: 'CP20240710003', member: '王五', verifyTime: '2024-07-12 10:20', status: 'revoked' },
+]);
+
+// 商家-停车券发放
+initModule('bapp/parking-issue', ['shop', 'member', 'parkingHours', 'issueTime', 'status'], [
+  { shop: '海底捞', member: '张三', parkingHours: 2, issueTime: '2024-07-10 13:00', status: 'issued' },
+  { shop: '星巴克', member: '李四', parkingHours: 1, issueTime: '2024-07-11 16:30', status: 'issued' },
+  { shop: '优衣库', member: '王五', parkingHours: 3, issueTime: '2024-07-12 11:00', status: 'used' },
+]);
+
+// 商家-商城订单核销
+initModule('bapp/order-verify', ['shop', 'orderNo', 'member', 'goods', 'verifyTime', 'status'], [
+  { shop: '优衣库', orderNo: 'O20240710001', member: '张三', goods: '纯棉T恤 x2', verifyTime: '2024-07-10 14:00', status: 'verified' },
+  { shop: '海底捞', orderNo: 'O20240710002', member: '李四', goods: '火锅套餐 x1', verifyTime: '2024-07-11 18:30', status: 'verified' },
+  { shop: '星巴克', orderNo: 'O20240710003', member: '王五', goods: '咖啡礼盒 x1', verifyTime: '2024-07-12 09:45', status: 'pending' },
+]);
+
+// 商家-团购秒杀核销
+initModule('bapp/group-verify', ['shop', 'activityName', 'member', 'verifyTime', 'status'], [
+  { shop: '海底捞', activityName: '三人拼团火锅套餐', member: '张三', verifyTime: '2024-07-10 19:00', status: 'verified' },
+  { shop: '星巴克', activityName: '咖啡秒杀活动', member: '李四', verifyTime: '2024-07-11 10:00', status: 'verified' },
+]);
+
+// 商家-活动核销
+initModule('bapp/activity-verify', ['shop', 'activityName', 'member', 'verifyTime', 'status'], [
+  { shop: '海底捞', activityName: '周年庆活动', member: '张三', verifyTime: '2024-07-10 20:00', status: 'verified' },
+  { shop: '星巴克', activityName: '新品品鉴会', member: '李四', verifyTime: '2024-07-11 15:00', status: 'verified' },
+  { shop: '优衣库', activityName: '会员日专场', member: '王五', verifyTime: '2024-07-12 14:00', status: 'pending' },
+]);
+
+// 商家-核销积分台账
+initModule('bapp/points-ledger', ['shop', 'verifyType', 'member', 'points', 'verifyTime'], [
+  { shop: '海底捞', verifyType: 'coupon', member: '张三', points: 50, verifyTime: '2024-07-10 12:30' },
+  { shop: '星巴克', verifyType: 'order', member: '李四', points: 30, verifyTime: '2024-07-11 15:45' },
+  { shop: '优衣库', verifyType: 'activity', member: '王五', points: 100, verifyTime: '2024-07-12 10:20' },
+]);
+
+// 商家-核销数据统计
+initModule('bapp/verify-stats', ['shop', 'date', 'couponCount', 'orderCount', 'activityCount', 'totalPoints'], [
+  { shop: '海底捞', date: '2024-07-10', couponCount: 45, orderCount: 12, activityCount: 3, totalPoints: 580 },
+  { shop: '星巴克', date: '2024-07-10', couponCount: 32, orderCount: 8, activityCount: 2, totalPoints: 320 },
+  { shop: '优衣库', date: '2024-07-10', couponCount: 18, orderCount: 5, activityCount: 1, totalPoints: 150 },
+]);
+
+// 商家-销售数据统计
+initModule('bapp/sales-stats', ['shop', 'date', 'orderCount', 'salesAmount', 'memberAmount', 'nonMemberAmount'], [
+  { shop: '海底捞', date: '2024-07-10', orderCount: 156, salesAmount: 28500, memberAmount: 22800, nonMemberAmount: 5700 },
+  { shop: '星巴克', date: '2024-07-10', orderCount: 89, salesAmount: 5340, memberAmount: 4272, nonMemberAmount: 1068 },
+  { shop: '优衣库', date: '2024-07-10', orderCount: 45, salesAmount: 13500, memberAmount: 10800, nonMemberAmount: 2700 },
+]);
+
+// 商家-基础信息
+initModule('bapp/shop-info', ['name', 'category', 'contractExpiry', 'phone', 'status'], [
+  { name: '海底捞', category: '餐饮', contractExpiry: '2025-12-31', phone: '0731-88888001', status: 'enabled' },
+  { name: '星巴克', category: '餐饮', contractExpiry: '2025-06-30', phone: '0731-88888002', status: 'enabled' },
+  { name: '优衣库', category: '服装', contractExpiry: '2026-03-31', phone: '0731-88888003', status: 'enabled' },
+]);
+
+// 商家-通知管理
+initModule('bapp/shop-notice', ['title', 'type', 'content', 'sendTime', 'readStatus'], [
+  { title: '暑期促销活动通知', type: 'activity', content: '暑期促销活动将于7月15日启动，请各门店做好准备。', sendTime: '2024-07-10 09:00', readStatus: 'read' },
+  { title: '系统升级维护通知', type: 'system', content: '系统将于7月15日凌晨2:00-4:00进行升级维护。', sendTime: '2024-07-12 18:00', readStatus: 'unread' },
+  { title: '合同到期提醒', type: 'contract', content: '您的合同将于下月到期，请及时续签。', sendTime: '2024-07-13 10:00', readStatus: 'unread' },
+]);
+
+// ============================================
+// C端小程序模块初始化数据
+// ============================================
+
+// C端-首页配置
+initModule('capp/home', ['name', 'type', 'content', 'sort', 'status'], [
+  { name: '首页轮播区', type: 'banner', content: '{"autoPlay":true,"interval":3000}', sort: 1, status: 'enabled' },
+  { name: '快捷入口', type: 'navGrid', content: '{"columns":4,"items":8}', sort: 2, status: 'enabled' },
+  { name: '限时秒杀', type: 'flashSale', content: '{"countdown":true,"goodsCount":3}', sort: 3, status: 'enabled' },
+]);
+
+// C端-会员注册登录
+initModule('capp/member-register', ['name', 'scene', 'source', 'status'], [
+  { name: '微信一键注册', scene: 'wechat', source: 'miniapp', status: 'enabled' },
+  { name: '手机号注册', scene: 'phone', source: 'h5', status: 'enabled' },
+  { name: '抖音扫码注册', scene: 'douyin', source: 'douyin', status: 'enabled' },
+]);
+
+// C端-完善资料
+initModule('capp/member-profile', ['fieldName', 'fieldType', 'required', 'rewardPoints', 'status'], [
+  { fieldName: '真实姓名', fieldType: 'text', required: 'yes', rewardPoints: 10, status: 'enabled' },
+  { fieldName: '生日', fieldType: 'date', required: 'yes', rewardPoints: 20, status: 'enabled' },
+  { fieldName: '性别', fieldType: 'select', required: 'no', rewardPoints: 5, status: 'enabled' },
+]);
+
+// C端-搜索配置
+initModule('capp/search', ['name', 'hotWords', 'type', 'status'], [
+  { name: '默认热搜词', hotWords: '停车缴费,积分兑换,海底捞,星巴克', type: 'auto', status: 'enabled' },
+  { name: '活动热搜词', hotWords: '暑期大促,新人福利,限时秒杀', type: 'manual', status: 'enabled' },
+]);
+
+// C端-消息通知
+initModule('capp/message', ['title', 'type', 'content', 'receiver', 'sendTime', 'status'], [
+  { title: '生日祝福', type: 'birthday', content: '尊敬的会员，祝您生日快乐！', receiver: '张三', sendTime: '2024-07-15', status: 'sent' },
+  { title: '积分到账通知', type: 'points', content: '您消费获得100积分已到账', receiver: '李四', sendTime: '2024-07-10', status: 'sent' },
+  { title: '优惠券即将过期', type: 'coupon', content: '您有1张优惠券即将过期，请尽快使用', receiver: '王五', sendTime: '2024-07-12', status: 'pending' },
+]);
+
+// C端-积分查询
+initModule('capp/points-query', ['member', 'totalPoints', 'availablePoints', 'frozenPoints', 'updateTime'], [
+  { member: '张三', totalPoints: 10000, availablePoints: 6200, frozenPoints: 0, updateTime: '2024-07-10' },
+  { member: '李四', totalPoints: 3000, availablePoints: 1500, frozenPoints: 100, updateTime: '2024-07-11' },
+  { member: '王五', totalPoints: 500, availablePoints: 500, frozenPoints: 0, updateTime: '2024-07-12' },
+]);
+
+// C端-商户列表
+initModule('capp/shop-list', ['name', 'category', 'floor', 'logo', 'status'], [
+  { name: '海底捞', category: '餐饮', floor: 'F3', logo: '/logo/haidilao.png', status: 'enabled' },
+  { name: '星巴克', category: '餐饮', floor: 'F1', logo: '/logo/starbucks.png', status: 'enabled' },
+  { name: '优衣库', category: '零售', floor: 'F2', logo: '/logo/uniqlo.png', status: 'enabled' },
+]);
+
+// C端-商户详情
+initModule('capp/shop-detail', ['name', 'story', 'phone', 'location', 'businessHours'], [
+  { name: '海底捞', story: '以川味火锅为主，服务贴心周到', phone: '0731-88888001', location: 'F3-A05', businessHours: '11:00-22:00' },
+  { name: '星巴克', story: '全球知名咖啡连锁品牌', phone: '0731-88888002', location: 'F1-B01', businessHours: '08:00-22:00' },
+  { name: '优衣库', story: '日本快时尚品牌，简约舒适', phone: '0731-88888003', location: 'F2-A03', businessHours: '10:00-22:00' },
+]);
+
+// C端-餐饮导览
+initModule('capp/restaurant-guide', ['name', 'cuisine', 'avgPrice', 'recommendDishes', 'status'], [
+  { name: '海底捞', cuisine: '火锅', avgPrice: 120, recommendDishes: '番茄锅,虾滑,毛肚', status: 'enabled' },
+  { name: '外婆家', cuisine: '杭帮菜', avgPrice: 80, recommendDishes: '茶香鸡,东坡肉', status: 'enabled' },
+  { name: '太二酸菜鱼', cuisine: '川菜', avgPrice: 70, recommendDishes: '酸菜鱼,手工豆腐', status: 'enabled' },
+]);
+
+// C端-店铺导航
+initModule('capp/shop-navigation', ['shop', 'floor', 'location', 'floorMap', 'status'], [
+  { shop: '海底捞', floor: 'F3', location: 'A区05号', floorMap: '/maps/f3.svg', status: 'enabled' },
+  { shop: '星巴克', floor: 'F1', location: 'B区01号', floorMap: '/maps/f1.svg', status: 'enabled' },
+  { shop: '优衣库', floor: 'F2', location: 'A区03号', floorMap: '/maps/f2.svg', status: 'enabled' },
+]);
+
+// C端-Banner广告
+initModule('capp/banner-ad', ['name', 'position', 'image', 'linkUrl', 'clickCount', 'status'], [
+  { name: '暑期大促Banner', position: 'home_top', image: '/ads/summer-banner.jpg', linkUrl: '/activity/summer', clickCount: 1280, status: 'enabled' },
+  { name: '会员日Banner', position: 'home_middle', image: '/ads/member-day.jpg', linkUrl: '/member/day', clickCount: 856, status: 'enabled' },
+  { name: '新人专享Banner', position: 'home_bottom', image: '/ads/new-member.jpg', linkUrl: '/coupon/new', clickCount: 520, status: 'enabled' },
+]);
+
+// C端-弹窗广告
+initModule('capp/popup-ad', ['name', 'page', 'image', 'linkUrl', 'showRule', 'status'], [
+  { name: '新人弹窗', page: 'home', image: '/ads/new-popup.jpg', linkUrl: '/coupon/new', showRule: '首次进入', status: 'enabled' },
+  { name: '活动弹窗', page: 'home', image: '/ads/activity-popup.jpg', linkUrl: '/activity/summer', showRule: '每日首次', status: 'enabled' },
+]);
+
+// C端-启动页广告
+initModule('capp/splash-ad', ['name', 'image', 'duration', 'linkUrl', 'startTime', 'endTime', 'status'], [
+  { name: '暑期启动页', image: '/ads/splash-summer.jpg', duration: 3, linkUrl: '/activity/summer', startTime: '2024-07-01', endTime: '2024-08-31', status: 'enabled' },
+  { name: '周年庆启动页', image: '/ads/splash-anniversary.jpg', duration: 5, linkUrl: '/activity/anniversary', startTime: '2024-09-01', endTime: '2024-09-07', status: 'disabled' },
+  { name: '双11启动页', image: '/ads/splash-1111.jpg', duration: 3, linkUrl: '/activity/1111', startTime: '2024-11-01', endTime: '2024-11-11', status: 'disabled' },
+]);
+
+// C端-千人千面广告
+initModule('capp/personalized-ad', ['name', 'tags', 'content', 'priority', 'status'], [
+  { name: '高消费会员推荐', tags: '高消费,金卡会员', content: 'VIP专属优惠', priority: 10, status: 'enabled' },
+  { name: '新会员引导', tags: '新注册,首单未购', content: '新人专享礼包', priority: 8, status: 'enabled' },
+  { name: '沉睡唤醒', tags: '90天未消费', content: '回归礼遇', priority: 5, status: 'enabled' },
+]);
+
+// C端-新人礼
+initModule('capp/new-member-gift', ['name', 'giftContent', 'points', 'coupons', 'parkingHours', 'claimed', 'status'], [
+  { name: '新人见面礼', giftContent: '积分+优惠券+停车券', points: 100, coupons: '满50减10券', parkingHours: 1, claimed: 856, status: 'enabled' },
+  { name: '首单礼包', giftContent: '首单积分双倍', points: 200, coupons: '满100减30券', parkingHours: 2, claimed: 520, status: 'enabled' },
+]);
+
+// C端-推荐有礼
+initModule('capp/referral', ['name', 'referrerReward', 'refereeReward', 'maxReferrals', 'status'], [
+  { name: '邀请好友得积分', referrerReward: '100积分', refereeReward: '50积分', maxReferrals: 10, status: 'enabled' },
+  { name: '推荐新人双倍礼', referrerReward: '200积分', refereeReward: '100积分', maxReferrals: 5, status: 'disabled' },
+]);
+
+// C端-助力领券
+initModule('capp/help-coupon', ['name', 'requiredHelps', 'couponTemplate', 'discountPrice', 'status'], [
+  { name: '助力领50元券', requiredHelps: 3, couponTemplate: '50元代金券', discountPrice: 50, status: 'enabled' },
+  { name: '好友助力免费停车', requiredHelps: 5, couponTemplate: '2小时停车券', discountPrice: 0, status: 'enabled' },
+]);
+
+// C端-会员签到
+initModule('capp/checkin', ['days', 'rewardType', 'reward', 'status'], [
+  { days: 1, rewardType: 'points', reward: '5积分', status: 'enabled' },
+  { days: 7, rewardType: 'coupon', reward: '满50减10券', status: 'enabled' },
+  { days: 30, rewardType: 'gift', reward: '神秘礼品', status: 'enabled' },
+]);
+
+// C端-游戏互动
+initModule('capp/game', ['name', 'type', 'playLimit', 'rewardConfig', 'status'], [
+  { name: '大转盘', type: 'wheel', playLimit: '每日1次', rewardConfig: '积分/优惠券/实物', status: 'enabled' },
+  { name: '刮刮乐', type: 'scratch', playLimit: '每日3次', rewardConfig: '积分为主', status: 'enabled' },
+  { name: '砸金蛋', type: 'hammer', playLimit: '活动期间1次', rewardConfig: '大奖+参与奖', status: 'enabled' },
+]);
+
+// C端-调查问卷
+initModule('capp/survey', ['name', 'questions', 'rewardPoints', 'startTime', 'endTime', 'status'], [
+  { name: '会员满意度调查', questions: '10题', rewardPoints: 50, startTime: '2024-07-01', endTime: '2024-07-31', status: 'enabled' },
+  { name: '餐饮体验调查', questions: '8题', rewardPoints: 30, startTime: '2024-07-15', endTime: '2024-08-15', status: 'enabled' },
+]);
+
+// C端-投票活动
+initModule('capp/vote', ['name', 'options', 'rewardPoints', 'voteLimit', 'status'], [
+  { name: '最受欢迎餐厅评选', options: '海底捞,星巴克,外婆家', rewardPoints: 20, voteLimit: '每日1次', status: 'enabled' },
+  { name: '最佳服务商户', options: '优衣库,屈臣氏,丝芙兰', rewardPoints: 15, voteLimit: '活动期间1次', status: 'enabled' },
+]);
+
+// C端-活动报名
+initModule('capp/activity-signup', ['name', 'type', 'maxParticipants', 'location', 'activityTime', 'status'], [
+  { name: '亲子手工活动', type: 'offline', maxParticipants: 30, location: 'F1中庭', activityTime: '2024-07-20 14:00', status: 'enabled' },
+  { name: '美妆课堂', type: 'offline', maxParticipants: 20, location: 'F2丝芙兰', activityTime: '2024-07-25 15:00', status: 'enabled' },
+  { name: '线上秒杀活动', type: 'online', maxParticipants: 500, location: '小程序', activityTime: '2024-07-18 10:00', status: 'enabled' },
+]);
+
 export function fetchDashboard() {
   const memberCount = modules['member/list']?.data.length || 0;
   const pointsIssued = (modules['points/logs']?.data.reduce((s, x) => s + (x.points || 0), 0)) || 0;

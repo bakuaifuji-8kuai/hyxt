@@ -5128,6 +5128,1319 @@ export const MODULES: ModuleConfig[] = [
     ],
     doc: { overview: '操作日志审计、异常登录检测、安全事件告警、审计报表。', features: ['操作日志审计', '异常登录检测', '安全事件告警', '审计报表生成'], tips: ['严重级别事件需立即处理', '审计日志建议保留180天以上'] }
   },
+  // ===== C端小程序配置 =====
+  {
+    key: 'c-app-home', path: 'capp/home', name: 'C端-首页配置', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '配置项', dataIndex: 'name' },
+      { title: '类型', dataIndex: 'type' },
+      { title: '内容', dataIndex: 'content', width: 200 },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '配置项名称', type: 'text', required: true },
+      { name: 'type', label: '类型', type: 'select', options: [
+        { label: 'Banner轮播', value: 'banner' }, { label: '弹窗广告', value: 'popup' }, { label: '启动页', value: 'splash' }, { label: '金刚区', value: 'iconNav' }
+      ] },
+      { name: 'content', label: '内容配置', type: 'textarea' },
+      { name: 'sort', label: '排序', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: 'C端小程序首页配置，管理Banner轮播、弹窗广告、启动页、金刚区导航等。', features: ['Banner轮播配置', '弹窗广告管理', '启动页设置', '金刚区导航配置'], tips: ['建议定期更新首页内容，保持新鲜感'] }
+  },
+  {
+    key: 'c-member-register', path: 'capp/member-register', name: 'C端-会员注册登录', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '配置项', dataIndex: 'name' },
+      { title: '触发场景', dataIndex: 'scene' },
+      { title: '注册来源', dataIndex: 'source' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '配置项', type: 'text', required: true },
+      { name: 'scene', label: '触发场景', type: 'select', options: [
+        { label: '用户主动注册', value: 'active' }, { label: '消费后注册', value: 'consume' }, { label: '领券触发', value: 'coupon' }
+      ] },
+      { name: 'source', label: '注册来源', type: 'select', options: [
+        { label: '微信小程序', value: 'wechat' }, { label: '支付宝小程序', value: 'alipay' }, { label: 'H5', value: 'h5' }
+      ] },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '会员注册登录配置，支持用户主动注册或指定操作触发注册。', features: ['多渠道注册配置', '触发场景设置', '注册来源追踪'], tips: ['建议简化注册流程，降低门槛'] }
+  },
+  {
+    key: 'c-member-profile', path: 'capp/member-profile', name: 'C端-完善资料', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '字段名称', dataIndex: 'fieldName' },
+      { title: '字段类型', dataIndex: 'fieldType' },
+      { title: '是否必填', dataIndex: 'required', render: (v) => (v ? '是' : '否') },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'fieldName', label: '字段名称', type: 'text', required: true },
+      { name: 'fieldType', label: '字段类型', type: 'select', options: [
+        { label: '文本', value: 'text' }, { label: '数字', value: 'number' }, { label: '日期', value: 'date' }, { label: '下拉选择', value: 'select' }
+      ] },
+      { name: 'required', label: '是否必填', type: 'switch' },
+      { name: 'rewardPoints', label: '完善奖励积分', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '会员资料字段配置，管理姓名、性别、年龄、生日、地址、邮箱等字段。', features: ['字段自定义配置', '必填项设置', '完善奖励积分'], tips: ['核心字段建议设为必填'] }
+  },
+  {
+    key: 'c-search', path: 'capp/search', name: 'C端-搜索配置', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '配置项', dataIndex: 'name' },
+      { title: '热搜词', dataIndex: 'hotWords' },
+      { title: '类型', dataIndex: 'type' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '配置项', type: 'text', required: true },
+      { name: 'hotWords', label: '热搜词(逗号分隔)', type: 'textarea' },
+      { name: 'type', label: '搜索类型', type: 'select', options: [
+        { label: '商品搜索', value: 'goods' }, { label: '商户搜索', value: 'shop' }, { label: '活动搜索', value: 'activity' }, { label: '全局搜索', value: 'global' }
+      ] },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '搜索功能配置，管理热搜词、搜索范围、搜索结果排序。', features: ['热搜词配置', '多类型搜索', '搜索记录管理'], tips: ['热搜词建议每周更新'] }
+  },
+  {
+    key: 'c-message', path: 'capp/message', name: 'C端-消息通知', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '消息标题', dataIndex: 'title' },
+      { title: '消息类型', dataIndex: 'type' },
+      { title: '接收人', dataIndex: 'receiver' },
+      { title: '发送时间', dataIndex: 'sendTime' },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ pending: '待发送', sent: '已发送', read: '已读' }[v] || v) }
+    ],
+    fields: [
+      { name: 'title', label: '消息标题', type: 'text', required: true },
+      { name: 'type', label: '消息类型', type: 'select', options: [
+        { label: '积分通知', value: 'points' }, { label: '券到期提醒', value: 'coupon' }, { label: '活动通知', value: 'activity' }, { label: '系统通知', value: 'system' }
+      ] },
+      { name: 'content', label: '消息内容', type: 'textarea' },
+      { name: 'receiver', label: '接收人', type: 'text' },
+      { name: 'sendTime', label: '发送时间', type: 'date' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '待发送', value: 'pending' }, { label: '已发送', value: 'sent' }, { label: '已读', value: 'read' }
+      ] }
+    ],
+    doc: { overview: '会员消息通知管理，包含积分兑换通知、自助积分通知等系统消息。', features: ['多类型消息', '定时发送', '消息状态追踪'], tips: ['重要消息建议即时发送'] }
+  },
+  {
+    key: 'c-points-query', path: 'capp/points-query', name: 'C端-积分查询', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '会员', dataIndex: 'member' },
+      { title: '总积分', dataIndex: 'totalPoints' },
+      { title: '可用积分', dataIndex: 'availablePoints' },
+      { title: '冻结积分', dataIndex: 'frozenPoints' },
+      { title: '更新时间', dataIndex: 'updateTime' }
+    ],
+    fields: [
+      { name: 'member', label: '会员', type: 'text' },
+      { name: 'totalPoints', label: '总积分', type: 'number' },
+      { name: 'availablePoints', label: '可用积分', type: 'number' },
+      { name: 'frozenPoints', label: '冻结积分', type: 'number' },
+      { name: 'updateTime', label: '更新时间', type: 'date' }
+    ],
+    doc: { overview: '会员积分查询，支持查看跨项目融合积分余额、积分明细。', features: ['积分余额查询', '积分明细记录', '多项目积分融合'], tips: ['积分明细建议保留完整记录'] }
+  },
+  // ===== 商户导览 =====
+  {
+    key: 'c-shop-list', path: 'capp/shop-list', name: 'C端-商户列表', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '商户名称', dataIndex: 'name' },
+      { title: '分类', dataIndex: 'category' },
+      { title: '楼层', dataIndex: 'floor' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '营业中' : '休息中') }
+    ],
+    fields: [
+      { name: 'name', label: '商户名称', type: 'text', required: true },
+      { name: 'category', label: '分类', type: 'select', source: { path: 'shop/categories', labelField: 'name', valueField: 'name' } },
+      { name: 'floor', label: '楼层', type: 'text' },
+      { name: 'logo', label: 'Logo图片', type: 'text' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '商户列表信息展示配置，支持按分类、楼层筛选。', features: ['商户列表展示', '分类筛选', '楼层导航'], tips: ['商户信息需实时更新'] }
+  },
+  {
+    key: 'c-shop-detail', path: 'capp/shop-detail', name: 'C端-商户详情', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '商户', dataIndex: 'name' },
+      { title: '品牌故事', dataIndex: 'story', width: 200 },
+      { title: '联系电话', dataIndex: 'phone' },
+      { title: '位置', dataIndex: 'location' }
+    ],
+    fields: [
+      { name: 'name', label: '商户名称', type: 'text', required: true },
+      { name: 'story', label: '品牌故事', type: 'textarea' },
+      { name: 'phone', label: '联系电话', type: 'text' },
+      { name: 'location', label: '店铺位置', type: 'text' },
+      { name: 'businessHours', label: '营业时间', type: 'text' }
+    ],
+    doc: { overview: '商户详情页配置，包含品牌形象、logo、故事、店铺位置、联系方式、在售商品。', features: ['品牌故事展示', '一键拨号', '在售商品关联'], tips: ['品牌故事建议简明扼要'] }
+  },
+  {
+    key: 'c-restaurant-guide', path: 'capp/restaurant-guide', name: 'C端-餐饮导览', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '餐厅名称', dataIndex: 'name' },
+      { title: '菜系', dataIndex: 'cuisine' },
+      { title: '人均消费', dataIndex: 'avgPrice' },
+      { title: '推荐菜品', dataIndex: 'recommendDishes' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '营业中' : '休息中') }
+    ],
+    fields: [
+      { name: 'name', label: '餐厅名称', type: 'text', required: true },
+      { name: 'cuisine', label: '菜系', type: 'select', options: [
+        { label: '中餐', value: 'chinese' }, { label: '西餐', value: 'western' }, { label: '日韩料理', value: 'asian' }, { label: '火锅', value: 'hotpot' }, { label: '烧烤', value: 'bbq' }
+      ] },
+      { name: 'avgPrice', label: '人均消费', type: 'number' },
+      { name: 'recommendDishes', label: '推荐菜品', type: 'textarea' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '餐饮美食导览，展示餐厅列表及详情（菜系、推荐菜品、人均消费、促销活动）。', features: ['菜系分类', '人均消费展示', '推荐菜品', '促销关联'], tips: ['人均消费建议定期更新'] }
+  },
+  {
+    key: 'c-shop-navigation', path: 'capp/shop-navigation', name: 'C端-店铺导航', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '商户', dataIndex: 'shop' },
+      { title: '楼层', dataIndex: 'floor' },
+      { title: '位置描述', dataIndex: 'location' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'shop', label: '商户', type: 'text', required: true },
+      { name: 'floor', label: '楼层', type: 'text' },
+      { name: 'location', label: '位置描述', type: 'text' },
+      { name: 'floorMap', label: '楼层导航图', type: 'text' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '店铺位置导航，查看店铺所在楼层位置，支持楼层导航图展示与店铺定位。', features: ['楼层导航图', '店铺定位', '导航路线'], tips: ['楼层导航图建议使用高清图片'] }
+  },
+  // ===== 广告推广 =====
+  {
+    key: 'c-banner-ad', path: 'capp/banner-ad', name: 'C端-Banner广告', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '广告名称', dataIndex: 'name' },
+      { title: '位置', dataIndex: 'position' },
+      { title: '图片', dataIndex: 'image' },
+      { title: '点击量', dataIndex: 'clickCount' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '广告名称', type: 'text', required: true },
+      { name: 'position', label: '位置', type: 'select', options: [
+        { label: '首页顶部', value: 'homeTop' }, { label: '商城首页', value: 'mallTop' }, { label: '活动页', value: 'activity' }
+      ] },
+      { name: 'image', label: '图片URL', type: 'text' },
+      { name: 'linkUrl', label: '跳转链接', type: 'text' },
+      { name: 'clickCount', label: '点击量', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '页面Banner轮播广告展示配置。', features: ['多位置支持', '跳转链接', '点击统计'], tips: ['图片建议750x350比例'] }
+  },
+  {
+    key: 'c-popup-ad', path: 'capp/popup-ad', name: 'C端-弹窗广告', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '广告名称', dataIndex: 'name' },
+      { title: '弹窗页面', dataIndex: 'page' },
+      { title: '展示次数', dataIndex: 'showCount' },
+      { title: '点击率', dataIndex: 'clickRate' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '广告名称', type: 'text', required: true },
+      { name: 'page', label: '弹窗页面', type: 'select', options: [
+        { label: '首页', value: 'home' }, { label: '商城首页', value: 'mall' }, { label: '活动页', value: 'activity' }
+      ] },
+      { name: 'image', label: '图片URL', type: 'text' },
+      { name: 'linkUrl', label: '跳转链接', type: 'text' },
+      { name: 'showRule', label: '展示规则', type: 'text' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '页面弹窗广告展示配置，支持展示规则设置。', features: ['弹窗页面配置', '展示规则', '点击率统计'], tips: ['弹窗建议每日最多展示一次'] }
+  },
+  {
+    key: 'c-splash-ad', path: 'capp/splash-ad', name: 'C端-启动页广告', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '广告名称', dataIndex: 'name' },
+      { title: '展示时长(秒)', dataIndex: 'duration' },
+      { title: '开始时间', dataIndex: 'startTime' },
+      { title: '结束时间', dataIndex: 'endTime' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '广告名称', type: 'text', required: true },
+      { name: 'image', label: '图片URL', type: 'text' },
+      { name: 'duration', label: '展示时长(秒)', type: 'number' },
+      { name: 'linkUrl', label: '跳转链接', type: 'text' },
+      { name: 'startTime', label: '开始时间', type: 'date' },
+      { name: 'endTime', label: '结束时间', type: 'date' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '启动页广告展示配置，支持定时投放。', features: ['展示时长设置', '投放时间配置', '跳转链接'], tips: ['展示时长建议3-5秒'] }
+  },
+  {
+    key: 'c-personalized-ad', path: 'capp/personalized-ad', name: 'C端-千人千面广告', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '策略名称', dataIndex: 'name' },
+      { title: '人群标签', dataIndex: 'tags' },
+      { title: '广告内容', dataIndex: 'content' },
+      { title: '点击率', dataIndex: 'clickRate' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '策略名称', type: 'text', required: true },
+      { name: 'tags', label: '人群标签', type: 'text' },
+      { name: 'content', label: '广告内容', type: 'textarea' },
+      { name: 'priority', label: '优先级', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '根据会员标签和喜好展示个性化广告内容。', features: ['人群标签匹配', '个性化内容', '效果统计'], tips: ['标签建议细化到三级'] }
+  },
+  // ===== 营销活动 =====
+  {
+    key: 'c-new-member-gift', path: 'capp/new-member-gift', name: 'C端-新人礼', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '活动名称', dataIndex: 'name' },
+      { title: '礼品内容', dataIndex: 'giftContent' },
+      { title: '已领取', dataIndex: 'claimed' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '活动名称', type: 'text', required: true },
+      { name: 'giftContent', label: '礼品内容', type: 'textarea' },
+      { name: 'points', label: '赠送积分', type: 'number' },
+      { name: 'coupons', label: '赠送券', type: 'text' },
+      { name: 'parkingHours', label: '停车券(小时)', type: 'number' },
+      { name: 'claimed', label: '已领取', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '会员拉新（新人礼），新会员注册后自动赠送礼品（停车券、积分、优惠券等）。', features: ['新人礼包配置', '自动发放', '领取统计'], tips: ['新人礼建议设置高价值内容'] }
+  },
+  {
+    key: 'c-referral', path: 'capp/referral', name: 'C端-推荐有礼', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '活动名称', dataIndex: 'name' },
+      { title: '推荐人奖励', dataIndex: 'referrerReward' },
+      { title: '被推荐人奖励', dataIndex: 'refereeReward' },
+      { title: '参与次数', dataIndex: 'participateCount' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '活动名称', type: 'text', required: true },
+      { name: 'referrerReward', label: '推荐人奖励', type: 'textarea' },
+      { name: 'refereeReward', label: '被推荐人奖励', type: 'textarea' },
+      { name: 'maxReferrals', label: '最大推荐次数', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '推荐有礼，老会员分享推荐二维码，朋友注册后双方获得奖励。', features: ['双向奖励', '推荐统计', '二维码生成'], tips: ['奖励建议设置阶梯式'] }
+  },
+  {
+    key: 'c-help-coupon', path: 'capp/help-coupon', name: 'C端-助力领券', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '活动名称', dataIndex: 'name' },
+      { title: '所需助力人数', dataIndex: 'requiredHelps' },
+      { title: '券模板', dataIndex: 'couponTemplate' },
+      { title: '参与人数', dataIndex: 'participants' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '活动名称', type: 'text', required: true },
+      { name: 'requiredHelps', label: '所需助力人数', type: 'number' },
+      { name: 'couponTemplate', label: '券模板', type: 'select', source: { path: 'coupon/templates', labelField: 'name', valueField: 'name' } },
+      { name: 'discountPrice', label: '优惠价', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '助力领券，转发好友邀请助力，满足人数后低价购买或免费领取。', features: ['助力人数设置', '社交传播', '券模板关联'], tips: ['助力人数建议5-10人'] }
+  },
+  {
+    key: 'c-checkin', path: 'capp/checkin', name: 'C端-会员签到', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '签到天数', dataIndex: 'days' },
+      { title: '奖励类型', dataIndex: 'rewardType' },
+      { title: '奖励内容', dataIndex: 'reward' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'days', label: '签到天数', type: 'number', required: true },
+      { name: 'rewardType', label: '奖励类型', type: 'select', options: [
+        { label: '积分', value: 'points' }, { label: '优惠券', value: 'coupon' }, { label: '停车券', value: 'parking' }, { label: '成长值', value: 'growth' }
+      ] },
+      { name: 'reward', label: '奖励内容', type: 'text' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '会员签到打卡获得奖励（积分、优惠券、停车券、成长值）。', features: ['连续签到奖励', '多类型奖励', '签到统计'], tips: ['建议设置7天连续签到大奖'] }
+  },
+  {
+    key: 'c-game', path: 'capp/game', name: 'C端-游戏互动', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '游戏名称', dataIndex: 'name' },
+      { title: '游戏类型', dataIndex: 'type' },
+      { title: '参与次数', dataIndex: 'playCount' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '游戏名称', type: 'text', required: true },
+      { name: 'type', label: '游戏类型', type: 'select', options: [
+        { label: '大转盘', value: 'wheel' }, { label: '老虎机', value: 'slot' }, { label: '抢红包', value: 'redpacket' }, { label: '九宫格', value: 'grid' }
+      ] },
+      { name: 'playLimit', label: '每日参与次数', type: 'number' },
+      { name: 'rewardConfig', label: '奖励配置', type: 'textarea' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '游戏互动，大转盘、老虎机、抢红包、九宫格等游戏互动获得奖励。', features: ['多种游戏类型', '参与次数限制', '奖励配置'], tips: ['建议设置每日参与上限'] }
+  },
+  {
+    key: 'c-survey', path: 'capp/survey', name: 'C端-调查问卷', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '问卷名称', dataIndex: 'name' },
+      { title: '问题数量', dataIndex: 'questionCount' },
+      { title: '参与人数', dataIndex: 'participants' },
+      { title: '奖励积分', dataIndex: 'rewardPoints' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '问卷名称', type: 'text', required: true },
+      { name: 'questions', label: '问题配置', type: 'textarea' },
+      { name: 'rewardPoints', label: '奖励积分', type: 'number' },
+      { name: 'startTime', label: '开始时间', type: 'date' },
+      { name: 'endTime', label: '结束时间', type: 'date' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '调查问卷，支持会员参与调查问卷，完成后获得奖励。', features: ['问卷配置', '奖励设置', '统计分析'], tips: ['问卷建议控制在10题以内'] }
+  },
+  {
+    key: 'c-vote', path: 'capp/vote', name: 'C端-投票活动', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '投票名称', dataIndex: 'name' },
+      { title: '投票选项', dataIndex: 'options' },
+      { title: '参与人数', dataIndex: 'participants' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '投票名称', type: 'text', required: true },
+      { name: 'options', label: '投票选项', type: 'textarea' },
+      { name: 'rewardPoints', label: '投票奖励积分', type: 'number' },
+      { name: 'voteLimit', label: '每人投票次数', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '投票活动，会员参与投票，投票后可获奖励。', features: ['投票选项配置', '投票次数限制', '奖励设置'], tips: ['建议设置投票次数上限'] }
+  },
+  {
+    key: 'c-activity-signup', path: 'capp/activity-signup', name: 'C端-活动报名', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '活动名称', dataIndex: 'name' },
+      { title: '活动类型', dataIndex: 'type' },
+      { title: '报名时间', dataIndex: 'signupTime' },
+      { title: '已报名', dataIndex: 'signedUp' },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ pending: '待开始', ongoing: '进行中', ended: '已结束' }[v] || v) }
+    ],
+    fields: [
+      { name: 'name', label: '活动名称', type: 'text', required: true },
+      { name: 'type', label: '活动类型', type: 'select', options: [
+        { label: '沙龙活动', value: 'salon' }, { label: '儿童选美', value: 'kids' }, { label: '亲子活动', value: 'family' }, { label: '会员日', value: 'memberDay' }
+      ] },
+      { name: 'maxParticipants', label: '最大参与人数', type: 'number' },
+      { name: 'location', label: '活动地点', type: 'text' },
+      { name: 'activityTime', label: '活动时间', type: 'date' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '待开始', value: 'pending' }, { label: '进行中', value: 'ongoing' }, { label: '已结束', value: 'ended' }
+      ] }
+    ],
+    doc: { overview: '活动报名，查看活动列表、活动详情、在线报名（沙龙、儿童选美等）。', features: ['活动列表', '在线报名', '报名统计'], tips: ['建议设置报名截止时间'] }
+  },
+  // ===== 优惠券 =====
+  {
+    key: 'c-coupon-display', path: 'capp/coupon-display', name: 'C端-优惠券展示', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '券名称', dataIndex: 'name' },
+      { title: '券类型', dataIndex: 'type' },
+      { title: '优惠金额', dataIndex: 'discount' },
+      { title: '使用范围', dataIndex: 'scope' },
+      { title: '有效期', dataIndex: 'validPeriod' }
+    ],
+    fields: [
+      { name: 'name', label: '券名称', type: 'text', required: true },
+      { name: 'type', label: '券类型', type: 'select', options: [
+        { label: '满减券', value: 'discount' }, { label: '折扣券', value: 'percent' }, { label: '兑换券', value: 'exchange' }
+      ] },
+      { name: 'discount', label: '优惠金额', type: 'number' },
+      { name: 'scope', label: '使用范围', type: 'text' },
+      { name: 'validPeriod', label: '有效期', type: 'text' }
+    ],
+    doc: { overview: '优惠券详情展示（图片、金额、规则、范围、有效期）。', features: ['券详情展示', '使用规则说明', '有效期展示'], tips: ['有效期建议醒目展示'] }
+  },
+  {
+    key: 'c-coupon-claim', path: 'capp/coupon-claim', name: 'C端-优惠券领取', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '会员', dataIndex: 'member' },
+      { title: '券名称', dataIndex: 'couponName' },
+      { title: '领取时间', dataIndex: 'claimTime' },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ unused: '未使用', used: '已使用', expired: '已过期' }[v] || v) }
+    ],
+    fields: [
+      { name: 'member', label: '会员', type: 'text' },
+      { name: 'couponName', label: '券名称', type: 'text' },
+      { name: 'claimTime', label: '领取时间', type: 'date' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '未使用', value: 'unused' }, { label: '已使用', value: 'used' }, { label: '已过期', value: 'expired' }
+      ] }
+    ],
+    doc: { overview: '优惠券领取记录，支持在线领取优惠券。', features: ['领取记录', '状态追踪', '使用提醒'], tips: ['建议设置到期提醒'] }
+  },
+  {
+    key: 'c-coupon-package', path: 'capp/coupon-package', name: 'C端-券包功能', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '券包名称', dataIndex: 'name' },
+      { title: '包含券数', dataIndex: 'couponCount' },
+      { title: '领取条件', dataIndex: 'condition' },
+      { title: '已领取', dataIndex: 'claimed' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '券包名称', type: 'text', required: true },
+      { name: 'coupons', label: '包含券(逗号分隔)', type: 'textarea' },
+      { name: 'condition', label: '领取条件', type: 'text' },
+      { name: 'total', label: '发放总量', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '券包功能，支持多张券组合发放。', features: ['多券组合', '领取条件设置', '发放统计'], tips: ['券包建议设置限量'] }
+  },
+  {
+    key: 'c-group-buy', path: 'capp/group-buy', name: 'C端-团购秒杀', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '活动名称', dataIndex: 'name' },
+      { title: '商品', dataIndex: 'goods' },
+      { title: '原价', dataIndex: 'originalPrice' },
+      { title: '团购价', dataIndex: 'groupPrice' },
+      { title: '已售', dataIndex: 'sold' },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ pending: '待开始', ongoing: '进行中', ended: '已结束' }[v] || v) }
+    ],
+    fields: [
+      { name: 'name', label: '活动名称', type: 'text', required: true },
+      { name: 'goods', label: '商品名称', type: 'text' },
+      { name: 'originalPrice', label: '原价', type: 'number' },
+      { name: 'groupPrice', label: '团购价', type: 'number' },
+      { name: 'groupSize', label: '成团人数', type: 'number' },
+      { name: 'startTime', label: '开始时间', type: 'date' },
+      { name: 'endTime', label: '结束时间', type: 'date' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '待开始', value: 'pending' }, { label: '进行中', value: 'ongoing' }, { label: '已结束', value: 'ended' }
+      ] }
+    ],
+    doc: { overview: '团购/秒杀，在线开团特价商品、秒杀抢购（倒计时），线下到店提货。', features: ['团购配置', '秒杀倒计时', '库存管理'], tips: ['团购价建议设置明显优惠'] }
+  },
+  {
+    key: 'c-count-card', path: 'capp/count-card', name: 'C端-计次卡', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '卡名称', dataIndex: 'name' },
+      { title: '总次数', dataIndex: 'totalCount' },
+      { title: '剩余次数', dataIndex: 'remainCount' },
+      { title: '适用商户', dataIndex: 'shops' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '卡名称', type: 'text', required: true },
+      { name: 'totalCount', label: '总次数', type: 'number' },
+      { name: 'price', label: '售价', type: 'number' },
+      { name: 'shops', label: '适用商户', type: 'textarea' },
+      { name: 'discount', label: '折扣率', type: 'number' },
+      { name: 'validDays', label: '有效期(天)', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '计次卡，在线购买计次卡，场内指定餐饮商户享受折扣。', features: ['计次卡配置', '适用商户设置', '折扣率配置'], tips: ['计次卡建议设置较长的有效期'] }
+  },
+  // ===== 积分商城 =====
+  {
+    key: 'c-points-mall-home', path: 'capp/points-mall-home', name: 'C端-积分商城首页', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '配置项', dataIndex: 'name' },
+      { title: '类型', dataIndex: 'type' },
+      { title: '内容', dataIndex: 'content', width: 200 },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '配置项名称', type: 'text', required: true },
+      { name: 'type', label: '类型', type: 'select', options: [
+        { label: '为您推荐', value: 'recommend' }, { label: '热门兑换', value: 'hot' }, { label: 'Banner', value: 'banner' }
+      ] },
+      { name: 'content', label: '内容配置', type: 'textarea' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '积分商城首页，为您推荐、浏览轨迹、热门兑换、商品详情展示。', features: ['推荐配置', '热门兑换展示', 'Banner配置'], tips: ['推荐商品建议每周更新'] }
+  },
+  {
+    key: 'c-points-goods', path: 'capp/points-goods', name: 'C端-积分兑换礼品', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '商品名称', dataIndex: 'name' },
+      { title: '所需积分', dataIndex: 'points' },
+      { title: '库存', dataIndex: 'stock' },
+      { title: '已兑换', dataIndex: 'exchanged' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '上架' : '下架') }
+    ],
+    fields: [
+      { name: 'name', label: '商品名称', type: 'text', required: true },
+      { name: 'points', label: '所需积分', type: 'number' },
+      { name: 'stock', label: '库存', type: 'number' },
+      { name: 'image', label: '商品图片', type: 'text' },
+      { name: 'deliveryType', label: '配送方式', type: 'select', options: [
+        { label: '邮寄', value: 'delivery' }, { label: '到店自提', value: 'pickup' }, { label: '均可', value: 'both' }
+      ] },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '积分兑换礼品，支持会员积分兑换礼品，可邮寄或到店自提。', features: ['礼品配置', '积分定价', '配送方式'], tips: ['积分定价建议合理'] }
+  },
+  {
+    key: 'c-points-order', path: 'capp/points-order', name: 'C端-兑换订单', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '订单号', dataIndex: 'orderNo' },
+      { title: '会员', dataIndex: 'member' },
+      { title: '商品', dataIndex: 'goods' },
+      { title: '消耗积分', dataIndex: 'points' },
+      { title: '配送方式', dataIndex: 'deliveryType' },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ pending: '待发货', shipped: '已发货', completed: '已完成' }[v] || v) }
+    ],
+    fields: [
+      { name: 'orderNo', label: '订单号', type: 'text' },
+      { name: 'member', label: '会员', type: 'text' },
+      { name: 'goods', label: '商品', type: 'text' },
+      { name: 'points', label: '消耗积分', type: 'number' },
+      { name: 'deliveryType', label: '配送方式', type: 'select', options: [
+        { label: '邮寄', value: 'delivery' }, { label: '到店自提', value: 'pickup' }
+      ] },
+      { name: 'trackingNo', label: '物流单号', type: 'text' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '待发货', value: 'pending' }, { label: '已发货', value: 'shipped' }, { label: '已完成', value: 'completed' }
+      ] }
+    ],
+    doc: { overview: '兑换订单管理，兑换订单查看、物流查询、自提码。', features: ['订单查看', '物流查询', '自提码生成'], tips: ['自提码建议设置有效期'] }
+  },
+  // ===== 线上商城 =====
+  {
+    key: 'c-mall-home', path: 'capp/mall-home', name: 'C端-商城首页', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '配置项', dataIndex: 'name' },
+      { title: '类型', dataIndex: 'type' },
+      { title: '内容', dataIndex: 'content', width: 200 },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '配置项名称', type: 'text', required: true },
+      { name: 'type', label: '类型', type: 'select', options: [
+        { label: '门店切换区', value: 'storeSwitch' }, { label: '搜索区', value: 'search' }, { label: '广告轮播区', value: 'banner' }, { label: '分类导购区', value: 'category' }, { label: '促销活动区', value: 'promotion' }
+      ] },
+      { name: 'content', label: '内容配置', type: 'textarea' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '商场首页配置，门店切换区、搜索区、广告轮播区、分类导购区、促销活动区。', features: ['多区域配置', '内容管理', '排序设置'], tips: ['首页配置建议简洁明了'] }
+  },
+  {
+    key: 'c-goods-category', path: 'capp/goods-category', name: 'C端-商品分类', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '分类名称', dataIndex: 'name' },
+      { title: '父分类', dataIndex: 'parent' },
+      { title: '商品数', dataIndex: 'goodsCount' },
+      { title: '排序', dataIndex: 'sort' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '分类名称', type: 'text', required: true },
+      { name: 'parent', label: '父分类', type: 'text' },
+      { name: 'icon', label: '分类图标', type: 'text' },
+      { name: 'sort', label: '排序', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '商品分类，按商品分类筛选展示（彩妆、鞋靴、运动、女装等）。', features: ['多级分类', '分类图标', '排序配置'], tips: ['分类建议控制在三级以内'] }
+  },
+  {
+    key: 'c-goods-detail', path: 'capp/goods-detail', name: 'C端-商品详情', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '商品名称', dataIndex: 'name' },
+      { title: '分类', dataIndex: 'category' },
+      { title: '价格', dataIndex: 'price' },
+      { title: '库存', dataIndex: 'stock' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '上架' : '下架') }
+    ],
+    fields: [
+      { name: 'name', label: '商品名称', type: 'text', required: true },
+      { name: 'category', label: '分类', type: 'select', source: { path: 'capp/goods-category', labelField: 'name', valueField: 'name' } },
+      { name: 'price', label: '价格', type: 'number' },
+      { name: 'originalPrice', label: '原价', type: 'number' },
+      { name: 'stock', label: '库存', type: 'number' },
+      { name: 'images', label: '商品图片(逗号分隔)', type: 'textarea' },
+      { name: 'description', label: '商品描述', type: 'textarea' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '商品详情，多图片、价格、库存、包邮、活动、规格选择、客服电话、图文介绍。', features: ['多图片展示', '规格选择', '活动关联'], tips: ['商品图片建议使用高清图'] }
+  },
+  {
+    key: 'c-order-manage', path: 'capp/order-manage', name: 'C端-订单管理', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '订单号', dataIndex: 'orderNo' },
+      { title: '会员', dataIndex: 'member' },
+      { title: '商品', dataIndex: 'goods' },
+      { title: '金额', dataIndex: 'amount' },
+      { title: '订单状态', dataIndex: 'status', render: (v) => ({ unpaid: '待支付', paid: '已支付', shipped: '已发货', completed: '已完成', cancelled: '已取消' }[v] || v) }
+    ],
+    fields: [
+      { name: 'orderNo', label: '订单号', type: 'text' },
+      { name: 'member', label: '会员', type: 'text' },
+      { name: 'goods', label: '商品', type: 'text' },
+      { name: 'amount', label: '金额', type: 'number' },
+      { name: 'deliveryType', label: '配送方式', type: 'select', options: [
+        { label: '邮寄', value: 'delivery' }, { label: '自提', value: 'pickup' }
+      ] },
+      { name: 'status', label: '订单状态', type: 'select', options: [
+        { label: '待支付', value: 'unpaid' }, { label: '已支付', value: 'paid' }, { label: '已发货', value: 'shipped' }, { label: '已完成', value: 'completed' }, { label: '已取消', value: 'cancelled' }
+      ] }
+    ],
+    doc: { overview: '订单管理，商品立即购买、加入购物车后购买。', features: ['订单查看', '状态流转', '物流查询'], tips: ['建议设置订单超时自动取消'] }
+  },
+  {
+    key: 'c-order-refund', path: 'capp/order-refund', name: 'C端-订单退货', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '订单号', dataIndex: 'orderNo' },
+      { title: '会员', dataIndex: 'member' },
+      { title: '退货原因', dataIndex: 'reason' },
+      { title: '退款金额', dataIndex: 'refundAmount' },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ pending: '待审核', approved: '已同意', rejected: '已拒绝', refunded: '已退款' }[v] || v) }
+    ],
+    fields: [
+      { name: 'orderNo', label: '订单号', type: 'text' },
+      { name: 'member', label: '会员', type: 'text' },
+      { name: 'reason', label: '退货原因', type: 'textarea' },
+      { name: 'refundAmount', label: '退款金额', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '待审核', value: 'pending' }, { label: '已同意', value: 'approved' }, { label: '已拒绝', value: 'rejected' }, { label: '已退款', value: 'refunded' }
+      ] }
+    ],
+    doc: { overview: '订单退货，已付款未发货/未自提订单发起退款，审核后原路返回。', features: ['退货申请', '审核流程', '退款处理'], tips: ['建议设置退货审核时限'] }
+  },
+  {
+    key: 'c-mall-marketing', path: 'capp/mall-marketing', name: 'C端-商城营销', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '活动名称', dataIndex: 'name' },
+      { title: '活动类型', dataIndex: 'type' },
+      { title: '开始时间', dataIndex: 'startTime' },
+      { title: '结束时间', dataIndex: 'endTime' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '活动名称', type: 'text', required: true },
+      { name: 'type', label: '活动类型', type: 'select', options: [
+        { label: '拼团购', value: 'group' }, { label: '限时购', value: 'flash' }, { label: '预售', value: 'presale' }, { label: '帮砍价', value: 'bargain' }, { label: '众筹抽奖', value: 'crowd' }, { label: '盲盒', value: 'blindbox' }
+      ] },
+      { name: 'startTime', label: '开始时间', type: 'date' },
+      { name: 'endTime', label: '结束时间', type: 'date' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '商城营销，优惠券、拼团购、限时购、预售、帮砍价、众筹抽奖、盲盒。', features: ['多种营销类型', '时间设置', '活动管理'], tips: ['活动时间建议错开避免冲突'] }
+  },
+  // ===== 自助积分 =====
+  {
+    key: 'c-photo-points', path: 'capp/photo-points', name: 'C端-拍照积分', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '会员', dataIndex: 'member' },
+      { title: '小票金额', dataIndex: 'amount' },
+      { title: '申请积分', dataIndex: 'applyPoints' },
+      { title: '提交时间', dataIndex: 'submitTime' },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ pending: '待审核', approved: '已通过', rejected: '已拒绝' }[v] || v) }
+    ],
+    fields: [
+      { name: 'member', label: '会员', type: 'text' },
+      { name: 'amount', label: '小票金额', type: 'number' },
+      { name: 'applyPoints', label: '申请积分', type: 'number' },
+      { name: 'image', label: '小票图片', type: 'text' },
+      { name: 'submitTime', label: '提交时间', type: 'date' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '待审核', value: 'pending' }, { label: '已通过', value: 'approved' }, { label: '已拒绝', value: 'rejected' }
+      ] }
+    ],
+    doc: { overview: '拍照积分，会员拍照消费小票上传，后台审核积分。', features: ['小票上传', '人工审核', '积分发放'], tips: ['建议设置审核时限'] }
+  },
+  {
+    key: 'c-ai-points', path: 'capp/ai-points', name: 'C端-AI积分', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '会员', dataIndex: 'member' },
+      { title: '小票金额', dataIndex: 'amount' },
+      { title: 'AI识别金额', dataIndex: 'aiAmount' },
+      { title: '发放积分', dataIndex: 'grantedPoints' },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ success: '成功', failed: '失败', manual: '人工处理' }[v] || v) }
+    ],
+    fields: [
+      { name: 'member', label: '会员', type: 'text' },
+      { name: 'amount', label: '小票金额', type: 'number' },
+      { name: 'aiAmount', label: 'AI识别金额', type: 'number' },
+      { name: 'grantedPoints', label: '发放积分', type: 'number' },
+      { name: 'confidence', label: '置信度', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '成功', value: 'success' }, { label: '失败', value: 'failed' }, { label: '人工处理', value: 'manual' }
+      ] }
+    ],
+    doc: { overview: 'AI积分，基于AI技术自动完成拍照积分审核。', features: ['AI自动识别', '高准确率', '自动发放'], tips: ['置信度低于阈值建议人工复核'] }
+  },
+  {
+    key: 'c-pay-points', path: 'capp/pay-points', name: 'C端-支付即积分', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '会员', dataIndex: 'member' },
+      { title: '支付金额', dataIndex: 'amount' },
+      { title: '支付渠道', dataIndex: 'channel' },
+      { title: '获得积分', dataIndex: 'points' },
+      { title: '支付时间', dataIndex: 'payTime' }
+    ],
+    fields: [
+      { name: 'member', label: '会员', type: 'text' },
+      { name: 'amount', label: '支付金额', type: 'number' },
+      { name: 'channel', label: '支付渠道', type: 'select', options: [
+        { label: '微信', value: 'wechat' }, { label: '支付宝', value: 'alipay' }
+      ] },
+      { name: 'points', label: '获得积分', type: 'number' },
+      { name: 'payTime', label: '支付时间', type: 'date' }
+    ],
+    doc: { overview: '支付即积分，支付宝/微信商圈消费自动推送积分。', features: ['自动积分', '多渠道支持', '实时推送'], tips: ['需配置商圈支付接口'] }
+  },
+  // ===== 智慧停车 =====
+  {
+    key: 'c-parking-pay', path: 'capp/parking-pay', name: 'C端-手机缴停车费', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '会员', dataIndex: 'member' },
+      { title: '车牌号', dataIndex: 'plateNo' },
+      { title: '停车时长', dataIndex: 'duration' },
+      { title: '应付金额', dataIndex: 'amount' },
+      { title: '支付方式', dataIndex: 'payMethod' },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ unpaid: '待支付', paid: '已支付' }[v] || v) }
+    ],
+    fields: [
+      { name: 'member', label: '会员', type: 'text' },
+      { name: 'plateNo', label: '车牌号', type: 'text' },
+      { name: 'duration', label: '停车时长(分钟)', type: 'number' },
+      { name: 'amount', label: '应付金额', type: 'number' },
+      { name: 'payMethod', label: '支付方式', type: 'select', options: [
+        { label: '微信', value: 'wechat' }, { label: '支付宝', value: 'alipay' }, { label: '积分抵扣', value: 'points' }
+      ] },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '待支付', value: 'unpaid' }, { label: '已支付', value: 'paid' }
+      ] }
+    ],
+    doc: { overview: '手机缴纳停车费，支持手机缴纳停车费。', features: ['在线支付', '多种支付方式', '停车记录查询'], tips: ['建议支持无感支付'] }
+  },
+  {
+    key: 'c-parking-combo', path: 'capp/parking-combo', name: 'C端-组合支付', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '会员', dataIndex: 'member' },
+      { title: '车牌号', dataIndex: 'plateNo' },
+      { title: '券抵扣', dataIndex: 'couponDiscount' },
+      { title: '积分抵扣', dataIndex: 'pointsDiscount' },
+      { title: '现金支付', dataIndex: 'cashPay' },
+      { title: '总金额', dataIndex: 'totalAmount' }
+    ],
+    fields: [
+      { name: 'member', label: '会员', type: 'text' },
+      { name: 'plateNo', label: '车牌号', type: 'text' },
+      { name: 'couponDiscount', label: '券抵扣金额', type: 'number' },
+      { name: 'pointsDiscount', label: '积分抵扣金额', type: 'number' },
+      { name: 'cashPay', label: '现金支付金额', type: 'number' },
+      { name: 'totalAmount', label: '总金额', type: 'number' }
+    ],
+    doc: { overview: '组合支付，停车券、积分、微信/支付宝组合支付。', features: ['多方式组合', '自动计算', '实时抵扣'], tips: ['组合支付建议设置优先级'] }
+  },
+  {
+    key: 'c-parking-stack', path: 'capp/parking-stack', name: 'C端-停车券叠加', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '会员', dataIndex: 'member' },
+      { title: '车牌号', dataIndex: 'plateNo' },
+      { title: '券1', dataIndex: 'coupon1' },
+      { title: '券2', dataIndex: 'coupon2' },
+      { title: '叠加时长', dataIndex: 'totalHours' },
+      { title: '使用时间', dataIndex: 'useTime' }
+    ],
+    fields: [
+      { name: 'member', label: '会员', type: 'text' },
+      { name: 'plateNo', label: '车牌号', type: 'text' },
+      { name: 'coupon1', label: '券1', type: 'text' },
+      { name: 'coupon2', label: '券2', type: 'text' },
+      { name: 'totalHours', label: '叠加时长(小时)', type: 'number' },
+      { name: 'useTime', label: '使用时间', type: 'date' }
+    ],
+    doc: { overview: '停车券叠加，停车券支持叠加使用。', features: ['券叠加使用', '时长累加', '记录查询'], tips: ['建议设置叠加上限'] }
+  },
+  {
+    key: 'c-parking-senseless', path: 'capp/parking-senseless', name: 'C端-无感停车', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '会员', dataIndex: 'member' },
+      { title: '车牌号', dataIndex: 'plateNo' },
+      { title: '绑定状态', dataIndex: 'bindStatus', render: (v) => (v === 'enabled' ? '已绑定' : '未绑定') },
+      { title: '扣费方式', dataIndex: 'payType' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'member', label: '会员', type: 'text' },
+      { name: 'plateNo', label: '车牌号', type: 'text' },
+      { name: 'bindStatus', label: '绑定状态', type: 'select', options: [
+        { label: '已绑定', value: 'enabled' }, { label: '未绑定', value: 'disabled' }
+      ] },
+      { name: 'payType', label: '扣费方式', type: 'select', options: [
+        { label: '微信无感支付', value: 'wechat' }, { label: '支付宝无感支付', value: 'alipay' }, { label: '积分自动抵扣', value: 'points' }
+      ] },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '无感停车，微信/支付宝无感停车，自动扣会员积分抵扣停车费。', features: ['无感支付', '自动扣费', '积分抵扣'], tips: ['需开通微信/支付宝无感支付'] }
+  },
+  {
+    key: 'c-parking-no-plate', path: 'capp/parking-no-plate', name: 'C端-无牌车权益', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '会员', dataIndex: 'member' },
+      { title: '临时车牌', dataIndex: 'tempPlate' },
+      { title: '入场时间', dataIndex: 'entryTime' },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ active: '有效', expired: '已过期' }[v] || v) }
+    ],
+    fields: [
+      { name: 'member', label: '会员', type: 'text' },
+      { name: 'tempPlate', label: '临时车牌', type: 'text' },
+      { name: 'entryTime', label: '入场时间', type: 'date' },
+      { name: 'validHours', label: '有效时长(小时)', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '有效', value: 'active' }, { label: '已过期', value: 'expired' }
+      ] }
+    ],
+    doc: { overview: '无牌车权益，支持无牌车享受会员权益进行停车缴费。', features: ['临时车牌生成', '权益关联', '有效期管理'], tips: ['建议设置临时车牌有效期'] }
+  },
+  {
+    key: 'c-parking-exchange', path: 'capp/parking-exchange', name: 'C端-积分换停车券', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '会员', dataIndex: 'member' },
+      { title: '消耗积分', dataIndex: 'usedPoints' },
+      { title: '获得停车券', dataIndex: 'parkingCoupon' },
+      { title: '兑换时间', dataIndex: 'exchangeTime' },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ unused: '未使用', used: '已使用', expired: '已过期' }[v] || v) }
+    ],
+    fields: [
+      { name: 'member', label: '会员', type: 'text' },
+      { name: 'usedPoints', label: '消耗积分', type: 'number' },
+      { name: 'parkingCoupon', label: '获得停车券', type: 'text' },
+      { name: 'parkingHours', label: '停车时长(小时)', type: 'number' },
+      { name: 'exchangeTime', label: '兑换时间', type: 'date' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '未使用', value: 'unused' }, { label: '已使用', value: 'used' }, { label: '已过期', value: 'expired' }
+      ] }
+    ],
+    doc: { overview: '积分兑换停车券，会员积分兑换停车券，支持立方/捷顺停车系统。', features: ['积分兑换', '停车系统对接', '自动发放'], tips: ['兑换比例建议合理设置'] }
+  },
+  // ===== 客服功能 =====
+  {
+    key: 'c-online-service', path: 'capp/online-service', name: 'C端-在线客服', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '会话ID', dataIndex: 'sessionId' },
+      { title: '会员', dataIndex: 'member' },
+      { title: '问题类型', dataIndex: 'questionType' },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ waiting: '等待中', chatting: '会话中', closed: '已关闭' }[v] || v) },
+      { title: '开始时间', dataIndex: 'startTime' }
+    ],
+    fields: [
+      { name: 'sessionId', label: '会话ID', type: 'text' },
+      { name: 'member', label: '会员', type: 'text' },
+      { name: 'questionType', label: '问题类型', type: 'select', options: [
+        { label: '积分问题', value: 'points' }, { label: '优惠券问题', value: 'coupon' }, { label: '停车问题', value: 'parking' }, { label: '其他', value: 'other' }
+      ] },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '等待中', value: 'waiting' }, { label: '会话中', value: 'chatting' }, { label: '已关闭', value: 'closed' }
+      ] },
+      { name: 'startTime', label: '开始时间', type: 'date' }
+    ],
+    doc: { overview: '在线客服，输入问题语义匹配答案，支持接入人工客服。', features: ['智能问答', '人工客服接入', '会话管理'], tips: ['常见问题建议配置自动回复'] }
+  },
+  {
+    key: 'c-ai-service', path: 'capp/ai-service', name: 'C端-AI客服', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '问题', dataIndex: 'question', width: 200 },
+      { title: '回答', dataIndex: 'answer', width: 200 },
+      { title: '满意度', dataIndex: 'satisfaction', render: (v) => ({ good: '满意', normal: '一般', bad: '不满意' }[v] || v) },
+      { title: '时间', dataIndex: 'time' }
+    ],
+    fields: [
+      { name: 'question', label: '问题', type: 'textarea' },
+      { name: 'answer', label: 'AI回答', type: 'textarea' },
+      { name: 'satisfaction', label: '满意度', type: 'select', options: [
+        { label: '满意', value: 'good' }, { label: '一般', value: 'normal' }, { label: '不满意', value: 'bad' }
+      ] },
+      { name: 'time', label: '时间', type: 'date' }
+    ],
+    doc: { overview: 'AI客服，基于大模型的AI客服，商业行业知识训练调优。', features: ['大模型支持', '行业知识库', '满意度评价'], tips: ['建议定期优化知识库'] }
+  },
+  // ===== 物品租借 =====
+  {
+    key: 'c-rental', path: 'capp/rental', name: 'C端-物品租借', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '会员', dataIndex: 'member' },
+      { title: '物品类型', dataIndex: 'itemType' },
+      { title: '押金', dataIndex: 'deposit' },
+      { title: '租借时间', dataIndex: 'rentTime' },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ renting: '租借中', returned: '已归还' }[v] || v) }
+    ],
+    fields: [
+      { name: 'member', label: '会员', type: 'text' },
+      { name: 'itemType', label: '物品类型', type: 'select', options: [
+        { label: '雨伞', value: 'umbrella' }, { label: '推车', value: 'cart' }, { label: '充电宝', value: 'charger' }, { label: '其他', value: 'other' }
+      ] },
+      { name: 'deposit', label: '押金', type: 'number' },
+      { name: 'rentTime', label: '租借时间', type: 'date' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '租借中', value: 'renting' }, { label: '已归还', value: 'returned' }
+      ] }
+    ],
+    doc: { overview: '在线租借，在线申请租借雨伞、推车等物品。', features: ['在线申请', '押金管理', '归还记录'], tips: ['押金建议实时冻结'] }
+  },
+  {
+    key: 'c-rental-deposit', path: 'capp/rental-deposit', name: 'C端-押金支付退还', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '会员', dataIndex: 'member' },
+      { title: '物品', dataIndex: 'item' },
+      { title: '押金金额', dataIndex: 'depositAmount' },
+      { title: '支付时间', dataIndex: 'payTime' },
+      { title: '退还时间', dataIndex: 'refundTime' },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ paid: '已支付', refunded: '已退还' }[v] || v) }
+    ],
+    fields: [
+      { name: 'member', label: '会员', type: 'text' },
+      { name: 'item', label: '物品', type: 'text' },
+      { name: 'depositAmount', label: '押金金额', type: 'number' },
+      { name: 'payTime', label: '支付时间', type: 'date' },
+      { name: 'refundTime', label: '退还时间', type: 'date' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '已支付', value: 'paid' }, { label: '已退还', value: 'refunded' }
+      ] }
+    ],
+    doc: { overview: '押金支付/退还，在线支付押金，归还后自动退还。', features: ['在线支付', '自动退还', '记录查询'], tips: ['退还建议实时到账'] }
+  },
+  // ===== 公域运营 =====
+  {
+    key: 'c-douyin-exchange', path: 'capp/douyin-exchange', name: 'C端-抖音兑换券', category: 'C端小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '会员', dataIndex: 'member' },
+      { title: '抖音券码', dataIndex: 'douyinCode' },
+      { title: '兑换权益', dataIndex: 'reward' },
+      { title: '兑换时间', dataIndex: 'exchangeTime' },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ pending: '待核销', completed: '已完成' }[v] || v) }
+    ],
+    fields: [
+      { name: 'member', label: '会员', type: 'text' },
+      { name: 'douyinCode', label: '抖音券码', type: 'text' },
+      { name: 'reward', label: '兑换权益', type: 'text' },
+      { name: 'exchangeTime', label: '兑换时间', type: 'date' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '待核销', value: 'pending' }, { label: '已完成', value: 'completed' }
+      ] }
+    ],
+    doc: { overview: '抖音兑换券，抖音团购券码到小程序兑换，自动核销并发放权益。', features: ['券码验证', '自动核销', '权益发放'], tips: ['需配置抖音券码验证接口'] }
+  },
+  // ===== 商家小程序 =====
+  {
+    key: 'b-coupon-issue', path: 'bapp/coupon-issue', name: '商家-优惠券发放', category: '商家小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '商户', dataIndex: 'shop' },
+      { title: '券名称', dataIndex: 'couponName' },
+      { title: '券类型', dataIndex: 'couponType' },
+      { title: '发放数量', dataIndex: 'issueCount' },
+      { title: '发放时间', dataIndex: 'issueTime' }
+    ],
+    fields: [
+      { name: 'shop', label: '商户', type: 'text', required: true },
+      { name: 'couponName', label: '券名称', type: 'text' },
+      { name: 'couponType', label: '券类型', type: 'select', options: [
+        { label: '商户券', value: 'shop' }, { label: '平台券', value: 'platform' }
+      ] },
+      { name: 'issueCount', label: '发放数量', type: 'number' },
+      { name: 'issueTime', label: '发放时间', type: 'date' }
+    ],
+    doc: { overview: '商户券发放，商户选择指定优惠券发放给会员，支持商户券和平台券。', features: ['券发放管理', '批量发放', '发放记录'], tips: ['发放前需确认券库存'] }
+  },
+  {
+    key: 'b-coupon-batch', path: 'bapp/coupon-batch', name: '商家-批量发放', category: '商家小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '商户', dataIndex: 'shop' },
+      { title: '券名称', dataIndex: 'couponName' },
+      { title: '发放对象', dataIndex: 'targets', width: 200 },
+      { title: '发放数量', dataIndex: 'issueCount' },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ pending: '待发放', completed: '已完成' }[v] || v) }
+    ],
+    fields: [
+      { name: 'shop', label: '商户', type: 'text', required: true },
+      { name: 'couponName', label: '券名称', type: 'text' },
+      { name: 'targets', label: '发放对象(逗号分隔)', type: 'textarea' },
+      { name: 'issueCount', label: '发放数量', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '待发放', value: 'pending' }, { label: '已完成', value: 'completed' }
+      ] }
+    ],
+    doc: { overview: '批量发放，支持单个会员发放和批量发放。', features: ['批量选择会员', '一键发放', '发放日志'], tips: ['批量发放建议控制在100人以内'] }
+  },
+  {
+    key: 'b-coupon-verify', path: 'bapp/coupon-verify', name: '商家-优惠券核销', category: '商家小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '商户', dataIndex: 'shop' },
+      { title: '券码', dataIndex: 'couponCode' },
+      { title: '会员', dataIndex: 'member' },
+      { title: '核销时间', dataIndex: 'verifyTime' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'verified' ? '已核销' : '待核销') }
+    ],
+    fields: [
+      { name: 'shop', label: '商户', type: 'text' },
+      { name: 'couponCode', label: '券码', type: 'text' },
+      { name: 'member', label: '会员', type: 'text' },
+      { name: 'verifyTime', label: '核销时间', type: 'date' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '已核销', value: 'verified' }, { label: '待核销', value: 'pending' }
+      ] }
+    ],
+    doc: { overview: '优惠券核销，商户在商家小程序上进行优惠券核销操作。', features: ['扫码核销', '手动输入核销', '核销记录'], tips: ['核销前请确认券有效性'] }
+  },
+  {
+    key: 'b-parking-issue', path: 'bapp/parking-issue', name: '商家-停车券发放', category: '商家小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '商户', dataIndex: 'shop' },
+      { title: '会员', dataIndex: 'member' },
+      { title: '停车时长', dataIndex: 'parkingHours' },
+      { title: '发放时间', dataIndex: 'issueTime' },
+      { title: '状态', dataIndex: 'status', render: (v) => ({ unused: '未使用', used: '已使用' }[v] || v) }
+    ],
+    fields: [
+      { name: 'shop', label: '商户', type: 'text', required: true },
+      { name: 'member', label: '会员', type: 'text' },
+      { name: 'parkingHours', label: '停车时长(小时)', type: 'number' },
+      { name: 'issueTime', label: '发放时间', type: 'date' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '未使用', value: 'unused' }, { label: '已使用', value: 'used' }
+      ] }
+    ],
+    doc: { overview: '停车券发放，商场给商户开通停车券账户，商户发放停车券给会员。', features: ['停车券发放', '时长配置', '使用记录'], tips: ['发放前请确认账户余额'] }
+  },
+  {
+    key: 'b-order-verify', path: 'bapp/order-verify', name: '商家-商城订单核销', category: '商家小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '商户', dataIndex: 'shop' },
+      { title: '订单号', dataIndex: 'orderNo' },
+      { title: '会员', dataIndex: 'member' },
+      { title: '商品', dataIndex: 'goods' },
+      { title: '核销时间', dataIndex: 'verifyTime' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'verified' ? '已核销' : '待核销') }
+    ],
+    fields: [
+      { name: 'shop', label: '商户', type: 'text' },
+      { name: 'orderNo', label: '订单号', type: 'text' },
+      { name: 'member', label: '会员', type: 'text' },
+      { name: 'goods', label: '商品', type: 'text' },
+      { name: 'verifyTime', label: '核销时间', type: 'date' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '已核销', value: 'verified' }, { label: '待核销', value: 'pending' }
+      ] }
+    ],
+    doc: { overview: '商城订单核销，商城自提订单核销、积分商城自提订单核销。', features: ['订单核销', '自提码验证', '核销记录'], tips: ['核销前请确认订单状态'] }
+  },
+  {
+    key: 'b-group-verify', path: 'bapp/group-verify', name: '商家-团购秒杀核销', category: '商家小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '商户', dataIndex: 'shop' },
+      { title: '活动名称', dataIndex: 'activityName' },
+      { title: '会员', dataIndex: 'member' },
+      { title: '核销时间', dataIndex: 'verifyTime' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'verified' ? '已核销' : '待核销') }
+    ],
+    fields: [
+      { name: 'shop', label: '商户', type: 'text' },
+      { name: 'activityName', label: '活动名称', type: 'text' },
+      { name: 'member', label: '会员', type: 'text' },
+      { name: 'verifyTime', label: '核销时间', type: 'date' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '已核销', value: 'verified' }, { label: '待核销', value: 'pending' }
+      ] }
+    ],
+    doc: { overview: '团购秒杀核销，秒杀团购订单核销。', features: ['团购订单核销', '秒杀订单核销', '核销记录'], tips: ['建议核销时验证会员身份'] }
+  },
+  {
+    key: 'b-activity-verify', path: 'bapp/activity-verify', name: '商家-活动核销', category: '商家小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '商户', dataIndex: 'shop' },
+      { title: '活动名称', dataIndex: 'activityName' },
+      { title: '会员', dataIndex: 'member' },
+      { title: '核销时间', dataIndex: 'verifyTime' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'verified' ? '已核销' : '待核销') }
+    ],
+    fields: [
+      { name: 'shop', label: '商户', type: 'text' },
+      { name: 'activityName', label: '活动名称', type: 'text' },
+      { name: 'member', label: '会员', type: 'text' },
+      { name: 'verifyTime', label: '核销时间', type: 'date' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '已核销', value: 'verified' }, { label: '待核销', value: 'pending' }
+      ] }
+    ],
+    doc: { overview: '活动核销，活动报名核销。', features: ['活动报名核销', '签到核销', '核销记录'], tips: ['建议活动开始前核销'] }
+  },
+  {
+    key: 'b-points-ledger', path: 'bapp/points-ledger', name: '商家-核销积分台账', category: '商家小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '商户', dataIndex: 'shop' },
+      { title: '核销类型', dataIndex: 'verifyType' },
+      { title: '会员', dataIndex: 'member' },
+      { title: '积分数量', dataIndex: 'points' },
+      { title: '核销时间', dataIndex: 'verifyTime' }
+    ],
+    fields: [
+      { name: 'shop', label: '商户', type: 'text' },
+      { name: 'verifyType', label: '核销类型', type: 'select', options: [
+        { label: '优惠券核销', value: 'coupon' }, { label: '订单核销', value: 'order' }, { label: '活动核销', value: 'activity' }
+      ] },
+      { name: 'member', label: '会员', type: 'text' },
+      { name: 'points', label: '积分数量', type: 'number' },
+      { name: 'verifyTime', label: '核销时间', type: 'date' }
+    ],
+    doc: { overview: '核销积分台账，商家查看自己核销积分的明细台账，包含核销时间、核销类型、会员信息、积分数量等。', features: ['积分明细', '类型筛选', '统计汇总'], tips: ['建议定期核对积分台账'] }
+  },
+  {
+    key: 'b-verify-stats', path: 'bapp/verify-stats', name: '商家-核销数据统计', category: '商家小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '商户', dataIndex: 'shop' },
+      { title: '统计日期', dataIndex: 'date' },
+      { title: '券核销', dataIndex: 'couponCount' },
+      { title: '订单核销', dataIndex: 'orderCount' },
+      { title: '活动核销', dataIndex: 'activityCount' },
+      { title: '总积分', dataIndex: 'totalPoints' }
+    ],
+    fields: [
+      { name: 'shop', label: '商户', type: 'text' },
+      { name: 'date', label: '统计日期', type: 'date' },
+      { name: 'couponCount', label: '券核销数', type: 'number' },
+      { name: 'orderCount', label: '订单核销数', type: 'number' },
+      { name: 'activityCount', label: '活动核销数', type: 'number' },
+      { name: 'totalPoints', label: '总积分', type: 'number' }
+    ],
+    doc: { overview: '核销数据统计，各种业务类型的核销及核销数据记录、统计。', features: ['多维度统计', '趋势分析', '导出报表'], tips: ['建议每日统计一次'] }
+  },
+  {
+    key: 'b-sales-stats', path: 'bapp/sales-stats', name: '商家-销售数据统计', category: '商家小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '商户', dataIndex: 'shop' },
+      { title: '统计日期', dataIndex: 'date' },
+      { title: '订单数', dataIndex: 'orderCount' },
+      { title: '销售金额', dataIndex: 'salesAmount' },
+      { title: '会员消费', dataIndex: 'memberAmount' },
+      { title: '非会员消费', dataIndex: 'nonMemberAmount' }
+    ],
+    fields: [
+      { name: 'shop', label: '商户', type: 'text' },
+      { name: 'date', label: '统计日期', type: 'date' },
+      { name: 'orderCount', label: '订单数', type: 'number' },
+      { name: 'salesAmount', label: '销售金额', type: 'number' },
+      { name: 'memberAmount', label: '会员消费', type: 'number' },
+      { name: 'nonMemberAmount', label: '非会员消费', type: 'number' }
+    ],
+    doc: { overview: '销售数据统计，商户销售数据统计与分析。', features: ['销售统计', '会员分析', '趋势分析'], tips: ['建议每日统计一次'] }
+  },
+  {
+    key: 'b-shop-info', path: 'bapp/shop-info', name: '商家-基础信息', category: '商家小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '商户名称', dataIndex: 'name' },
+      { title: '行业分类', dataIndex: 'category' },
+      { title: '合同有效期', dataIndex: 'contractExpiry' },
+      { title: '联系电话', dataIndex: 'phone' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'active' ? '营业中' : '休息中') }
+    ],
+    fields: [
+      { name: 'name', label: '商户名称', type: 'text' },
+      { name: 'category', label: '行业分类', type: 'text' },
+      { name: 'contractExpiry', label: '合同有效期', type: 'date' },
+      { name: 'phone', label: '联系电话', type: 'text' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '营业中', value: 'active' }, { label: '休息中', value: 'inactive' }
+      ] }
+    ],
+    doc: { overview: '商家基础信息，展示从猎豹系统同步的商家信息（合同有效期、行业分类等）。', features: ['信息展示', '合同管理', '状态管理'], tips: ['合同到期前建议提醒续签'] }
+  },
+  {
+    key: 'b-shop-notice', path: 'bapp/shop-notice', name: '商家-通知管理', category: '商家小程序',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '通知标题', dataIndex: 'title' },
+      { title: '通知类型', dataIndex: 'type' },
+      { title: '发送时间', dataIndex: 'sendTime' },
+      { title: '阅读状态', dataIndex: 'readStatus', render: (v) => (v === 'read' ? '已读' : '未读') }
+    ],
+    fields: [
+      { name: 'title', label: '通知标题', type: 'text', required: true },
+      { name: 'type', label: '通知类型', type: 'select', options: [
+        { label: '运营通知', value: 'operation' }, { label: '活动通知', value: 'activity' }, { label: '系统通知', value: 'system' }
+      ] },
+      { name: 'content', label: '通知内容', type: 'textarea' },
+      { name: 'sendTime', label: '发送时间', type: 'date' },
+      { name: 'readStatus', label: '阅读状态', type: 'select', options: [
+        { label: '已读', value: 'read' }, { label: '未读', value: 'unread' }
+      ] }
+    ],
+    doc: { overview: '商家通知，接收商场运营通知、活动通知等。', features: ['通知接收', '已读未读管理', '通知历史'], tips: ['重要通知建议短信提醒'] }
+  },
 ];
 
 export function getModule(key: string): ModuleConfig | undefined {
