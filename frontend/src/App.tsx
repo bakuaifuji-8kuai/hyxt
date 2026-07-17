@@ -8,7 +8,7 @@ import {
   UserOutlined, LogoutOutlined, ApartmentOutlined as Flow,
   SafetyCertificateOutlined, FileTextOutlined, AccountBookOutlined,
   PictureOutlined, GlobalOutlined, HomeOutlined, ReloadOutlined,
-  BarChartOutlined
+  BarChartOutlined, SearchOutlined
 } from '@ant-design/icons';
 import { getMenuTree } from './services/modules';
 import { isAuthenticated, handleLogout } from './services/request';
@@ -53,6 +53,12 @@ const CATEGORY_ICONS: Record<string, any> = {
   '数据中心': BarChartOutlined,
   '自助积分': CrownOutlined,
   '在线客服': MessageOutlined,
+  'AI小票': CrownOutlined,
+  '广告推广': PictureOutlined,
+  '客服管理': CustomerServiceOutlined,
+  '搜索管理': SearchOutlined,
+  '小程序营销平台': PictureOutlined,
+  '系统安全': SafetyCertificateOutlined,
 };
 
 export default function App() {

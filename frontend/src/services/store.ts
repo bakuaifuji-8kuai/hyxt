@@ -537,6 +537,90 @@ initModule('services/items', ['name', 'price', 'duration', 'shop', 'status'], [
   { name: '按摩理疗', price: 188, duration: 45, shop: '总店', status: 'enabled' },
   { name: '健身私教', price: 500, duration: 60, shop: '总店', status: 'enabled' }
 ]);
+
+// AI小票
+initModule('ai/receipt-audit', ['member', 'amount', 'aiAmount', 'aiStatus', 'auditStatus', 'pointsIssued', 'merchant', 'receiptImage', 'submitTime', 'auditRemark'], [
+  { member: '张三', amount: 258, aiAmount: 258, aiStatus: 'success', auditStatus: 'approved', pointsIssued: 258, merchant: '星巴克', submitTime: '2024-07-10' },
+  { member: '李四', amount: 89, aiAmount: 89, aiStatus: 'success', auditStatus: 'pending', pointsIssued: 0, merchant: '海底捞', submitTime: '2024-07-11' },
+  { member: '王五', amount: 1500, aiAmount: 0, aiStatus: 'failed', auditStatus: 'pending', pointsIssued: 0, merchant: '优衣库', submitTime: '2024-07-12' },
+]);
+initModule('ai/receipt-rules', ['name', 'pointsPerYuan', 'maxPoints', 'dailyLimit', 'applicableMerchant', 'minAmount', 'status'], [
+  { name: '全场通用规则', pointsPerYuan: 1, maxPoints: 500, dailyLimit: 3, applicableMerchant: '', minAmount: 10, status: 'enabled' },
+  { name: '餐饮专属规则', pointsPerYuan: 2, maxPoints: 300, dailyLimit: 5, applicableMerchant: '海底捞', minAmount: 50, status: 'enabled' },
+]);
+
+// 广告推广
+initModule('ad/config', ['name', 'type', 'position', 'imageUrl', 'linkUrl', 'startTime', 'endTime', 'sort', 'targetGroup', 'status'], [
+  { name: '暑期大促Banner', type: 'banner', position: 'home', imageUrl: '/ads/summer-banner.jpg', linkUrl: '/activity/summer', startTime: '2024-07-01', endTime: '2024-08-31', sort: 1, targetGroup: 'all', status: 'enabled' },
+  { name: '新会员弹窗', type: 'popup', position: 'home', imageUrl: '/ads/new-member.jpg', linkUrl: '/coupon/new-member', startTime: '2024-07-01', endTime: '2024-12-31', sort: 1, targetGroup: 'new', status: 'enabled' },
+  { name: '启动页广告', type: 'splash', position: 'home', imageUrl: '/ads/splash-brand.jpg', linkUrl: '/brand', startTime: '2024-07-01', endTime: '2024-07-31', sort: 1, targetGroup: 'all', status: 'enabled' },
+]);
+initModule('ad/precise', ['name', 'adId', 'targetGroup', 'tags', 'impressions', 'clicks', 'startTime', 'endTime', 'status'], [
+  { name: '高消费会员定向投放', adId: '暑期大促Banner', targetGroup: 'custom', tags: '高消费,金卡会员', impressions: 5280, clicks: 432, startTime: '2024-07-01', endTime: '2024-08-31', status: 'enabled' },
+  { name: '沉睡会员唤醒投放', adId: '新会员弹窗', targetGroup: 'inactive', tags: '', impressions: 3200, clicks: 156, startTime: '2024-07-01', endTime: '2024-08-31', status: 'enabled' },
+]);
+
+// 客服管理
+initModule('cs/knowledge', ['category', 'question', 'answer', 'keywords', 'sort', 'status'], [
+  { category: 'member', question: '如何注册会员？', answer: '进入小程序点击"我的"即可快速注册成为会员', keywords: '注册,会员,加入', sort: 1, status: 'enabled' },
+  { category: 'points', question: '积分怎么获取？', answer: '消费积分、签到积分、活动积分等多种方式', keywords: '积分,获取,赚取', sort: 2, status: 'enabled' },
+  { category: 'parking', question: '停车费怎么交？', answer: '小程序"智慧停车"模块可直接缴费', keywords: '停车,缴费,停车费', sort: 3, status: 'enabled' },
+]);
+initModule('cs/auto-reply', ['name', 'keyword', 'replyContent', 'matchType', 'priority', 'status'], [
+  { name: '营业时间回复', keyword: '营业时间', replyContent: '商场营业时间为10:00-22:00，欢迎光临！', matchType: 'fuzzy', priority: 1, status: 'enabled' },
+  { name: 'WiFi回复', keyword: 'WiFi|wifi|无线网', replyContent: '商场免费WiFi：HW-Mall，密码：88888888', matchType: 'regex', priority: 2, status: 'enabled' },
+]);
+initModule('cs/ai-training', ['name', 'corpusCount', 'modelVersion', 'trainingParams', 'status', 'accuracy', 'updateTime'], [
+  { name: '商业体行业语料训练', corpusCount: 5200, modelVersion: 'v3.2', trainingParams: '{"epochs": 50, "lr": 0.001}', status: 'completed', accuracy: 87.5, updateTime: '2024-07-01' },
+  { name: '停车场景语料补充', corpusCount: 800, modelVersion: 'v3.3', trainingParams: '{"epochs": 30, "lr": 0.002}', status: 'pending', accuracy: 0, updateTime: '' },
+]);
+initModule('cs/staff', ['name', 'staffNo', 'workTime', 'maxSessions', 'transferRule', 'skillTags', 'onlineStatus', 'status'], [
+  { name: '王小美', staffNo: 'CS001', workTime: '09:00-18:00', maxSessions: 8, transferRule: 'idle', skillTags: '会员,积分', onlineStatus: 'online', status: 'enabled' },
+  { name: '李大强', staffNo: 'CS002', workTime: '14:00-22:00', maxSessions: 6, transferRule: 'skill', skillTags: '停车,优惠券', onlineStatus: 'offline', status: 'enabled' },
+]);
+
+// 搜索管理
+initModule('search/hotwords', ['word', 'searchCount', 'type', 'sort', 'status'], [
+  { word: '停车缴费', searchCount: 12580, type: 'auto', sort: 1, status: 'enabled' },
+  { word: '积分兑换', searchCount: 8920, type: 'auto', sort: 2, status: 'enabled' },
+  { word: '优惠券', searchCount: 6540, type: 'auto', sort: 3, status: 'enabled' },
+  { word: '海底捞', searchCount: 4320, type: 'auto', sort: 4, status: 'enabled' },
+  { word: '暑期活动', searchCount: 0, type: 'manual', sort: 5, status: 'enabled' },
+]);
+initModule('search/scope', ['moduleName', 'searchFields', 'weight', 'status'], [
+  { moduleName: 'merchant', searchFields: 'name,category,brand', weight: 10, status: 'enabled' },
+  { moduleName: 'goods', searchFields: 'name,category,brand,description', weight: 8, status: 'enabled' },
+  { moduleName: 'activity', searchFields: 'name,type,description', weight: 6, status: 'enabled' },
+  { moduleName: 'coupon', searchFields: 'name,type,description', weight: 5, status: 'enabled' },
+  { moduleName: 'brand', searchFields: 'name,category', weight: 4, status: 'enabled' },
+]);
+
+// 停车券管理
+initModule('parking/coupons', ['name', 'type', 'value', 'issueType', 'exchangePoints', 'parkingLot', 'validDays', 'totalQuota', 'usedQuota', 'status'], [
+  { name: '1小时停车券', type: 'time', value: 1, issueType: 'auto', exchangePoints: 0, parkingLot: 'B1停车场', validDays: 30, totalQuota: 1000, usedQuota: 356, status: 'enabled' },
+  { name: '2小时停车券', type: 'time', value: 2, issueType: 'exchange', exchangePoints: 200, parkingLot: 'B1停车场', validDays: 30, totalQuota: 500, usedQuota: 128, status: 'enabled' },
+  { name: '5元停车抵扣券', type: 'amount', value: 5, issueType: 'manual', exchangePoints: 0, parkingLot: 'B2停车场', validDays: 7, totalQuota: 2000, usedQuota: 890, status: 'enabled' },
+  { name: 'VIP全免停车券', type: 'free', value: 0, issueType: 'auto', exchangePoints: 0, parkingLot: 'B1停车场', validDays: 1, totalQuota: 100, usedQuota: 23, status: 'enabled' },
+]);
+
+// 公域运营增强
+initModule('channel/douyin-member', ['syncType', 'douyinOpenid', 'member', 'syncStatus', 'syncTime', 'remark'], [
+  { syncType: 'register', douyinOpenid: 'dy_user_001', member: '张三', syncStatus: 'success', syncTime: '2024-07-10', remark: '抖音引流注册' },
+  { syncType: 'verify', douyinOpenid: 'dy_user_002', member: '李四', syncStatus: 'success', syncTime: '2024-07-11', remark: '核销自动积分+50' },
+  { syncType: 'info', douyinOpenid: 'dy_user_003', member: '王五', syncStatus: 'pending', syncTime: '', remark: '信息同步待处理' },
+]);
+initModule('channel/meituan-config', ['name', 'appId', 'appSecret', 'callbackUrl', 'merchantCount', 'status'], [
+  { name: '美团团购配置', appId: 'mt_app_1a2b3c', appSecret: '***', callbackUrl: 'https://api.example.com/meituan/callback', merchantCount: 12, status: 'enabled' },
+]);
+initModule('channel/meituan-verify', ['couponCode', 'merchant', 'verifyType', 'verifyStatus', 'benefitIssued', 'verifyTime', 'remark'], [
+  { couponCode: 'MT20240710001', merchant: '星巴克', verifyType: 'verify', verifyStatus: 'success', benefitIssued: 'yes', verifyTime: '2024-07-10', remark: '核销后自动发放50积分' },
+  { couponCode: 'MT20240710002', merchant: '海底捞', verifyType: 'verify', verifyStatus: 'revoked', benefitIssued: 'no', verifyTime: '2024-07-11', remark: '用户退款已撤销' },
+]);
+initModule('channel/meituan-orders', ['meituanOrderNo', 'merchant', 'goodsName', 'amount', 'syncStatus', 'orderStatus', 'syncTime'], [
+  { meituanOrderNo: 'MT_ORD_001', merchant: '星巴克', goodsName: '大杯拿铁', amount: 38, syncStatus: 'synced', orderStatus: 'used', syncTime: '2024-07-10' },
+  { meituanOrderNo: 'MT_ORD_002', merchant: '海底捞', goodsName: '4人套餐', amount: 298, syncStatus: 'synced', orderStatus: 'paid', syncTime: '2024-07-11' },
+  { meituanOrderNo: 'MT_ORD_003', merchant: '优衣库', goodsName: '夏装满减', amount: 0, syncStatus: 'failed', orderStatus: 'unpaid', syncTime: '' },
+]);
 initModule('marketing/prizes', ['name', 'type', 'value', 'stock', 'used', 'status'], [
   { name: '100积分', type: 'points', value: 100, stock: 9999, used: 0, status: 'enabled' },
   { name: '500积分', type: 'points', value: 500, stock: 9999, used: 0, status: 'enabled' },
@@ -596,6 +680,46 @@ initModule('channel/reconciliation/daily', ['date', 'channel', 'platformVerifyCo
 initModule('channel/settlement/monthly', ['merchantId', 'merchantName', 'channel', 'settlementMonth', 'totalDiscountAmount', 'merchantCostAmount', 'platformFeeAmount', 'daRenCommissionAmount', 'settlementAmount', 'settlementMethod', 'status', 'settlementTime', 'operator', 'documents', 'remark'], [
   { merchantId: 1, merchantName: '星巴克', channel: 'all', settlementMonth: '2024-06', totalDiscountAmount: 10000, merchantCostAmount: 5000, platformFeeAmount: 800, daRenCommissionAmount: 500, settlementAmount: 3700, settlementMethod: 'rentDeduct', status: 'completed', settlementTime: '2024-07-05 10:00:00', operator: '财务A', documents: '["抖音结算账单.pdf", "美团结算账单.pdf", "中台核销台账.xlsx", "结算单.pdf"]', remark: '' },
   { merchantId: 2, merchantName: '海底捞', channel: 'all', settlementMonth: '2024-06', totalDiscountAmount: 8000, merchantCostAmount: 3200, platformFeeAmount: 640, daRenCommissionAmount: 400, settlementAmount: 3760, settlementMethod: 'bankTransfer', status: 'processing', settlementTime: '', operator: '财务A', documents: '', remark: '待打款' }
+]);
+
+// 系统安全
+initModule('security/network', ['name', 'type', 'level', 'rule', 'whiteList', 'status'], [
+  { name: 'Web应用防火墙', type: 'firewall', level: 'high', rule: '仅允许HTTPS访问', whiteList: '10.0.0.0/8', status: 'enabled' },
+  { name: 'DDoS基础防护', type: 'ddos', level: 'medium', rule: '单IP限流1000QPS', whiteList: '', status: 'enabled' },
+  { name: 'IPS入侵防御', type: 'ips', level: 'high', rule: '拦截已知攻击特征', whiteList: '', status: 'enabled' },
+]);
+initModule('security/data', ['name', 'type', 'description', 'encryptAlgorithm', 'backupCycle', 'status'], [
+  { name: '传输加密策略', type: 'encrypt', description: '全站HTTPS/TLS1.3加密', encryptAlgorithm: '', backupCycle: '', status: 'enabled' },
+  { name: '敏感数据加密存储', type: 'storage', description: '手机号、身份证等AES-256加密', encryptAlgorithm: 'aes256', backupCycle: '', status: 'enabled' },
+  { name: '数据脱敏规则', type: 'desensitize', description: '手机号中间4位脱敏', encryptAlgorithm: '', backupCycle: '', status: 'enabled' },
+  { name: '每日自动备份', type: 'backup', description: '每日凌晨2:00自动备份数据库', encryptAlgorithm: '', backupCycle: 'daily', status: 'enabled' },
+]);
+initModule('security/app', ['name', 'type', 'rule', 'blockCount', 'status'], [
+  { name: 'WAF防火墙', type: 'waf', rule: '拦截SQL注入、XSS等常见攻击', blockCount: 1520, status: 'enabled' },
+  { name: 'SQL注入防护', type: 'sqli', rule: '参数化查询+关键字过滤', blockCount: 856, status: 'enabled' },
+  { name: 'XSS防护', type: 'xss', rule: '输出编码+Content-Security-Policy', blockCount: 320, status: 'enabled' },
+]);
+initModule('security/api', ['name', 'type', 'authType', 'rateLimit', 'tokenExpire', 'status'], [
+  { name: 'API鉴权策略', type: 'auth', authType: 'jwt', rateLimit: 0, tokenExpire: 60, status: 'enabled' },
+  { name: '接口限流策略', type: 'rate', authType: '', rateLimit: 500, tokenExpire: 0, status: 'enabled' },
+  { name: '签名验证', type: 'sign', authType: '', rateLimit: 0, tokenExpire: 0, status: 'enabled' },
+]);
+initModule('security/applet', ['name', 'type', 'description', 'status'], [
+  { name: '代码加固策略', type: 'code', description: '小程序代码混淆加固', status: 'enabled' },
+  { name: '接口防篡改', type: 'tamper', description: '接口请求签名验证', status: 'enabled' },
+  { name: '防反编译', type: 'decompile', description: '代码混淆+关键逻辑加密', status: 'enabled' },
+  { name: '防抓包', type: 'capture', description: 'SSL Pinning+证书校验', status: 'enabled' },
+]);
+initModule('security/compliance', ['name', 'type', 'description', 'checkResult', 'status'], [
+  { name: '隐私政策管理', type: 'privacy', description: '用户隐私政策展示与同意管理', checkResult: 'pass', status: 'enabled' },
+  { name: '数据收集范围', type: 'collect', description: '仅收集必要个人信息', checkResult: 'pass', status: 'enabled' },
+  { name: '用户数据导出', type: 'export', description: '支持用户申请导出个人数据', checkResult: 'pending', status: 'disabled' },
+  { name: '用户数据删除', type: 'delete', description: '支持用户申请删除个人数据', checkResult: 'pending', status: 'disabled' },
+]);
+initModule('security/audit', ['type', 'content', 'level', 'operator', 'ip', 'time'], [
+  { type: 'operation', content: '管理员修改了系统配置', level: 'info', operator: 'admin', ip: '10.0.1.100', time: '2024-07-10' },
+  { type: 'login', content: '异常登录：IP来自境外', level: 'warning', operator: 'unknown', ip: '203.0.113.1', time: '2024-07-11' },
+  { type: 'event', content: 'SQL注入攻击被拦截', level: 'critical', operator: 'system', ip: '198.51.100.1', time: '2024-07-12' },
 ]);
 
 export function login(username: string, password: string) {
@@ -783,6 +907,128 @@ initModule('analytics/bi', ['name', 'type', 'period', 'startDate', 'endDate', 'c
   { name: '用户行为漏斗月报', type: 'behavior', period: 'month', startDate: '2024-06-01', endDate: '2024-06-30', channels: 'douyin,meituan', generatedAt: '2024-07-01 10:00', status: 'generated' },
   { name: '交易核销月报', type: 'transaction', period: 'month', startDate: '2024-06-01', endDate: '2024-06-30', channels: 'all', generatedAt: '2024-07-01 11:00', status: 'generated' },
   { name: '投放营销复盘季报', type: 'marketing', period: 'quarter', startDate: '2024-04-01', endDate: '2024-06-30', channels: 'douyin,xiaohongshu', generatedAt: '2024-07-01 12:00', status: 'generating' }
+]);
+
+// ===== 第二阶段 - 多商业体架构 =====
+initModule('system/projects', ['name', 'code', 'type', 'dataIsolated', 'description', 'status'], [
+  { name: '恒伟商业广场', code: 'HW-MALL', type: 'mall', dataIsolated: 'yes', description: '总部商业广场项目', status: 'enabled' },
+  { name: '恒伟奥特莱斯', code: 'HW-OUTLET', type: 'outlet', dataIsolated: 'yes', description: '奥特莱斯项目', status: 'enabled' },
+  { name: '恒伟城市综合体', code: 'HW-MIXED', type: 'mixed', dataIsolated: 'yes', description: '城市综合体项目', status: 'disabled' },
+]);
+initModule('points/cross-project', ['member', 'mainProject', 'mergeProject', 'mergePoints', 'status', 'mergeTime'], [
+  { member: '张三', mainProject: '恒伟商业广场', mergeProject: '恒伟奥特莱斯', mergePoints: 500, status: 'merged', mergeTime: '2024-07-01' },
+  { member: '李四', mainProject: '恒伟商业广场', mergeProject: '恒伟城市综合体', mergePoints: 200, status: 'pending', mergeTime: '' },
+]);
+initModule('analytics/cross-project', ['projectA', 'projectB', 'dimension', 'period', 'createTime'], [
+  { projectA: '恒伟商业广场', projectB: '恒伟奥特莱斯', dimension: 'member', period: '30d', createTime: '2024-07-10' },
+]);
+
+// 地产对接扩展
+initModule('property/auth', ['roleName', 'userName', 'scope', 'status'], [
+  { roleName: '地产运营', userName: '张地产', scope: 'content,member,task', status: 'enabled' },
+  { roleName: '地产审核员', userName: '李审核', scope: 'task,analytics', status: 'enabled' },
+]);
+initModule('property/content', ['type', 'title', 'imageUrl', 'linkUrl', 'sort', 'status', 'updateTime'], [
+  { type: 'banner', title: '夏日购房节', imageUrl: '/property/summer-banner.jpg', linkUrl: '/property/summer', sort: 1, status: 'enabled', updateTime: '2024-07-01' },
+  { type: 'benefit', title: '业主专享权益', imageUrl: '/property/benefit.jpg', linkUrl: '/property/benefits', sort: 2, status: 'enabled', updateTime: '2024-07-05' },
+]);
+initModule('property/owners', ['name', 'phone', 'memberId', 'property', 'community', 'benefits', 'status'], [
+  { name: '王业主', phone: '13800001111', memberId: 'M001', property: 'A栋1单元501', community: '恒伟花园', benefits: '专属停车优惠,积分倍率1.5倍', status: 'enabled' },
+  { name: '赵业主', phone: '13800002222', memberId: 'M002', property: 'B栋2单元301', community: '恒伟花园', benefits: '专属停车优惠', status: 'enabled' },
+]);
+initModule('property/task-audit', ['taskName', 'applicant', 'points', 'evidence', 'auditStatus', 'auditor', 'applyTime', 'auditRemark'], [
+  { taskName: '朋友圈转发', applicant: '王业主', points: 50, evidence: '/upload/screenshot1.jpg', auditStatus: 'approved', auditor: '李审核', applyTime: '2024-07-08', auditRemark: '审核通过' },
+  { taskName: '推荐到访', applicant: '赵业主', points: 100, evidence: '/upload/screenshot2.jpg', auditStatus: 'pending', auditor: '', applyTime: '2024-07-10', auditRemark: '' },
+]);
+initModule('property/notify', ['name', 'trigger', 'channel', 'templateId', 'content', 'status'], [
+  { name: '积分审核通过通知', trigger: 'audit_pass', channel: 'wechat,sms', templateId: 'TPL_001', content: '您好{业主名}，您的积分任务"{任务名}"已审核通过，获得{积分}积分', status: 'enabled' },
+]);
+initModule('property/goods', ['name', 'points', 'stock', 'community', 'imageUrl', 'description', 'exchangeRule', 'status'], [
+  { name: '品牌家电兑换券', points: 5000, stock: 20, community: '恒伟花园', imageUrl: '/goods/appliance.jpg', description: '品牌家电兑换券', exchangeRule: '每户限兑1次', status: 'enabled' },
+  { name: '物业费抵扣券', points: 2000, stock: 50, community: '', imageUrl: '/goods/property-fee.jpg', description: '可抵扣100元物业费', exchangeRule: '不限次数', status: 'enabled' },
+]);
+initModule('property/community-scope', ['activityName', 'scopeType', 'communities', 'status'], [
+  { activityName: '夏日购房节', scopeType: 'all', communities: '', status: 'enabled' },
+  { activityName: '恒伟花园专属活动', scopeType: 'specific', communities: '恒伟花园,恒伟名苑', status: 'enabled' },
+]);
+initModule('property/multi-bind', ['member', 'phone', 'communities', 'propertyCount', 'status'], [
+  { member: '王业主', phone: '13800001111', communities: '恒伟花园,恒伟名苑', propertyCount: 2, status: 'enabled' },
+  { member: '赵业主', phone: '13800002222', communities: '恒伟花园', propertyCount: 1, status: 'enabled' },
+]);
+
+// 商户导览增强
+initModule('merchant/locations', ['merchant', 'floor', 'positionNo', 'navMap', 'status'], [
+  { merchant: '星巴克', floor: '1F', positionNo: '1F-A01', navMap: '/maps/1f.svg', status: 'enabled' },
+  { merchant: '海底捞', floor: '3F', positionNo: '3F-B05', navMap: '/maps/3f.svg', status: 'enabled' },
+  { merchant: '优衣库', floor: '2F', positionNo: '2F-A03', navMap: '/maps/2f.svg', status: 'enabled' },
+]);
+initModule('merchant/floor-maps', ['floor', 'mapUrl', 'markedShops', 'description', 'status'], [
+  { floor: '1F', mapUrl: '/maps/1f.svg', markedShops: 15, description: '一楼为精品零售区', status: 'enabled' },
+  { floor: '2F', mapUrl: '/maps/2f.svg', markedShops: 12, description: '二楼为服装区', status: 'enabled' },
+  { floor: '3F', mapUrl: '/maps/3f.svg', markedShops: 10, description: '三楼为餐饮区', status: 'enabled' },
+]);
+initModule('merchant/food-config', ['merchant', 'cuisineType', 'recommendDishes', 'avgCost', 'promo', 'status'], [
+  { merchant: '海底捞', cuisineType: 'hotpot', recommendDishes: '番茄锅底,虾滑,毛肚', avgCost: 120, promo: '午市8折', status: 'enabled' },
+  { merchant: '星巴克', cuisineType: 'other', recommendDishes: '拿铁,星冰乐', avgCost: 40, promo: '', status: 'enabled' },
+]);
+
+// 积分消费比例配置
+initModule('points/consumption-ratio', ['name', 'scene', 'pointsPerYuan', 'maxDeductRate', 'minPoints', 'status'], [
+  { name: '商场消费抵扣', scene: 'mall', pointsPerYuan: 10, maxDeductRate: 30, minPoints: 100, status: 'enabled' },
+  { name: '地产消费抵扣', scene: 'property', pointsPerYuan: 5, maxDeductRate: 50, minPoints: 50, status: 'enabled' },
+  { name: '停车缴费抵扣', scene: 'parking', pointsPerYuan: 10, maxDeductRate: 100, minPoints: 10, status: 'enabled' },
+]);
+
+// 商家信息/通知管理
+initModule('merchant/info', ['name', 'industry', 'contractExpiry', 'contact', 'dataSource', 'status'], [
+  { name: '星巴克', industry: 'food', contractExpiry: '2025-12-31', contact: '0755-88880001', dataSource: 'liebao', status: 'enabled' },
+  { name: '海底捞', industry: 'food', contractExpiry: '2025-06-30', contact: '0755-88880002', dataSource: 'liebao', status: 'enabled' },
+  { name: '优衣库', industry: 'clothing', contractExpiry: '2026-03-31', contact: '0755-88880003', dataSource: 'manual', status: 'enabled' },
+]);
+initModule('merchant/contracts-mgmt', ['merchant', 'contractNo', 'type', 'startDate', 'endDate', 'remindDays', 'remark'], [
+  { merchant: '星巴克', contractNo: 'CT-2024-001', type: 'lease', startDate: '2023-01-01', endDate: '2025-12-31', remindDays: 30, remark: '标准租赁合同' },
+  { merchant: '海底捞', contractNo: 'CT-2024-002', type: 'lease', startDate: '2023-07-01', endDate: '2025-06-30', remindDays: 60, remark: '含推广条款' },
+]);
+initModule('merchant/notify-template', ['name', 'type', 'channel', 'content', 'status'], [
+  { name: '活动通知模板', type: 'activity', channel: 'applet,sms', content: '尊敬的{商家名}，{活动名}即将开始，请做好准备。', status: 'enabled' },
+  { name: '系统通知模板', type: 'system', channel: 'applet', content: '系统将于{日期}进行维护，预计影响{时长}。', status: 'enabled' },
+]);
+initModule('merchant/notify-logs', ['merchant', 'type', 'channel', 'content', 'sendStatus', 'sendTime'], [
+  { merchant: '星巴克', type: 'activity', channel: '小程序消息', content: '暑期促销活动即将开始', sendStatus: 'success', sendTime: '2024-07-01' },
+  { merchant: '海底捞', type: 'system', channel: '短信', content: '系统维护通知', sendStatus: 'success', sendTime: '2024-07-05' },
+]);
+
+// 小程序装修增强
+initModule('content/decoration-preview', ['pageName', 'previewType', 'decorationId', 'createTime'], [
+  { pageName: '首页装修V2', previewType: 'qr', decorationId: 'DEC_001', createTime: '2024-07-10' },
+]);
+initModule('content/decoration-templates', ['name', 'pageType', 'switchCondition', 'switchRule', 'status'], [
+  { name: '夏日主题模板', pageType: 'home', switchCondition: 'time', switchRule: '7月1日-8月31日', status: 'enabled' },
+  { name: '默认模板', pageType: 'home', switchCondition: 'manual', switchRule: '', status: 'disabled' },
+]);
+initModule('content/decoration-history', ['pageName', 'version', 'operator', 'publishTime', 'status', 'snapshot'], [
+  { pageName: '首页', version: 'v2.3', operator: 'admin', publishTime: '2024-07-10', status: 'current', snapshot: '{}' },
+  { pageName: '首页', version: 'v2.2', operator: 'admin', publishTime: '2024-06-15', status: 'archived', snapshot: '{}' },
+]);
+initModule('content/decoration-qrcode', ['pageName', 'qrcodeUrl', 'pageLink', 'scene', 'createTime'], [
+  { pageName: '首页', qrcodeUrl: '/qrcode/home.png', pageLink: 'pages/index/index', scene: 'from=poster', createTime: '2024-07-10' },
+  { pageName: '积分商城', qrcodeUrl: '/qrcode/points.png', pageLink: 'pages/points/index', scene: 'from=share', createTime: '2024-07-10' },
+]);
+initModule('points/mall-decoration', ['sectionName', 'sectionType', 'sort', 'displayCount', 'status'], [
+  { sectionName: '为您推荐', sectionType: 'recommend', sort: 1, displayCount: 6, status: 'enabled' },
+  { sectionName: '热门兑换', sectionType: 'hot', sort: 2, displayCount: 8, status: 'enabled' },
+  { sectionName: '浏览轨迹', sectionType: 'history', sort: 3, displayCount: 4, status: 'enabled' },
+]);
+
+// 核销增强
+initModule('verification/export', ['name', 'scope', 'merchant', 'startDate', 'endDate', 'verifyType', 'fileFormat', 'recordCount', 'status', 'createTime'], [
+  { name: '7月核销报表', scope: 'time', merchant: '', startDate: '2024-07-01', endDate: '2024-07-31', verifyType: '', fileFormat: 'excel', recordCount: 1520, status: 'completed', createTime: '2024-08-01' },
+  { name: '星巴克核销明细', scope: 'merchant', merchant: '星巴克', startDate: '', endDate: '', verifyType: 'coupon', fileFormat: 'excel', recordCount: 356, status: 'completed', createTime: '2024-07-15' },
+]);
+initModule('verification/points-audit', ['merchant', 'verifyType', 'points', 'member', 'auditStatus', 'verifyTime', 'auditRemark'], [
+  { merchant: '星巴克', verifyType: 'coupon', points: 50, member: '张三', auditStatus: 'approved', verifyTime: '2024-07-10', auditRemark: '正常核销' },
+  { merchant: '海底捞', verifyType: 'coupon', points: 200, member: '李四', auditStatus: 'pending', verifyTime: '2024-07-12', auditRemark: '' },
+  { merchant: '优衣库', verifyType: 'goods', points: 500, member: '王五', auditStatus: 'rejected', verifyTime: '2024-07-11', auditRemark: '异常核销，积分退回' },
 ]);
 
 export function fetchDashboard() {

@@ -3921,7 +3921,1213 @@ export const MODULES: ModuleConfig[] = [
       features: ['支持新增、编辑、删除服务项目', '记录项目名称、价格、服务时长等基础信息', '适用门店配置，支持多门店差异化服务', '状态管理：启用/禁用，禁用后会员无法购买'],
       tips: ['服务项目价格变更不影响已生成订单的价格', '删除服务项目前请确认没有进行中的服务订单', '建议为每个服务项目配置详细的描述和注意事项']
     }
-  }
+  },
+  // ===== AI小票 =====
+  {
+    key: 'ai-receipt-audit', path: 'ai/receipt-audit', name: 'AI小票审核', category: 'AI小票',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '会员', dataIndex: 'member' },
+      { title: '小票金额', dataIndex: 'amount', render: (v: number) => v ? `¥${v}` : '' },
+      { title: 'AI识别金额', dataIndex: 'aiAmount', render: (v: number) => v ? `¥${v}` : '' },
+      { title: '识别状态', dataIndex: 'aiStatus', render: (v: string) => ({ pending: '待识别', success: '识别成功', failed: '识别失败' }[v] || v) },
+      { title: '审核状态', dataIndex: 'auditStatus', render: (v: string) => ({ pending: '待审核', approved: '已通过', rejected: '已退回' }[v] || v) },
+      { title: '发放积分', dataIndex: 'pointsIssued' },
+      { title: '商户', dataIndex: 'merchant' },
+      { title: '提交时间', dataIndex: 'submitTime' }
+    ],
+    fields: [
+      { name: 'member', label: '会员', type: 'text', required: true },
+      { name: 'amount', label: '小票金额(元)', type: 'number', required: true },
+      { name: 'aiAmount', label: 'AI识别金额(元)', type: 'number' },
+      { name: 'aiStatus', label: '识别状态', type: 'select', options: [
+        { label: '待识别', value: 'pending' }, { label: '识别成功', value: 'success' }, { label: '识别失败', value: 'failed' }
+      ] },
+      { name: 'auditStatus', label: '审核状态', type: 'select', options: [
+        { label: '待审核', value: 'pending' }, { label: '已通过', value: 'approved' }, { label: '已退回', value: 'rejected' }
+      ] },
+      { name: 'pointsIssued', label: '发放积分', type: 'number' },
+      { name: 'merchant', label: '商户', type: 'select', source: { path: 'merchant/list', labelField: 'name', valueField: 'name' } },
+      { name: 'receiptImage', label: '小票图片', type: 'text' },
+      { name: 'submitTime', label: '提交时间', type: 'date' },
+      { name: 'auditRemark', label: '审核备注', type: 'textarea' }
+    ],
+    doc: {
+      overview: 'AI小票审核模块，会员上传消费小票后系统自动OCR识别金额并审核发放积分，支持人工复核AI未通过的小票，确保积分发放准确可控。',
+      features: ['OCR自动识别消费小票金额', 'AI自动审核与人工审核结合', '识别状态追踪（待识别/成功/失败）', '审核状态管理（待审核/已通过/已退回）', '自动计算并发放积分', '小票图片存档', '审核备注记录'],
+      tips: ['AI识别失败的小票需人工审核', '建议设置单笔积分发放上限', '审核退回时请填写退回原因']
+    }
+  },
+  {
+    key: 'ai-receipt-rules', path: 'ai/receipt-rules', name: '小票积分规则', category: 'AI小票',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '规则名称', dataIndex: 'name' },
+      { title: '消费1元得积分', dataIndex: 'pointsPerYuan' },
+      { title: '单笔上限积分', dataIndex: 'maxPoints' },
+      { title: '每日上限', dataIndex: 'dailyLimit' },
+      { title: '适用商户', dataIndex: 'applicableMerchant' },
+      { title: '状态', dataIndex: 'status', render: (v: string) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '规则名称', type: 'text', required: true },
+      { name: 'pointsPerYuan', label: '消费1元得积分', type: 'number', required: true },
+      { name: 'maxPoints', label: '单笔上限积分', type: 'number' },
+      { name: 'dailyLimit', label: '每日上限(次)', type: 'number' },
+      { name: 'applicableMerchant', label: '适用商户', type: 'select', source: { path: 'merchant/list', labelField: 'name', valueField: 'name' } },
+      { name: 'minAmount', label: '最低消费金额(元)', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '启用', value: 'enabled' }, { label: '禁用', value: 'disabled' }
+      ] }
+    ],
+    doc: {
+      overview: '小票积分规则配置，按消费金额设定积分比例、上限、适用商户等规则，支持差异化场景配置。',
+      features: ['按消费金额配置积分比例', '单笔积分上限控制', '每日提交次数限制', '适用商户范围配置', '最低消费金额限制', '规则启用/禁用控制'],
+      tips: ['积分比例建议1元=1积分起步', '单笔上限建议设置合理范围防止异常', '适用商户为空则表示全场通用']
+    }
+  },
+  // ===== 广告推广 =====
+  {
+    key: 'ad-config', path: 'ad/config', name: '广告配置', category: '广告推广',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '广告名称', dataIndex: 'name' },
+      { title: '广告类型', dataIndex: 'type', render: (v: string) => ({ banner: 'Banner轮播', popup: '弹窗广告', fullscreen: '全屏广告', splash: '启动页广告' }[v] || v) },
+      { title: '投放位置', dataIndex: 'position', render: (v: string) => ({ home: '首页', mall: '商城', points: '积分商城', activity: '活动页' }[v] || v) },
+      { title: '开始时间', dataIndex: 'startTime' },
+      { title: '结束时间', dataIndex: 'endTime' },
+      { title: '状态', dataIndex: 'status', render: (v: string) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '广告名称', type: 'text', required: true },
+      { name: 'type', label: '广告类型', type: 'select', required: true, options: [
+        { label: 'Banner轮播', value: 'banner' }, { label: '弹窗广告', value: 'popup' }, { label: '全屏广告', value: 'fullscreen' }, { label: '启动页广告', value: 'splash' }
+      ] },
+      { name: 'position', label: '投放位置', type: 'select', multiple: true, options: [
+        { label: '首页', value: 'home' }, { label: '商城', value: 'mall' }, { label: '积分商城', value: 'points' }, { label: '活动页', value: 'activity' }
+      ] },
+      { name: 'imageUrl', label: '广告图片URL', type: 'text', required: true },
+      { name: 'linkUrl', label: '跳转链接', type: 'text' },
+      { name: 'startTime', label: '开始时间', type: 'date', required: true },
+      { name: 'endTime', label: '结束时间', type: 'date', required: true },
+      { name: 'sort', label: '排序', type: 'number' },
+      { name: 'targetGroup', label: '投放人群', type: 'select', options: [
+        { label: '全部用户', value: 'all' }, { label: '新会员', value: 'new' }, { label: '活跃会员', value: 'active' }, { label: '沉睡会员', value: 'inactive' }
+      ] },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '启用', value: 'enabled' }, { label: '禁用', value: 'disabled' }
+      ] }
+    ],
+    doc: {
+      overview: '广告配置模块，支持配置Banner轮播、弹窗广告、全屏广告、启动页广告等多种广告形式，可设置投放位置、时间范围和目标人群。',
+      features: ['多种广告类型支持', '灵活的投放位置配置', '广告投放时间控制', '跳转链接配置', '广告排序管理', '目标人群定向投放', '广告启用/禁用控制'],
+      tips: ['广告图片建议尺寸：Banner 750×300、弹窗 600×600、全屏 750×1334', '投放人群为高级功能，需配合会员标签使用', '排序数值越小越靠前']
+    }
+  },
+  {
+    key: 'ad-precise', path: 'ad/precise', name: '精准广告投放', category: '广告推广',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '投放名称', dataIndex: 'name' },
+      { title: '关联广告', dataIndex: 'adName' },
+      { title: '投放人群', dataIndex: 'targetGroup' },
+      { title: '会员标签', dataIndex: 'tags' },
+      { title: '曝光次数', dataIndex: 'impressions' },
+      { title: '点击次数', dataIndex: 'clicks' },
+      { title: '状态', dataIndex: 'status', render: (v: string) => (v === 'enabled' ? '投放中' : '已暂停') }
+    ],
+    fields: [
+      { name: 'name', label: '投放名称', type: 'text', required: true },
+      { name: 'adId', label: '关联广告', type: 'select', source: { path: 'ad/config', labelField: 'name', valueField: 'name' } },
+      { name: 'targetGroup', label: '投放人群', type: 'select', options: [
+        { label: '全部用户', value: 'all' }, { label: '新会员', value: 'new' }, { label: '活跃会员', value: 'active' }, { label: '沉睡会员', value: 'inactive' }, { label: '自定义标签', value: 'custom' }
+      ] },
+      { name: 'tags', label: '会员标签', type: 'select', multiple: true, source: { path: 'member/tags', labelField: 'name', valueField: 'name' } },
+      { name: 'impressions', label: '曝光次数', type: 'number' },
+      { name: 'clicks', label: '点击次数', type: 'number' },
+      { name: 'startTime', label: '开始时间', type: 'date' },
+      { name: 'endTime', label: '结束时间', type: 'date' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '投放中', value: 'enabled' }, { label: '已暂停', value: 'disabled' }
+      ] }
+    ],
+    doc: {
+      overview: '精准广告投放模块，根据会员喜好群组、特定标签用户群组展示不同广告内容，实现千人千面的个性化广告展示。',
+      features: ['会员喜好群组定向', '自定义标签投放', '关联广告配置联动', '曝光和点击数据统计', '投放时间控制', '投放状态管理'],
+      tips: ['选择自定义标签时需先配置会员标签', '建议定期分析点击率优化投放策略', '同一广告可创建多个投放计划面向不同人群']
+    }
+  },
+  // ===== 客服管理 =====
+  {
+    key: 'cs-knowledge', path: 'cs/knowledge', name: '知识库维护', category: '客服管理',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '问题分类', dataIndex: 'category' },
+      { title: '问题', dataIndex: 'question' },
+      { title: '答案', dataIndex: 'answer', width: 200 },
+      { title: '排序', dataIndex: 'sort' },
+      { title: '状态', dataIndex: 'status', render: (v: string) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'category', label: '问题分类', type: 'select', required: true, options: [
+        { label: '会员相关', value: 'member' }, { label: '积分相关', value: 'points' }, { label: '优惠券相关', value: 'coupon' }, { label: '停车相关', value: 'parking' }, { label: '活动相关', value: 'activity' }, { label: '其他', value: 'other' }
+      ] },
+      { name: 'question', label: '问题', type: 'textarea', required: true },
+      { name: 'answer', label: '答案', type: 'textarea', required: true },
+      { name: 'keywords', label: '关键词(逗号分隔)', type: 'text' },
+      { name: 'sort', label: '排序', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '启用', value: 'enabled' }, { label: '禁用', value: 'disabled' }
+      ] }
+    ],
+    doc: {
+      overview: '客服知识库维护模块，配置常见问题与答案，支持分类管理，用于在线客服自动匹配回复。',
+      features: ['问题分类管理', '问答对配置', '关键词匹配', '排序管理', '启用/禁用控制'],
+      tips: ['关键词建议设置多个同义词提高匹配率', '答案内容支持文字描述', '分类建议与业务模块对应']
+    }
+  },
+  {
+    key: 'cs-auto-reply', path: 'cs/auto-reply', name: '自动回复配置', category: '客服管理',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '规则名称', dataIndex: 'name' },
+      { title: '触发关键词', dataIndex: 'keyword' },
+      { title: '回复内容', dataIndex: 'replyContent', width: 200 },
+      { title: '匹配方式', dataIndex: 'matchType', render: (v: string) => ({ exact: '精确匹配', fuzzy: '模糊匹配', regex: '正则匹配' }[v] || v) },
+      { title: '状态', dataIndex: 'status', render: (v: string) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '规则名称', type: 'text', required: true },
+      { name: 'keyword', label: '触发关键词', type: 'text', required: true },
+      { name: 'replyContent', label: '回复内容', type: 'textarea', required: true },
+      { name: 'matchType', label: '匹配方式', type: 'select', options: [
+        { label: '精确匹配', value: 'exact' }, { label: '模糊匹配', value: 'fuzzy' }, { label: '正则匹配', value: 'regex' }
+      ] },
+      { name: 'priority', label: '优先级', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '启用', value: 'enabled' }, { label: '禁用', value: 'disabled' }
+      ] }
+    ],
+    doc: {
+      overview: '自动回复配置模块，配置关键词自动回复规则，支持精确匹配、模糊匹配和正则匹配，提升客服响应效率。',
+      features: ['关键词触发自动回复', '多种匹配方式', '回复内容自定义', '优先级控制', '规则启用/禁用'],
+      tips: ['优先级数值越小越优先匹配', '正则匹配适合复杂场景但需注意性能', '建议先配置模糊匹配覆盖常见问题']
+    }
+  },
+  {
+    key: 'cs-ai-training', path: 'cs/ai-training', name: 'AI客服训练', category: '客服管理',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '训练任务', dataIndex: 'name' },
+      { title: '语料数量', dataIndex: 'corpusCount' },
+      { title: '模型版本', dataIndex: 'modelVersion' },
+      { title: '训练状态', dataIndex: 'status', render: (v: string) => ({ pending: '待训练', training: '训练中', completed: '已完成', failed: '训练失败' }[v] || v) },
+      { title: '准确率', dataIndex: 'accuracy', render: (v: number) => v ? `${v}%` : '' },
+      { title: '更新时间', dataIndex: 'updateTime' }
+    ],
+    fields: [
+      { name: 'name', label: '训练任务名称', type: 'text', required: true },
+      { name: 'corpusCount', label: '语料数量', type: 'number' },
+      { name: 'modelVersion', label: '模型版本', type: 'text' },
+      { name: 'trainingParams', label: '训练参数(JSON)', type: 'textarea' },
+      { name: 'status', label: '训练状态', type: 'select', options: [
+        { label: '待训练', value: 'pending' }, { label: '训练中', value: 'training' }, { label: '已完成', value: 'completed' }, { label: '训练失败', value: 'failed' }
+      ] },
+      { name: 'accuracy', label: '准确率(%)', type: 'number' },
+      { name: 'updateTime', label: '更新时间', type: 'date' }
+    ],
+    doc: {
+      overview: 'AI客服训练管理模块，管理AI客服语料库、训练参数配置和知识库调优，持续提升AI客服回答准确率。',
+      features: ['语料库管理', '训练参数配置', '模型版本管理', '训练状态追踪', '准确率评估', '知识库调优'],
+      tips: ['语料数量越多AI回答越准确', '建议定期更新语料库保持知识新鲜度', '准确率低于80%建议补充语料重新训练']
+    }
+  },
+  {
+    key: 'cs-staff', path: 'cs/staff', name: '人工客服配置', category: '客服管理',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '客服姓名', dataIndex: 'name' },
+      { title: '工号', dataIndex: 'staffNo' },
+      { title: '工作时间', dataIndex: 'workTime' },
+      { title: '在线状态', dataIndex: 'onlineStatus', render: (v: string) => ({ online: '在线', offline: '离线', busy: '忙碌' }[v] || v) },
+      { title: '转接规则', dataIndex: 'transferRule' },
+      { title: '状态', dataIndex: 'status', render: (v: string) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '客服姓名', type: 'text', required: true },
+      { name: 'staffNo', label: '工号', type: 'text', required: true },
+      { name: 'workTime', label: '工作时间', type: 'text' },
+      { name: 'maxSessions', label: '最大并发会话数', type: 'number' },
+      { name: 'transferRule', label: '转接规则', type: 'select', options: [
+        { label: '按空闲分配', value: 'idle' }, { label: '按技能分配', value: 'skill' }, { label: '轮询分配', value: 'round' }
+      ] },
+      { name: 'skillTags', label: '技能标签', type: 'text' },
+      { name: 'onlineStatus', label: '在线状态', type: 'select', options: [
+        { label: '在线', value: 'online' }, { label: '离线', value: 'offline' }, { label: '忙碌', value: 'busy' }
+      ] },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '启用', value: 'enabled' }, { label: '禁用', value: 'disabled' }
+      ] }
+    ],
+    doc: {
+      overview: '人工客服配置模块，管理客服人员分配、工作时间设置和转接规则配置，保障客户服务质量和效率。',
+      features: ['客服人员管理', '工作时间配置', '最大并发会话数限制', '转接规则配置', '技能标签管理', '在线状态监控'],
+      tips: ['最大并发会话数建议5-10之间', '转接规则选择按技能分配时需配置技能标签', '工作时间格式如 09:00-18:00']
+    }
+  },
+  // ===== 搜索管理 =====
+  {
+    key: 'search-hotwords', path: 'search/hotwords', name: '搜索热词配置', category: '搜索管理',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '热词', dataIndex: 'word' },
+      { title: '搜索次数', dataIndex: 'searchCount' },
+      { title: '类型', dataIndex: 'type', render: (v: string) => ({ manual: '手动添加', auto: '自动统计' }[v] || v) },
+      { title: '排序', dataIndex: 'sort' },
+      { title: '状态', dataIndex: 'status', render: (v: string) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'word', label: '热词', type: 'text', required: true },
+      { name: 'searchCount', label: '搜索次数', type: 'number' },
+      { name: 'type', label: '类型', type: 'select', options: [
+        { label: '手动添加', value: 'manual' }, { label: '自动统计', value: 'auto' }
+      ] },
+      { name: 'sort', label: '排序', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '启用', value: 'enabled' }, { label: '禁用', value: 'disabled' }
+      ] }
+    ],
+    doc: {
+      overview: '搜索热词配置模块，管理热搜词、搜索推荐设置和热门搜索排行，提升用户搜索体验。',
+      features: ['热词手动添加和自动统计', '搜索次数统计', '排序管理', '启用/禁用控制'],
+      tips: ['手动添加的热词优先级高于自动统计', '排序数值越小越靠前', '建议定期更新热词保持时效性']
+    }
+  },
+  {
+    key: 'search-scope', path: 'search/scope', name: '搜索范围设置', category: '搜索管理',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '可搜索模块', dataIndex: 'moduleName' },
+      { title: '搜索字段', dataIndex: 'searchFields' },
+      { title: '权重', dataIndex: 'weight' },
+      { title: '状态', dataIndex: 'status', render: (v: string) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'moduleName', label: '可搜索模块', type: 'select', required: true, options: [
+        { label: '商户', value: 'merchant' }, { label: '商品', value: 'goods' }, { label: '活动', value: 'activity' }, { label: '优惠券', value: 'coupon' }, { label: '品牌', value: 'brand' }
+      ] },
+      { name: 'searchFields', label: '搜索字段', type: 'text', required: true },
+      { name: 'weight', label: '权重', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '启用', value: 'enabled' }, { label: '禁用', value: 'disabled' }
+      ] }
+    ],
+    doc: {
+      overview: '搜索范围设置模块，配置可搜索内容范围（商户、商品、活动等），控制搜索字段和权重排序。',
+      features: ['可搜索模块配置', '搜索字段自定义', '权重排序设置', '模块启用/禁用'],
+      tips: ['权重越大搜索结果排名越靠前', '搜索字段用逗号分隔', '禁用模块不会出现在搜索结果中']
+    }
+  },
+  // ===== 停车券管理 =====
+  {
+    key: 'parking-coupons', path: 'parking/coupons', name: '停车券管理', category: '智慧停车',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '券名称', dataIndex: 'name' },
+      { title: '券类型', dataIndex: 'type', render: (v: string) => ({ time: '时长券', amount: '金额券', free: '全免券' }[v] || v) },
+      { title: '面额/时长', dataIndex: 'value', render: (v: any, r: any) => r.type === 'time' ? `${v}小时` : r.type === 'amount' ? `¥${v}` : '全免' },
+      { title: '发放方式', dataIndex: 'issueType', render: (v: string) => ({ auto: '自动发放', manual: '手动发放', exchange: '积分兑换' }[v] || v) },
+      { title: '适用停车场', dataIndex: 'parkingLot' },
+      { title: '有效期(天)', dataIndex: 'validDays' },
+      { title: '状态', dataIndex: 'status', render: (v: string) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '券名称', type: 'text', required: true },
+      { name: 'type', label: '券类型', type: 'select', required: true, options: [
+        { label: '时长券', value: 'time' }, { label: '金额券', value: 'amount' }, { label: '全免券', value: 'free' }
+      ] },
+      { name: 'value', label: '面额/时长', type: 'number' },
+      { name: 'issueType', label: '发放方式', type: 'select', options: [
+        { label: '自动发放', value: 'auto' }, { label: '手动发放', value: 'manual' }, { label: '积分兑换', value: 'exchange' }
+      ] },
+      { name: 'exchangePoints', label: '兑换所需积分', type: 'number' },
+      { name: 'parkingLot', label: '适用停车场', type: 'select', source: { path: 'parking/lots', labelField: 'name', valueField: 'name' } },
+      { name: 'validDays', label: '有效期(天)', type: 'number' },
+      { name: 'totalQuota', label: '发放总量', type: 'number' },
+      { name: 'usedQuota', label: '已发放量', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '启用', value: 'enabled' }, { label: '禁用', value: 'disabled' }
+      ] }
+    ],
+    doc: {
+      overview: '停车券管理模块，支持停车券创建、发放和核销规则配置，支持时长券、金额券和全免券，可配置积分兑换停车券规则。',
+      features: ['多种券类型（时长/金额/全免）', '多种发放方式（自动/手动/积分兑换）', '适用停车场配置', '发放总量控制', '有效期管理', '停车系统路由配置'],
+      tips: ['时长券value单位为小时，金额券value单位为元', '积分兑换需配置兑换所需积分数', '发放总量为0表示不限量']
+    }
+  },
+  // ===== 公域运营增强 =====
+  {
+    key: 'douyin-member-sync', path: 'channel/douyin-member', name: '抖音会员通', category: '公域运营',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '同步类型', dataIndex: 'syncType', render: (v: string) => ({ register: '引流注册', info: '信息同步', verify: '核销积分', promo: '场景促销' }[v] || v) },
+      { title: '抖音用户ID', dataIndex: 'douyinOpenid' },
+      { title: '会员', dataIndex: 'member' },
+      { title: '同步状态', dataIndex: 'syncStatus', render: (v: string) => ({ pending: '待同步', success: '成功', failed: '失败' }[v] || v) },
+      { title: '同步时间', dataIndex: 'syncTime' }
+    ],
+    fields: [
+      { name: 'syncType', label: '同步类型', type: 'select', required: true, options: [
+        { label: '引流注册', value: 'register' }, { label: '信息同步', value: 'info' }, { label: '核销积分', value: 'verify' }, { label: '场景促销', value: 'promo' }
+      ] },
+      { name: 'douyinOpenid', label: '抖音用户ID', type: 'text' },
+      { name: 'member', label: '会员', type: 'select', source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
+      { name: 'syncStatus', label: '同步状态', type: 'select', options: [
+        { label: '待同步', value: 'pending' }, { label: '成功', value: 'success' }, { label: '失败', value: 'failed' }
+      ] },
+      { name: 'syncTime', label: '同步时间', type: 'date' },
+      { name: 'remark', label: '备注', type: 'textarea' }
+    ],
+    doc: {
+      overview: '抖音会员通管理模块，管理抖音引流会员注册和信息同步、核销自动积分、场景促销等运营能力。',
+      features: ['抖音引流会员注册', '会员信息双向同步', '核销自动积分', '场景促销配置', '同步状态追踪'],
+      tips: ['引流注册需配置抖音OAuth授权', '信息同步为双向同步', '核销积分需关联积分规则']
+    }
+  },
+  {
+    key: 'meituan-config', path: 'channel/meituan-config', name: '美团API配置', category: '公域运营',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '配置名称', dataIndex: 'name' },
+      { title: 'AppId', dataIndex: 'appId' },
+      { title: '回调地址', dataIndex: 'callbackUrl' },
+      { title: '签约商户数', dataIndex: 'merchantCount' },
+      { title: '状态', dataIndex: 'status', render: (v: string) => (v === 'enabled' ? '已启用' : '未启用') }
+    ],
+    fields: [
+      { name: 'name', label: '配置名称', type: 'text', required: true },
+      { name: 'appId', label: 'AppId', type: 'text', required: true },
+      { name: 'appSecret', label: 'AppSecret', type: 'text', required: true },
+      { name: 'callbackUrl', label: '消息回调地址', type: 'text', required: true },
+      { name: 'merchantCount', label: '签约商户数', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '已启用', value: 'enabled' }, { label: '未启用', value: 'disabled' }
+      ] }
+    ],
+    doc: {
+      overview: '美团API配置模块，对接美团技术服务合作中心API，配置AppId、AppSecret、消息回调地址等参数。',
+      features: ['美团API参数配置', 'AppId/AppSecret管理', '消息回调地址配置', '签约商户数统计', '配置启用/禁用'],
+      tips: ['AppSecret为敏感信息请注意保密', '回调地址需外网可访问', '建议先在测试环境验证配置']
+    }
+  },
+  {
+    key: 'meituan-verify', path: 'channel/meituan-verify', name: '美团券核销管理', category: '公域运营',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '券码', dataIndex: 'couponCode' },
+      { title: '商户', dataIndex: 'merchant' },
+      { title: '核销类型', dataIndex: 'verifyType', render: (v: string) => ({ verify: '核销', revoke: '撤销' }[v] || v) },
+      { title: '核销状态', dataIndex: 'verifyStatus', render: (v: string) => ({ success: '成功', failed: '失败', revoked: '已撤销' }[v] || v) },
+      { title: '权益发放', dataIndex: 'benefitIssued', render: (v: string) => (v === 'yes' ? '已发放' : '未发放') },
+      { title: '核销时间', dataIndex: 'verifyTime' }
+    ],
+    fields: [
+      { name: 'couponCode', label: '券码', type: 'text', required: true },
+      { name: 'merchant', label: '商户', type: 'select', source: { path: 'merchant/list', labelField: 'name', valueField: 'name' } },
+      { name: 'verifyType', label: '核销类型', type: 'select', options: [
+        { label: '核销', value: 'verify' }, { label: '撤销', value: 'revoke' }
+      ] },
+      { name: 'verifyStatus', label: '核销状态', type: 'select', options: [
+        { label: '成功', value: 'success' }, { label: '失败', value: 'failed' }, { label: '已撤销', value: 'revoked' }
+      ] },
+      { name: 'benefitIssued', label: '权益发放', type: 'select', options: [
+        { label: '已发放', value: 'yes' }, { label: '未发放', value: 'no' }
+      ] },
+      { name: 'verifyTime', label: '核销时间', type: 'date' },
+      { name: 'remark', label: '备注', type: 'textarea' }
+    ],
+    doc: {
+      overview: '美团券核销管理模块，管理美团团购券的核销和撤销，核销后自动发放权益并引流会员注册。',
+      features: ['美团券码核销', '券码撤销管理', '核销后自动发放权益', '引流会员注册', '核销状态追踪'],
+      tips: ['撤销操作需在核销后24小时内进行', '权益发放需配置自动发放规则', '核销失败请检查券码有效性']
+    }
+  },
+  {
+    key: 'meituan-orders', path: 'channel/meituan-orders', name: '美团订单同步', category: '公域运营',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '美团订单号', dataIndex: 'meituanOrderNo' },
+      { title: '商户', dataIndex: 'merchant' },
+      { title: '商品名称', dataIndex: 'goodsName' },
+      { title: '订单金额', dataIndex: 'amount', render: (v: number) => v ? `¥${v}` : '' },
+      { title: '同步状态', dataIndex: 'syncStatus', render: (v: string) => ({ pending: '待同步', synced: '已同步', failed: '同步失败' }[v] || v) },
+      { title: '订单状态', dataIndex: 'orderStatus', render: (v: string) => ({ unpaid: '未支付', paid: '已支付', used: '已使用', refunded: '已退款', expired: '已过期' }[v] || v) },
+      { title: '同步时间', dataIndex: 'syncTime' }
+    ],
+    fields: [
+      { name: 'meituanOrderNo', label: '美团订单号', type: 'text', required: true },
+      { name: 'merchant', label: '商户', type: 'select', source: { path: 'merchant/list', labelField: 'name', valueField: 'name' } },
+      { name: 'goodsName', label: '商品名称', type: 'text' },
+      { name: 'amount', label: '订单金额(元)', type: 'number' },
+      { name: 'syncStatus', label: '同步状态', type: 'select', options: [
+        { label: '待同步', value: 'pending' }, { label: '已同步', value: 'synced' }, { label: '同步失败', value: 'failed' }
+      ] },
+      { name: 'orderStatus', label: '订单状态', type: 'select', options: [
+        { label: '未支付', value: 'unpaid' }, { label: '已支付', value: 'paid' }, { label: '已使用', value: 'used' }, { label: '已退款', value: 'refunded' }, { label: '已过期', value: 'expired' }
+      ] },
+      { name: 'syncTime', label: '同步时间', type: 'date' }
+    ],
+    doc: {
+      overview: '美团订单同步模块，管理美团订单数据同步与状态管理，确保订单数据与美团平台一致。',
+      features: ['美团订单数据同步', '订单状态实时追踪', '同步失败重试', '订单金额同步', '多商户订单管理'],
+      tips: ['同步失败的订单可手动触发重新同步', '订单状态变更会自动同步', '建议配置定时任务自动同步']
+    }
+  },
+  // ===== 多商业体架构 =====
+  {
+    key: 'system-projects', path: 'system/projects', name: '多项目切换', category: '系统管理',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '项目名称', dataIndex: 'name' },
+      { title: '项目编码', dataIndex: 'code' },
+      { title: '项目类型', dataIndex: 'type', render: (v: string) => ({ mall: '商场', outlet: '奥特莱斯', mixed: '综合体' }[v] || v) },
+      { title: '数据独立', dataIndex: 'dataIsolated', render: (v: string) => (v === 'yes' ? '是' : '否') },
+      { title: '状态', dataIndex: 'status', render: (v: string) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '项目名称', type: 'text', required: true },
+      { name: 'code', label: '项目编码', type: 'text', required: true },
+      { name: 'type', label: '项目类型', type: 'select', options: [
+        { label: '商场', value: 'mall' }, { label: '奥特莱斯', value: 'outlet' }, { label: '综合体', value: 'mixed' }
+      ] },
+      { name: 'dataIsolated', label: '数据独立', type: 'select', options: [{ label: '是', value: 'yes' }, { label: '否', value: 'no' }] },
+      { name: 'description', label: '项目描述', type: 'textarea' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '多商业体项目切换管理，后台支持多商业体切换管理，各项目数据独立。', features: ['多项目统一管理', '项目数据隔离', '项目类型配置', '项目切换'], tips: ['项目编码创建后不建议修改', '数据独立项目间数据不可互通'] }
+  },
+  {
+    key: 'points-cross-project', path: 'points/cross-project', name: '跨项目积分融合', category: '积分中心',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '会员', dataIndex: 'member' },
+      { title: '主项目', dataIndex: 'mainProject' },
+      { title: '融合项目', dataIndex: 'mergeProject' },
+      { title: '融合积分', dataIndex: 'mergePoints' },
+      { title: '融合状态', dataIndex: 'status', render: (v: string) => ({ pending: '待融合', merged: '已融合', failed: '融合失败' }[v] || v) },
+      { title: '融合时间', dataIndex: 'mergeTime' }
+    ],
+    fields: [
+      { name: 'member', label: '会员', type: 'select', required: true, source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
+      { name: 'mainProject', label: '主项目', type: 'select', source: { path: 'system/projects', labelField: 'name', valueField: 'name' } },
+      { name: 'mergeProject', label: '融合项目', type: 'select', source: { path: 'system/projects', labelField: 'name', valueField: 'name' } },
+      { name: 'mergePoints', label: '融合积分', type: 'number' },
+      { name: 'status', label: '融合状态', type: 'select', options: [
+        { label: '待融合', value: 'pending' }, { label: '已融合', value: 'merged' }, { label: '融合失败', value: 'failed' }
+      ] },
+      { name: 'mergeTime', label: '融合时间', type: 'date' }
+    ],
+    doc: { overview: '跨项目积分融合，消费者在不同项目消费获取的积分累计到同一账户，支持跨项目积分查询。', features: ['跨项目积分累计', '积分融合状态追踪', '主项目归集'], tips: ['融合前请确认会员身份一致', '融合后积分不可拆分回原项目'] }
+  },
+  {
+    key: 'analytics-cross-project', path: 'analytics/cross-project', name: '跨项目数据对比', category: '数据中心',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '对比项目A', dataIndex: 'projectA' },
+      { title: '对比项目B', dataIndex: 'projectB' },
+      { title: '对比维度', dataIndex: 'dimension', render: (v: string) => ({ member: '会员增长', 'points': '积分发放', revenue: '营收', activity: '活动效果' }[v] || v) },
+      { title: '对比周期', dataIndex: 'period' },
+      { title: '创建时间', dataIndex: 'createTime' }
+    ],
+    fields: [
+      { name: 'projectA', label: '对比项目A', type: 'select', required: true, source: { path: 'system/projects', labelField: 'name', valueField: 'name' } },
+      { name: 'projectB', label: '对比项目B', type: 'select', required: true, source: { path: 'system/projects', labelField: 'name', valueField: 'name' } },
+      { name: 'dimension', label: '对比维度', type: 'select', options: [
+        { label: '会员增长', value: 'member' }, { label: '积分发放', value: 'points' }, { label: '营收', value: 'revenue' }, { label: '活动效果', value: 'activity' }
+      ] },
+      { name: 'period', label: '对比周期', type: 'select', options: [
+        { label: '近7天', value: '7d' }, { label: '近30天', value: '30d' }, { label: '近90天', value: '90d' }, { label: '近1年', value: '1y' }
+      ] },
+      { name: 'createTime', label: '创建时间', type: 'date' }
+    ],
+    doc: { overview: '多商业体运营数据横向对比分析，支持多维度、多周期对比。', features: ['多项目数据横向对比', '多维度分析', '多周期选择'], tips: ['对比维度建议选择核心指标', '周期越长数据越稳定'] }
+  },
+  // ===== 地产对接扩展 =====
+  {
+    key: 'property-auth', path: 'property/auth', name: '地产权限管理', category: '地产积分',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '角色名称', dataIndex: 'roleName' },
+      { title: '用户', dataIndex: 'userName' },
+      { title: '权限范围', dataIndex: 'scope' },
+      { title: '状态', dataIndex: 'status', render: (v: string) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'roleName', label: '角色名称', type: 'text', required: true },
+      { name: 'userName', label: '用户', type: 'text', required: true },
+      { name: 'scope', label: '权限范围', type: 'select', multiple: true, options: [
+        { label: '内容管理', value: 'content' }, { label: '会员管理', value: 'member' }, { label: '积分任务', value: 'task' }, { label: '活动管理', value: 'activity' }, { label: '数据统计', value: 'analytics' }
+      ] },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '地产模块角色管理、用户管理、菜单管理、操作日志，各项目独立配置。', features: ['角色管理', '用户权限分配', '菜单权限配置', '操作日志'], tips: ['超级管理员可管理全部项目', '建议最小权限原则'] }
+  },
+  {
+    key: 'property-content', path: 'property/content', name: '地产内容管理', category: '地产积分',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '内容类型', dataIndex: 'type', render: (v: string) => ({ promo: '促销活动', banner: '活动轮播', benefit: '会员权益', poster: '活动海报' }[v] || v) },
+      { title: '标题', dataIndex: 'title' },
+      { title: '状态', dataIndex: 'status', render: (v: string) => (v === 'enabled' ? '启用' : '禁用') },
+      { title: '更新时间', dataIndex: 'updateTime' }
+    ],
+    fields: [
+      { name: 'type', label: '内容类型', type: 'select', required: true, options: [
+        { label: '促销活动', value: 'promo' }, { label: '活动轮播', value: 'banner' }, { label: '会员权益', value: 'benefit' }, { label: '活动海报', value: 'poster' }
+      ] },
+      { name: 'title', label: '标题', type: 'text', required: true },
+      { name: 'imageUrl', label: '图片URL', type: 'text' },
+      { name: 'linkUrl', label: '跳转链接', type: 'text' },
+      { name: 'sort', label: '排序', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS },
+      { name: 'updateTime', label: '更新时间', type: 'date' }
+    ],
+    doc: { overview: '设置促销、活动轮播列表、展示会员权益、活动海报。', features: ['促销活动管理', '轮播列表配置', '会员权益展示', '活动海报管理'], tips: ['排序数值越小越靠前', '图片建议尺寸750x300'] }
+  },
+  {
+    key: 'property-owners', path: 'property/owners', name: '业主会员管理', category: '地产积分',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '业主姓名', dataIndex: 'name' },
+      { title: '手机号', dataIndex: 'phone' },
+      { title: '绑定房产', dataIndex: 'property' },
+      { title: '小区', dataIndex: 'community' },
+      { title: '业主权益', dataIndex: 'benefits' },
+      { title: '状态', dataIndex: 'status', render: (v: string) => (v === 'enabled' ? '正常' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '业主姓名', type: 'text', required: true },
+      { name: 'phone', label: '手机号', type: 'text', required: true },
+      { name: 'memberId', label: '关联会员ID', type: 'text' },
+      { name: 'property', label: '绑定房产', type: 'text' },
+      { name: 'community', label: '小区', type: 'text' },
+      { name: 'benefits', label: '业主权益', type: 'textarea' },
+      { name: 'status', label: 'status', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '管理地产业主会员基础信息、集团其他公司项目业主会员权益。', features: ['业主基础信息管理', '房产绑定', '业主权益配置', '多小区关联'], tips: ['业主认证需绑定房产信息', '一个业主可绑定多个小区'] }
+  },
+  {
+    key: 'property-task-audit', path: 'property/task-audit', name: '积分任务审批', category: '地产积分',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '任务名称', dataIndex: 'taskName' },
+      { title: '申请人', dataIndex: 'applicant' },
+      { title: '申请积分', dataIndex: 'points' },
+      { title: '审批状态', dataIndex: 'auditStatus', render: (v: string) => ({ pending: '待审批', approved: '已通过', rejected: '已拒绝' }[v] || v) },
+      { title: '审批人', dataIndex: 'auditor' },
+      { title: '申请时间', dataIndex: 'applyTime' }
+    ],
+    fields: [
+      { name: 'taskName', label: '任务名称', type: 'select', required: true, source: { path: 'property/tasks', labelField: 'name', valueField: 'name' } },
+      { name: 'applicant', label: '申请人', type: 'text', required: true },
+      { name: 'points', label: '申请积分', type: 'number' },
+      { name: 'evidence', label: '凭证(截图URL)', type: 'text' },
+      { name: 'auditStatus', label: '审批状态', type: 'select', options: [
+        { label: '待审批', value: 'pending' }, { label: '已通过', value: 'approved' }, { label: '已拒绝', value: 'rejected' }
+      ] },
+      { name: 'auditor', label: '审批人', type: 'text' },
+      { name: 'applyTime', label: '申请时间', type: 'date' },
+      { name: 'auditRemark', label: '审批备注', type: 'textarea' }
+    ],
+    doc: { overview: '审批需要人工审核类型的活动积分任务。', features: ['积分任务审批', '凭证审核', '审批状态管理', '审批备注'], tips: ['审批前请核实凭证真实性', '拒绝时请填写拒绝原因'] }
+  },
+  {
+    key: 'property-notify', path: 'property/notify', name: '积分公众号通知', category: '地产积分',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '通知名称', dataIndex: 'name' },
+      { title: '触发场景', dataIndex: 'trigger', render: (v: string) => ({ audit_pass: '积分审核通过', points_change: '积分变动', task_complete: '任务完成' }[v] || v) },
+      { title: '推送渠道', dataIndex: 'channel', render: (v: string) => ({ wechat: '微信公众号', sms: '短信', applet: '小程序消息' }[v] || v) },
+      { title: '状态', dataIndex: 'status', render: (v: string) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '通知名称', type: 'text', required: true },
+      { name: 'trigger', label: '触发场景', type: 'select', required: true, options: [
+        { label: '积分审核通过', value: 'audit_pass' }, { label: '积分变动', value: 'points_change' }, { label: '任务完成', value: 'task_complete' }
+      ] },
+      { name: 'channel', label: '推送渠道', type: 'select', multiple: true, options: [
+        { label: '微信公众号', value: 'wechat' }, { label: '短信', value: 'sms' }, { label: '小程序消息', value: 'applet' }
+      ] },
+      { name: 'templateId', label: '消息模板ID', type: 'text' },
+      { name: 'content', label: '通知内容模板', type: 'textarea' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '微信公众号通知功能配置，积分审核通过发送短信通知（积分余额等）。', features: ['触发场景配置', '多推送渠道', '消息模板管理', '通知内容自定义'], tips: ['微信公众号需先配置模板消息', '短信通知会产生费用请控制频率'] }
+  },
+  {
+    key: 'property-goods', path: 'property/goods', name: '地产积分商品', category: '地产积分',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '商品名称', dataIndex: 'name' },
+      { title: '所需积分', dataIndex: 'points' },
+      { title: '库存', dataIndex: 'stock' },
+      { title: '适用小区', dataIndex: 'community' },
+      { title: '状态', dataIndex: 'status', render: (v: string) => (v === 'enabled' ? '上架' : '下架') }
+    ],
+    fields: [
+      { name: 'name', label: '商品名称', type: 'text', required: true },
+      { name: 'points', label: '所需积分', type: 'number', required: true },
+      { name: 'stock', label: '库存', type: 'number' },
+      { name: 'community', label: '适用小区', type: 'text' },
+      { name: 'imageUrl', label: '商品图片', type: 'text' },
+      { name: 'description', label: '商品描述', type: 'textarea' },
+      { name: 'exchangeRule', label: '兑换规则', type: 'textarea' },
+      { name: 'status', label: '状态', type: 'select', options: [{ label: '上架', value: 'enabled' }, { label: '下架', value: 'disabled' }] }
+    ],
+    doc: { overview: '地产积分兑换礼品上架、库存管理、兑换规则配置。', features: ['积分商品上架', '库存管理', '适用小区配置', '兑换规则设置'], tips: ['适用小区为空表示全部小区可兑换', '库存为0时自动下架'] }
+  },
+  {
+    key: 'property-community-scope', path: 'property/community-scope', name: '活动小区范围', category: '地产积分',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '活动名称', dataIndex: 'activityName' },
+      { title: '范围类型', dataIndex: 'scopeType', render: (v: string) => ({ all: '全部小区', specific: '指定小区' }[v] || v) },
+      { title: '适用小区', dataIndex: 'communities' },
+      { title: '状态', dataIndex: 'status', render: (v: string) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'activityName', label: '活动名称', type: 'text', required: true },
+      { name: 'scopeType', label: '范围类型', type: 'select', required: true, options: [
+        { label: '全部小区', value: 'all' }, { label: '指定小区', value: 'specific' }
+      ] },
+      { name: 'communities', label: '适用小区(逗号分隔)', type: 'text' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '配置活动是否限定特定小区参与，支持多小区选择或全部小区开放。', features: ['全部小区开放', '指定小区参与', '灵活范围控制'], tips: ['选择指定小区时需填写小区名称', '范围变更即时生效'] }
+  },
+  {
+    key: 'property-multi-bind', path: 'property/multi-bind', name: '多小区业主绑定', category: '地产积分',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '会员', dataIndex: 'member' },
+      { title: '手机号', dataIndex: 'phone' },
+      { title: '绑定小区', dataIndex: 'communities' },
+      { title: '绑定房产数', dataIndex: 'propertyCount' },
+      { title: '状态', dataIndex: 'status', render: (v: string) => (v === 'enabled' ? '有效' : '无效') }
+    ],
+    fields: [
+      { name: 'member', label: '会员', type: 'select', required: true, source: { path: 'member/list', labelField: 'name', valueField: 'name' } },
+      { name: 'phone', label: '手机号', type: 'text', required: true },
+      { name: 'communities', label: '绑定小区(逗号分隔)', type: 'text' },
+      { name: 'propertyCount', label: '绑定房产数', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: [{ label: '有效', value: 'enabled' }, { label: '无效', value: 'disabled' }] }
+    ],
+    doc: { overview: '支持一个消费者绑定多个小区业主身份，管理多房产关联关系。', features: ['多小区业主绑定', '多房产关联', '绑定状态管理'], tips: ['同一手机号可绑定多个小区', '解绑后相关权益同步失效'] }
+  },
+  // ===== 商户导览增强 =====
+  {
+    key: 'merchant-locations', path: 'merchant/locations', name: '店铺位置管理', category: '商户营销',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '商户', dataIndex: 'merchant' },
+      { title: '楼层', dataIndex: 'floor' },
+      { title: '位置编号', dataIndex: 'positionNo' },
+      { title: '导航图', dataIndex: 'navMap' },
+      { title: '状态', dataIndex: 'status', render: (v: string) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'merchant', label: '商户', type: 'select', required: true, source: { path: 'merchant/list', labelField: 'name', valueField: 'name' } },
+      { name: 'floor', label: '楼层', type: 'select', options: [
+        { label: 'B1', value: 'B1' }, { label: '1F', value: '1F' }, { label: '2F', value: '2F' }, { label: '3F', value: '3F' }, { label: '4F', value: '4F' }, { label: '5F', value: '5F' }
+      ] },
+      { name: 'positionNo', label: '位置编号', type: 'text' },
+      { name: 'navMap', label: '导航图URL', type: 'text' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '编辑店铺所在商业体的楼层、位置编号、室内导航图。', features: ['楼层位置编辑', '位置编号管理', '导航图配置'], tips: ['位置编号格式如 2F-A01', '导航图建议使用SVG格式'] }
+  },
+  {
+    key: 'merchant-floor-maps', path: 'merchant/floor-maps', name: '楼层导航图管理', category: '商户营销',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '楼层', dataIndex: 'floor' },
+      { title: '导航图', dataIndex: 'mapUrl' },
+      { title: '标注店铺数', dataIndex: 'markedShops' },
+      { title: '状态', dataIndex: 'status', render: (v: string) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'floor', label: '楼层', type: 'text', required: true },
+      { name: 'mapUrl', label: '导航图URL', type: 'text', required: true },
+      { name: 'markedShops', label: '标注店铺数', type: 'number' },
+      { name: 'description', label: '楼层说明', type: 'textarea' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '上传和管理各楼层平面导航图，标注店铺位置。', features: ['楼层导航图上传', '店铺位置标注', '楼层说明管理'], tips: ['导航图建议尺寸1200x800', '标注店铺需与商户列表联动'] }
+  },
+  {
+    key: 'merchant-food-config', path: 'merchant/food-config', name: '餐饮美食配置', category: '商户营销',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '商户', dataIndex: 'merchant' },
+      { title: '菜系分类', dataIndex: 'cuisineType' },
+      { title: '推荐菜品', dataIndex: 'recommendDishes' },
+      { title: '人均消费', dataIndex: 'avgCost', render: (v: number) => v ? `¥${v}` : '' },
+      { title: '促销活动', dataIndex: 'promo' },
+      { title: '状态', dataIndex: 'status', render: (v: string) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'merchant', label: '商户', type: 'select', required: true, source: { path: 'merchant/list', labelField: 'name', valueField: 'name' } },
+      { name: 'cuisineType', label: '菜系分类', type: 'select', options: [
+        { label: '中餐', value: 'chinese' }, { label: '日料', value: 'japanese' }, { label: '韩餐', value: 'korean' }, { label: '西餐', value: 'western' }, { label: '火锅', value: 'hotpot' }, { label: '烧烤', value: 'bbq' }, { label: '甜品', value: 'dessert' }, { label: '其他', value: 'other' }
+      ] },
+      { name: 'recommendDishes', label: '推荐菜品(逗号分隔)', type: 'text' },
+      { name: 'avgCost', label: '人均消费(元)', type: 'number' },
+      { name: 'promo', label: '促销活动', type: 'text' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '菜系分类、推荐菜品、人均消费、促销活动等餐饮信息配置，对应C端餐饮美食导览。', features: ['菜系分类配置', '推荐菜品管理', '人均消费标注', '促销活动展示'], tips: ['推荐菜品建议3-5个', '人均消费影响用户选择请准确填写'] }
+  },
+  // ===== 积分消费比例配置 =====
+  {
+    key: 'points-consumption-ratio', path: 'points/consumption-ratio', name: '积分消费比例', category: '积分中心',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '规则名称', dataIndex: 'name' },
+      { title: '适用场景', dataIndex: 'scene', render: (v: string) => ({ mall: '商场消费', property: '地产消费', parking: '停车缴费', goods: '积分商城' }[v] || v) },
+      { title: '抵扣比例', dataIndex: 'ratio', render: (v: string) => v || '' },
+      { title: '状态', dataIndex: 'status', render: (v: string) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '规则名称', type: 'text', required: true },
+      { name: 'scene', label: '适用场景', type: 'select', required: true, options: [
+        { label: '商场消费', value: 'mall' }, { label: '地产消费', value: 'property' }, { label: '停车缴费', value: 'parking' }, { label: '积分商城', value: 'goods' }
+      ] },
+      { name: 'pointsPerYuan', label: '积分抵扣比例(积分/元)', type: 'number', required: true },
+      { name: 'maxDeductRate', label: '最大抵扣比例(%)', type: 'number' },
+      { name: 'minPoints', label: '最低使用积分', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '按商业体/地产分别配置积分抵扣比例（如10积分抵1元），支持不同消费场景差异化配置。', features: ['积分抵扣比例配置', '场景差异化配置', '最大抵扣比例限制', '最低使用积分限制'], tips: ['10积分抵1元表示100积分可抵10元', '最大抵扣比例建议不超过50%', '不同场景可配置不同抵扣比例'] }
+  },
+  // ===== 商家信息/通知管理 =====
+  {
+    key: 'merchant-info', path: 'merchant/info', name: '商家信息维护', category: '商户营销',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '商家名称', dataIndex: 'name' },
+      { title: '行业分类', dataIndex: 'industry' },
+      { title: '合同有效期', dataIndex: 'contractExpiry' },
+      { title: '联系方式', dataIndex: 'contact' },
+      { title: '数据来源', dataIndex: 'dataSource', render: (v: string) => ({ liebao: '猎豹系统', manual: '手动录入' }[v] || v) },
+      { title: '状态', dataIndex: 'status', render: (v: string) => (v === 'enabled' ? '正常' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '商家名称', type: 'text', required: true },
+      { name: 'industry', label: '行业分类', type: 'select', options: [
+        { label: '餐饮', value: 'food' }, { label: '零售', value: 'retail' }, { label: '服装', value: 'clothing' }, { label: '娱乐', value: 'entertainment' }, { label: '服务', value: 'service' }, { label: '其他', value: 'other' }
+      ] },
+      { name: 'contractExpiry', label: '合同有效期', type: 'date' },
+      { name: 'contact', label: '联系方式', type: 'text' },
+      { name: 'dataSource', label: '数据来源', type: 'select', options: [
+        { label: '猎豹系统', value: 'liebao' }, { label: '手动录入', value: 'manual' }
+      ] },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '管理从猎豹系统同步的商家信息（名称、合同有效期、行业分类、联系方式等）。', features: ['商家基础信息管理', '合同有效期管理', '行业分类配置', '数据来源标记'], tips: ['猎豹系统同步数据不可手动修改', '合同到期前30天系统自动提醒'] }
+  },
+  {
+    key: 'merchant-contracts-mgmt', path: 'merchant/contracts-mgmt', name: '合同信息管理', category: '商户营销',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '商家', dataIndex: 'merchant' },
+      { title: '合同编号', dataIndex: 'contractNo' },
+      { title: '合同类型', dataIndex: 'type', render: (v: string) => ({ lease: '租赁合同', operation: '运营合同', promotion: '推广合同' }[v] || v) },
+      { title: '开始日期', dataIndex: 'startDate' },
+      { title: '到期日期', dataIndex: 'endDate' },
+      { title: '到期提醒', dataIndex: 'remindDays', render: (v: number) => v ? `提前${v}天` : '' }
+    ],
+    fields: [
+      { name: 'merchant', label: '商家', type: 'select', required: true, source: { path: 'merchant/list', labelField: 'name', valueField: 'name' } },
+      { name: 'contractNo', label: '合同编号', type: 'text', required: true },
+      { name: 'type', label: '合同类型', type: 'select', options: [
+        { label: '租赁合同', value: 'lease' }, { label: '运营合同', value: 'operation' }, { label: '推广合同', value: 'promotion' }
+      ] },
+      { name: 'startDate', label: '开始日期', type: 'date', required: true },
+      { name: 'endDate', label: '到期日期', type: 'date', required: true },
+      { name: 'remindDays', label: '到期提醒(天)', type: 'number' },
+      { name: 'remark', label: '备注', type: 'textarea' }
+    ],
+    doc: { overview: '商家合同有效期管理、到期提醒设置。', features: ['合同信息管理', '合同到期提醒', '合同类型分类', '到期天数配置'], tips: ['到期提醒建议设置30天', '合同到期后系统自动标记'] }
+  },
+  {
+    key: 'merchant-notify-template', path: 'merchant/notify-template', name: '商家通知模板', category: '商户营销',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '模板名称', dataIndex: 'name' },
+      { title: '通知类型', dataIndex: 'type', render: (v: string) => ({ operation: '运营通知', activity: '活动通知', system: '系统通知' }[v] || v) },
+      { title: '推送渠道', dataIndex: 'channel' },
+      { title: '状态', dataIndex: 'status', render: (v: string) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '模板名称', type: 'text', required: true },
+      { name: 'type', label: '通知类型', type: 'select', options: [
+        { label: '运营通知', value: 'operation' }, { label: '活动通知', value: 'activity' }, { label: '系统通知', value: 'system' }
+      ] },
+      { name: 'channel', label: '推送渠道', type: 'select', multiple: true, options: [
+        { label: '小程序消息', value: 'applet' }, { label: '短信', value: 'sms' }, { label: '公众号', value: 'wechat' }
+      ] },
+      { name: 'content', label: '通知内容模板', type: 'textarea', required: true },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '商家通知模板创建、编辑（运营通知、活动通知、系统通知等）。', features: ['通知模板创建', '多种通知类型', '多推送渠道', '内容模板自定义'], tips: ['模板中可用变量：{商家名}、{日期}、{内容}等', '短信通知有费用建议控制频率'] }
+  },
+  {
+    key: 'merchant-notify-logs', path: 'merchant/notify-logs', name: '商家通知记录', category: '商户营销',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '商家', dataIndex: 'merchant' },
+      { title: '通知类型', dataIndex: 'type' },
+      { title: '推送渠道', dataIndex: 'channel' },
+      { title: '发送状态', dataIndex: 'sendStatus', render: (v: string) => ({ success: '成功', failed: '失败', pending: '待发送' }[v] || v) },
+      { title: '发送时间', dataIndex: 'sendTime' }
+    ],
+    fields: [
+      { name: 'merchant', label: '商家', type: 'select', source: { path: 'merchant/list', labelField: 'name', valueField: 'name' } },
+      { name: 'type', label: '通知类型', type: 'select', options: [
+        { label: '运营通知', value: 'operation' }, { label: '活动通知', value: 'activity' }, { label: '系统通知', value: 'system' }
+      ] },
+      { name: 'channel', label: '推送渠道', type: 'text' },
+      { name: 'content', label: '通知内容', type: 'textarea' },
+      { name: 'sendStatus', label: '发送状态', type: 'select', options: [
+        { label: '成功', value: 'success' }, { label: '失败', value: 'failed' }, { label: '待发送', value: 'pending' }
+      ] },
+      { name: 'sendTime', label: '发送时间', type: 'date' }
+    ],
+    doc: { overview: '商家通知发送历史记录查看，支持按商户、时间筛选。', features: ['通知发送记录', '发送状态追踪', '按商户筛选', '按时间筛选'], tips: ['发送失败的记录可重新发送', '建议定期清理历史记录'] }
+  },
+  // ===== 小程序装修增强 =====
+  {
+    key: 'decoration-preview', path: 'content/decoration-preview', name: '装修预览', category: '小程序营销平台',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '页面名称', dataIndex: 'pageName' },
+      { title: '预览方式', dataIndex: 'previewType', render: (v: string) => ({ qr: '小程序码', link: '预览链接', screenshot: '截图预览' }[v] || v) },
+      { title: '创建时间', dataIndex: 'createTime' }
+    ],
+    fields: [
+      { name: 'pageName', label: '页面名称', type: 'text', required: true },
+      { name: 'previewType', label: '预览方式', type: 'select', options: [
+        { label: '小程序码', value: 'qr' }, { label: '预览链接', value: 'link' }, { label: '截图预览', value: 'screenshot' }
+      ] },
+      { name: 'decorationId', label: '关联装修ID', type: 'text' },
+      { name: 'createTime', label: '创建时间', type: 'date' }
+    ],
+    doc: { overview: '装修效果实时预览，支持小程序码、预览链接和截图预览。', features: ['小程序码预览', '预览链接生成', '截图预览', '关联装修配置'], tips: ['预览链接有效期2小时', '小程序码需在微信中扫码查看'] }
+  },
+  {
+    key: 'decoration-templates', path: 'content/decoration-templates', name: '多模板切换', category: '小程序营销平台',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '模板名称', dataIndex: 'name' },
+      { title: '适用页面', dataIndex: 'pageType' },
+      { title: '切换条件', dataIndex: 'switchCondition' },
+      { title: '状态', dataIndex: 'status', render: (v: string) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '模板名称', type: 'text', required: true },
+      { name: 'pageType', label: '适用页面', type: 'select', options: [
+        { label: '首页', value: 'home' }, { label: '积分商城', value: 'points' }, { label: '活动页', value: 'activity' }
+      ] },
+      { name: 'switchCondition', label: '切换条件', type: 'select', options: [
+        { label: '按时间段', value: 'time' }, { label: '按会员等级', value: 'level' }, { label: '按活动', value: 'activity' }, { label: '手动切换', value: 'manual' }
+      ] },
+      { name: 'switchRule', label: '切换规则', type: 'textarea' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '同一页面多模板自动切换，支持按时间段、会员等级、活动等条件自动切换。', features: ['多模板管理', '条件自动切换', '手动切换', '适用页面配置'], tips: ['同一页面同时只能有一个模板启用', '时间段切换需设置优先级'] }
+  },
+  {
+    key: 'decoration-history', path: 'content/decoration-history', name: '装修历史版本', category: '小程序营销平台',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '页面名称', dataIndex: 'pageName' },
+      { title: '版本号', dataIndex: 'version' },
+      { title: '操作人', dataIndex: 'operator' },
+      { title: '发布时间', dataIndex: 'publishTime' },
+      { title: '状态', dataIndex: 'status', render: (v: string) => ({ current: '当前版本', archived: '已归档' }[v] || v) }
+    ],
+    fields: [
+      { name: 'pageName', label: '页面名称', type: 'text', required: true },
+      { name: 'version', label: '版本号', type: 'text' },
+      { name: 'operator', label: '操作人', type: 'text' },
+      { name: 'publishTime', label: '发布时间', type: 'date' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '当前版本', value: 'current' }, { label: '已归档', value: 'archived' }
+      ] },
+      { name: 'snapshot', label: '快照数据(JSON)', type: 'textarea' }
+    ],
+    doc: { overview: '历史版本页面恢复功能，支持查看和回滚到任意历史版本。', features: ['版本历史记录', '一键回滚', '版本对比', '快照存档'], tips: ['回滚操作会覆盖当前版本', '建议每次发布前自动创建快照'] }
+  },
+  {
+    key: 'decoration-qrcode', path: 'content/decoration-qrcode', name: '小程序码下载', category: '小程序营销平台',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '页面名称', dataIndex: 'pageName' },
+      { title: '小程序码', dataIndex: 'qrcodeUrl' },
+      { title: '页面链接', dataIndex: 'pageLink' },
+      { title: '创建时间', dataIndex: 'createTime' }
+    ],
+    fields: [
+      { name: 'pageName', label: '页面名称', type: 'text', required: true },
+      { name: 'qrcodeUrl', label: '小程序码URL', type: 'text' },
+      { name: 'pageLink', label: '页面链接', type: 'text' },
+      { name: 'scene', label: '场景参数', type: 'text' },
+      { name: 'createTime', label: '创建时间', type: 'date' }
+    ],
+    doc: { overview: '页面小程序码或页面链接下载，支持自定义场景参数。', features: ['小程序码生成', '页面链接生成', '场景参数配置', '批量下载'], tips: ['场景参数最长32个字符', '小程序码有效期为永久'] }
+  },
+  {
+    key: 'points-mall-decoration', path: 'points/mall-decoration', name: '积分商城装修', category: '积分中心',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '版块名称', dataIndex: 'sectionName' },
+      { title: '版块类型', dataIndex: 'sectionType', render: (v: string) => ({ recommend: '为您推荐', history: '浏览轨迹', hot: '热门兑换', banner: 'Banner' }[v] || v) },
+      { title: '排序', dataIndex: 'sort' },
+      { title: '状态', dataIndex: 'status', render: (v: string) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'sectionName', label: '版块名称', type: 'text', required: true },
+      { name: 'sectionType', label: '版块类型', type: 'select', options: [
+        { label: '为您推荐', value: 'recommend' }, { label: '浏览轨迹', value: 'history' }, { label: '热门兑换', value: 'hot' }, { label: 'Banner', value: 'banner' }
+      ] },
+      { name: 'sort', label: '排序', type: 'number' },
+      { name: 'displayCount', label: '展示数量', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: { overview: '积分商城页面个性化装修（为您推荐、热门兑换等版块）。', features: ['版块管理', '为您推荐配置', '热门兑换展示', '浏览轨迹记录', 'Banner配置'], tips: ['版块排序数值越小越靠前', '展示数量建议4-8个'] }
+  },
+  // ===== 核销增强 =====
+  {
+    key: 'verification-export', path: 'verification/export', name: '核销记录导出', category: '核销中心',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '导出名称', dataIndex: 'name' },
+      { title: '导出范围', dataIndex: 'scope' },
+      { title: '记录数', dataIndex: 'recordCount' },
+      { title: '文件格式', dataIndex: 'fileFormat', render: (v: string) => ({ excel: 'Excel', csv: 'CSV' }[v] || v) },
+      { title: '状态', dataIndex: 'status', render: (v: string) => ({ processing: '生成中', completed: '已完成', failed: '失败' }[v] || v) },
+      { title: '创建时间', dataIndex: 'createTime' }
+    ],
+    fields: [
+      { name: 'name', label: '导出名称', type: 'text', required: true },
+      { name: 'scope', label: '导出范围', type: 'select', options: [
+        { label: '全部', value: 'all' }, { label: '按商户', value: 'merchant' }, { label: '按时间', value: 'time' }, { label: '按类型', value: 'type' }
+      ] },
+      { name: 'merchant', label: '商户', type: 'select', source: { path: 'merchant/list', labelField: 'name', valueField: 'name' } },
+      { name: 'startDate', label: '开始时间', type: 'date' },
+      { name: 'endDate', label: '结束时间', type: 'date' },
+      { name: 'verifyType', label: '核销类型', type: 'select', options: [
+        { label: '优惠券', value: 'coupon' }, { label: '停车券', value: 'parking' }, { label: '活动', value: 'activity' }, { label: '商品', value: 'goods' }
+      ] },
+      { name: 'fileFormat', label: '文件格式', type: 'select', options: [
+        { label: 'Excel', value: 'excel' }, { label: 'CSV', value: 'csv' }
+      ] },
+      { name: 'createTime', label: '创建时间', type: 'date' }
+    ],
+    doc: { overview: '导出核销数据报表，支持按时间范围、商户维度导出。', features: ['多维度筛选导出', 'Excel/CSV格式', '按商户/时间/类型导出', '导出状态追踪'], tips: ['大数据量导出建议分批进行', '导出文件保留7天'] }
+  },
+  {
+    key: 'verification-points-audit', path: 'verification/points-audit', name: '核销积分审核', category: '核销中心',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '商户', dataIndex: 'merchant' },
+      { title: '核销类型', dataIndex: 'verifyType' },
+      { title: '核销积分', dataIndex: 'points' },
+      { title: '会员', dataIndex: 'member' },
+      { title: '审核状态', dataIndex: 'auditStatus', render: (v: string) => ({ pending: '待审核', approved: '已通过', rejected: '已驳回' }[v] || v) },
+      { title: '核销时间', dataIndex: 'verifyTime' }
+    ],
+    fields: [
+      { name: 'merchant', label: '商户', type: 'select', required: true, source: { path: 'merchant/list', labelField: 'name', valueField: 'name' } },
+      { name: 'verifyType', label: '核销类型', type: 'select', options: [
+        { label: '优惠券', value: 'coupon' }, { label: '停车券', value: 'parking' }, { label: '活动', value: 'activity' }, { label: '商品', value: 'goods' }
+      ] },
+      { name: 'points', label: '核销积分', type: 'number' },
+      { name: 'member', label: '会员', type: 'text' },
+      { name: 'auditStatus', label: '审核状态', type: 'select', options: [
+        { label: '待审核', value: 'pending' }, { label: '已通过', value: 'approved' }, { label: '已驳回', value: 'rejected' }
+      ] },
+      { name: 'verifyTime', label: '核销时间', type: 'date' },
+      { name: 'auditRemark', label: '审核备注', type: 'textarea' }
+    ],
+    doc: { overview: '商业体查看并审核各商家核销积分台账，支持按商户、时间、积分类型筛选，异常核销可驳回。', features: ['核销积分台账审核', '多维度筛选', '异常核销驳回', '审核备注记录'], tips: ['异常核销建议先与商户确认', '驳回后积分自动退回会员账户'] }
+  },
+  // ===== 系统安全 =====
+  {
+    key: 'security-network', path: 'security/network', name: '网络安全防护', category: '系统安全',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '策略名称', dataIndex: 'name' },
+      { title: '防护类型', dataIndex: 'type', render: (v: string) => ({ firewall: '防火墙', ips: 'IPS入侵防御', ddos: 'DDoS防护', isolation: '网络隔离' }[v] || v) },
+      { title: '防护等级', dataIndex: 'level', render: (v: string) => ({ low: '低', medium: '中', high: '高' }[v] || v) },
+      { title: '状态', dataIndex: 'status', render: (v: string) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '策略名称', type: 'text', required: true },
+      { name: 'type', label: '防护类型', type: 'select', required: true, options: [
+        { label: '防火墙', value: 'firewall' }, { label: 'IPS入侵防御', value: 'ips' }, { label: 'DDoS防护', value: 'ddos' }, { label: '网络隔离', value: 'isolation' }
+      ] },
+      { name: 'level', label: '防护等级', type: 'select', options: [
+        { label: '低', value: 'low' }, { label: '中', value: 'medium' }, { label: '高', value: 'high' }
+      ] },
+      { name: 'rule', label: '防护规则', type: 'textarea' },
+      { name: 'whiteList', label: '白名单IP(逗号分隔)', type: 'text' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '启用', value: 'enabled' }, { label: '禁用', value: 'disabled' }
+      ] }
+    ],
+    doc: { overview: '防火墙策略配置、IPS入侵防御、DDoS防护、网络隔离策略。', features: ['防火墙策略', 'IPS入侵防御', 'DDoS防护', '网络隔离', '白名单管理'], tips: ['防护等级过高可能影响性能', '白名单IP变更后即时生效'] }
+  },
+  {
+    key: 'security-data', path: 'security/data', name: '数据安全', category: '系统安全',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '策略名称', dataIndex: 'name' },
+      { title: '安全类型', dataIndex: 'type', render: (v: string) => ({ encrypt: '传输加密', storage: '存储加密', desensitize: '数据脱敏', backup: '备份恢复' }[v] || v) },
+      { title: '状态', dataIndex: 'status', render: (v: string) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '策略名称', type: 'text', required: true },
+      { name: 'type', label: '安全类型', type: 'select', required: true, options: [
+        { label: '传输加密(HTTPS/TLS)', value: 'encrypt' }, { label: '存储加密', value: 'storage' }, { label: '数据脱敏', value: 'desensitize' }, { label: '备份恢复', value: 'backup' }
+      ] },
+      { name: 'description', label: '策略描述', type: 'textarea' },
+      { name: 'encryptAlgorithm', label: '加密算法', type: 'select', options: [
+        { label: 'AES-256', value: 'aes256' }, { label: 'RSA-2048', value: 'rsa2048' }, { label: 'SM4', value: 'sm4' }
+      ] },
+      { name: 'backupCycle', label: '备份周期', type: 'select', options: [
+        { label: '每日', value: 'daily' }, { label: '每周', value: 'weekly' }, { label: '每月', value: 'monthly' }
+      ] },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '启用', value: 'enabled' }, { label: '禁用', value: 'disabled' }
+      ] }
+    ],
+    doc: { overview: '数据传输加密（HTTPS/TLS）、敏感数据加密存储、数据脱敏、数据备份与恢复。', features: ['传输加密配置', '存储加密管理', '数据脱敏规则', '备份恢复策略'], tips: ['传输加密为必选项', '备份建议每日执行', '脱敏规则需覆盖手机号、身份证等'] }
+  },
+  {
+    key: 'security-app', path: 'security/app', name: '应用安全', category: '系统安全',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '策略名称', dataIndex: 'name' },
+      { title: '防护类型', dataIndex: 'type', render: (v: string) => ({ waf: 'WAF', sqli: 'SQL注入', xss: 'XSS', csrf: 'CSRF', scan: '漏洞扫描' }[v] || v) },
+      { title: '拦截次数', dataIndex: 'blockCount' },
+      { title: '状态', dataIndex: 'status', render: (v: string) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '策略名称', type: 'text', required: true },
+      { name: 'type', label: '防护类型', type: 'select', required: true, options: [
+        { label: 'WAF防火墙', value: 'waf' }, { label: 'SQL注入防护', value: 'sqli' }, { label: 'XSS防护', value: 'xss' }, { label: 'CSRF防护', value: 'csrf' }, { label: '漏洞扫描', value: 'scan' }
+      ] },
+      { name: 'rule', label: '防护规则', type: 'textarea' },
+      { name: 'blockCount', label: '拦截次数', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '启用', value: 'enabled' }, { label: '禁用', value: 'disabled' }
+      ] }
+    ],
+    doc: { overview: 'Web应用防火墙（WAF）、SQL注入/XSS/CSRF防护、漏洞扫描、安全审计。', features: ['WAF防火墙', 'SQL注入防护', 'XSS/CSRF防护', '漏洞扫描', '安全审计'], tips: ['WAF建议开启学习模式先观察', '漏洞扫描建议每周执行一次'] }
+  },
+  {
+    key: 'security-api', path: 'security/api', name: '接口安全', category: '系统安全',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '策略名称', dataIndex: 'name' },
+      { title: '安全类型', dataIndex: 'type', render: (v: string) => ({ auth: 'API鉴权', sign: '签名验证', rate: '限流', replay: '防重放' }[v] || v) },
+      { title: '限流(QPS)', dataIndex: 'rateLimit' },
+      { title: '状态', dataIndex: 'status', render: (v: string) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '策略名称', type: 'text', required: true },
+      { name: 'type', label: '安全类型', type: 'select', required: true, options: [
+        { label: 'API鉴权(Token/OAuth2)', value: 'auth' }, { label: '签名验证', value: 'sign' }, { label: '限流', value: 'rate' }, { label: '防重放攻击', value: 'replay' }
+      ] },
+      { name: 'authType', label: '鉴权方式', type: 'select', options: [
+        { label: 'JWT Token', value: 'jwt' }, { label: 'OAuth2', value: 'oauth2' }, { label: 'API Key', value: 'apikey' }
+      ] },
+      { name: 'rateLimit', label: '限流(QPS)', type: 'number' },
+      { name: 'tokenExpire', label: 'Token有效期(分钟)', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '启用', value: 'enabled' }, { label: '禁用', value: 'disabled' }
+      ] }
+    ],
+    doc: { overview: 'API鉴权（Token/OAuth2）、接口签名验证、接口限流、防重放攻击。', features: ['API鉴权配置', '签名验证', '限流策略', '防重放攻击', 'Token有效期管理'], tips: ['限流QPS建议根据服务器性能设置', 'Token有效期建议30-60分钟'] }
+  },
+  {
+    key: 'security-applet', path: 'security/applet', name: '小程序安全', category: '系统安全',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '策略名称', dataIndex: 'name' },
+      { title: '安全类型', dataIndex: 'type', render: (v: string) => ({ code: '代码加固', tamper: '防篡改', decompile: '防反编译', capture: '防抓包' }[v] || v) },
+      { title: '状态', dataIndex: 'status', render: (v: string) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '策略名称', type: 'text', required: true },
+      { name: 'type', label: '安全类型', type: 'select', required: true, options: [
+        { label: '代码加固', value: 'code' }, { label: '接口防篡改', value: 'tamper' }, { label: '防反编译', value: 'decompile' }, { label: '防抓包', value: 'capture' }
+      ] },
+      { name: 'description', label: '策略描述', type: 'textarea' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '启用', value: 'enabled' }, { label: '禁用', value: 'disabled' }
+      ] }
+    ],
+    doc: { overview: '小程序代码加固、接口防篡改、防反编译、防抓包。', features: ['代码加固', '接口防篡改', '防反编译', '防抓包'], tips: ['代码加固每次发版前执行', '防抓包开启后可能影响调试'] }
+  },
+  {
+    key: 'security-compliance', path: 'security/compliance', name: '合规与隐私保护', category: '系统安全',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '合规项目', dataIndex: 'name' },
+      { title: '合规类型', dataIndex: 'type', render: (v: string) => ({ privacy: '隐私政策', collect: '数据收集', export: '数据导出', delete: '数据删除' }[v] || v) },
+      { title: '状态', dataIndex: 'status', render: (v: string) => (v === 'enabled' ? '合规' : '待整改') }
+    ],
+    fields: [
+      { name: 'name', label: '合规项目', type: 'text', required: true },
+      { name: 'type', label: '合规类型', type: 'select', options: [
+        { label: '隐私政策管理', value: 'privacy' }, { label: '数据收集范围', value: 'collect' }, { label: '数据导出', value: 'export' }, { label: '数据删除', value: 'delete' }
+      ] },
+      { name: 'description', label: '合规要求', type: 'textarea' },
+      { name: 'checkResult', label: '检查结果', type: 'select', options: [
+        { label: '合规', value: 'pass' }, { label: '待整改', value: 'pending' }, { label: '不合规', value: 'fail' }
+      ] },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '合规', value: 'enabled' }, { label: '待整改', value: 'disabled' }
+      ] }
+    ],
+    doc: { overview: '个人信息保护合规、用户隐私政策管理、数据收集范围控制、用户数据导出/删除。', features: ['隐私政策管理', '数据收集范围控制', '用户数据导出', '用户数据删除', '合规检查'], tips: ['隐私政策变更需通知用户', '数据导出需验证用户身份', '数据删除后不可恢复'] }
+  },
+  {
+    key: 'security-audit', path: 'security/audit', name: '安全审计与日志', category: '系统安全',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '审计类型', dataIndex: 'type', render: (v: string) => ({ operation: '操作日志', login: '登录检测', event: '安全事件', report: '审计报表' }[v] || v) },
+      { title: '审计内容', dataIndex: 'content', width: 200 },
+      { title: '级别', dataIndex: 'level', render: (v: string) => ({ info: '信息', warning: '警告', critical: '严重' }[v] || v) },
+      { title: '操作人', dataIndex: 'operator' },
+      { title: '时间', dataIndex: 'time' }
+    ],
+    fields: [
+      { name: 'type', label: '审计类型', type: 'select', required: true, options: [
+        { label: '操作日志审计', value: 'operation' }, { label: '异常登录检测', value: 'login' }, { label: '安全事件告警', value: 'event' }, { label: '审计报表', value: 'report' }
+      ] },
+      { name: 'content', label: '审计内容', type: 'textarea', required: true },
+      { name: 'level', label: '级别', type: 'select', options: [
+        { label: '信息', value: 'info' }, { label: '警告', value: 'warning' }, { label: '严重', value: 'critical' }
+      ] },
+      { name: 'operator', label: '操作人', type: 'text' },
+      { name: 'ip', label: 'IP地址', type: 'text' },
+      { name: 'time', label: '时间', type: 'date' }
+    ],
+    doc: { overview: '操作日志审计、异常登录检测、安全事件告警、审计报表。', features: ['操作日志审计', '异常登录检测', '安全事件告警', '审计报表生成'], tips: ['严重级别事件需立即处理', '审计日志建议保留180天以上'] }
+  },
 ];
 
 export function getModule(key: string): ModuleConfig | undefined {
