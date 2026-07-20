@@ -1229,6 +1229,1159 @@ app.get('/v1/dashboard/summary', auth, (req, res) => {
   });
 });
 
+// ============ C 端小程序接口 ============
+
+// ---- C端内存状态 ----
+const cappCheckinLog = new Map();   // key: `${memberId}_${YYYY-MM-DD}`, value: reward info
+const cappCart = new Map();         // key: memberId, value: [{itemId, goodsId, name, price, quantity, ...}]
+const cappAddresses = new Map();    // key: memberId, value: [{id, name, phone, province, city, district, detail, isDefault}]
+const cappNewMemberClaimed = new Map(); // key: memberId, value: true
+
+// ---- C端认证中间件 ----
+function cAuth(req, res, next) {
+  const h = req.headers.authorization || '';
+  const token = h.startsWith('Bearer ') ? h.slice(7) : null;
+  if (!token) return res.status(401).json({ code: 401, message: '未登录', data: null });
+  try {
+    const decoded = jwt.verify(token, SECRET);
+    if (decoded.scope !== 'member') return res.status(401).json({ code: 401, message: '非会员token', data: null });
+    const m = getModule('member/list');
+    const member = m.data.find(x => x.id === decoded.memberId);
+    if (!member) return res.status(401).json({ code: 401, message: '会员不存在', data: null });
+    req.member = member;
+    next();
+  } catch (e) {
+    return res.status(401).json({ code: 401, message: 'token无效', data: null });
+  }
+}
+
+// ---- 1. C端会员注册/登录 ----
+app.post('/v1/c/auth/login', (req, res) => {
+  const { phone, code } = req.body || {};
+  if (!phone) return res.status(400).json({ code: 400, message: '手机号必填', data: null });
+  if (!code || !/^\d{4,6}$/.test(String(code))) return res.status(400).json({ code: 400, message: '验证码格式错误(4-6位数字)', data: null });
+
+  const m = getModule('member/list');
+  let member = m.data.find(x => x.phone === phone);
+  if (!member) {
+    // 自动注册
+    const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    member = {
+      id: m.nextId++,
+      name: `会员${phone.slice(-4)}`,
+      phone,
+      gender: '',
+      birthday: '',
+      age: '',
+      address: '',
+      occupation: '',
+      hobby: '',
+      email: '',
+      level: 'NORMAL',
+      points: 0,
+      status: 'enabled',
+      createdAt: now,
+      updatedAt: now
+    };
+    m.data.push(member);
+  }
+
+  const token = jwt.sign({ sub: phone, scope: 'member', memberId: member.id }, SECRET, { expiresIn: '30d' });
+  res.json({ token, member });
+});
+
+app.get('/v1/c/auth/me', cAuth, (req, res) => {
+  res.json(req.member);
+});
+
+app.post('/v1/c/auth/logout', (req, res) => {
+  res.json({ success: true });
+});
+
+// ---- 2.（cAuth已定义在上方）----
+
+// ---- 3. 会员卡聚合 ----
+app.get('/v1/c/member/card', cAuth, (req, res) => {
+  const member = req.member;
+  const levelMod = getModule('member/level');
+  const benefitsMod = getModule('member/benefits');
+  const pointsLogs = getModule('points/logs');
+  const couponTemplates = getModule('coupon/templates');
+
+  // 等级信息
+  const currentLevel = levelMod.data.find(l => l.code === member.level) || levelMod.data[0];
+  const levelsSorted = [...levelMod.data].sort((a, b) => a.minPoints - b.minPoints);
+  const nextLevelIdx = levelsSorted.findIndex(l => l.code === member.level);
+  const nextLevel = nextLevelIdx < levelsSorted.length - 1 ? levelsSorted[nextLevelIdx + 1] : null;
+  const pointsToNext = nextLevel ? nextLevel.minPoints - member.points : 0;
+
+  // 权益列表
+  const benefits = benefitsMod.data.filter(b => b.status === 'enabled' && b.levels.split(',').includes(member.level));
+
+  // 统计
+  const myLogs = pointsLogs.data.filter(l => l.member === member.name);
+  const totalPointsEarned = myLogs.filter(l => l.points > 0).reduce((s, l) => s + l.points, 0);
+  const myCouponsCount = couponTemplates.data.reduce((s, t) => s + (t.claimed || 0), 0);
+
+  // 车牌列表（从 parking/records 去重）
+  const parkingMod = getModule('parking/records');
+  const plates = [...new Set(parkingMod.data.filter(r => r.member === member.name).map(r => r.plate))];
+
+  res.json({
+    member: { name: member.name, phone: member.phone, level: member.level, points: member.points, avatar: '' },
+    levelInfo: { ...currentLevel, nextLevel, pointsToNext },
+    benefits,
+    stats: { monthConsume: Math.floor(Math.random() * 2000 + 500), totalPointsEarned, totalCoupons: myCouponsCount },
+    plates
+  });
+});
+
+// ---- 4. 首页聚合 ----
+app.get('/v1/c/home', (req, res) => {
+  const adMod = getModule('ad/config');
+  const svcMod = getModule('decoration/services');
+  const seckillMod = getModule('marketing/seckill');
+  const groupbuyMod = getModule('marketing/groupbuy');
+  const newMemberMod = getModule('marketing/new-member');
+  const referralMod = getModule('marketing/referral');
+  const merchantMod = getModule('merchant/list');
+  const brandMod = getModule('shop/brands');
+  const persMod = getModule('decoration/personalization');
+
+  // banner
+  let banners = adMod.data.filter(a => a.type === 'banner' && a.status === 'enabled');
+  if (banners.length === 0) {
+    banners = [
+      { id: 1, name: '暑期大促', imageUrl: '/ads/summer-banner.jpg', linkUrl: '/activity/summer' },
+      { id: 2, name: '新品上线', imageUrl: '/ads/new-banner.jpg', linkUrl: '/goods/new' },
+      { id: 3, name: '会员日', imageUrl: '/ads/member-day.jpg', linkUrl: '/member/day' }
+    ];
+  }
+
+  // 弹窗广告
+  let popup = adMod.data.find(a => a.type === 'popup' && a.status === 'enabled');
+  if (!popup) popup = { id: 0, name: '新人礼弹窗', imageUrl: '/ads/new-member.jpg', linkUrl: '/coupon/new-member' };
+
+  // 金刚区图标
+  let navIcons = svcMod.data.filter(s => s.status === 'enabled').sort((a, b) => a.sort - b.sort);
+  if (navIcons.length === 0) {
+    navIcons = [
+      { name: '停车缴费', icon: 'parking', link: '/pages/parking' },
+      { name: '优惠券', icon: 'coupon', link: '/pages/coupon' },
+      { name: '积分', icon: 'points', link: '/pages/points' },
+      { name: '活动', icon: 'activity', link: '/pages/activity' },
+      { name: '品牌', icon: 'brand', link: '/pages/brand' },
+      { name: '餐饮', icon: 'food', link: '/pages/food' },
+      { name: '会员', icon: 'member', link: '/pages/member' },
+      { name: '客服', icon: 'service', link: '/pages/service' }
+    ];
+  }
+
+  // 营销板块
+  const seckills = seckillMod.data.filter(s => s.status === 'enabled').slice(0, 4);
+  const groupbuys = groupbuyMod.data.filter(g => g.status === 'enabled').slice(0, 4);
+  const newMemberGift = newMemberMod.data.filter(n => n.status === 'enabled').slice(0, 1);
+  const referralGift = referralMod.data.filter(r => r.status === 'enabled').slice(0, 1);
+
+  // 推荐商户/品牌
+  const merchants = merchantMod.data.filter(m => m.status === 'enabled').slice(0, 4);
+  const brands = brandMod.data.filter(b => b.status === 'enabled').slice(0, 4);
+  const recommended = [...merchants.map(m => ({ ...m, type: 'merchant' })), ...brands.map(b => ({ ...b, type: 'brand' }))].slice(0, 8);
+
+  // 千人千面
+  let personalization = null;
+  const { audienceId } = req.query;
+  if (audienceId) {
+    personalization = persMod.data.find(p => p.audienceId === parseInt(audienceId) && p.status === 'enabled');
+  }
+
+  res.json({
+    banners,
+    popup,
+    navIcons,
+    marketing: { seckills, groupbuys, newMemberGift, referralGift },
+    recommended,
+    personalization
+  });
+});
+
+// ---- 5. 优惠券中心 ----
+app.get('/v1/c/coupons/available', cAuth, (req, res) => {
+  const tmplMod = getModule('coupon/templates');
+  const poolMod = getModule('coupon/code-pool');
+  const memberId = req.member.id;
+
+  const available = tmplMod.data.filter(t => t.status === 'enabled' && t.claimed < t.quantity);
+  const result = available.map(t => ({
+    ...t,
+    claimedByMe: poolMod.data.some(c => c.templateId === t.id && c.status !== 'available' && c.memberId === memberId)
+  }));
+  res.json(result);
+});
+
+app.post('/v1/c/coupons/:templateId/claim', cAuth, (req, res) => {
+  const tmplMod = getModule('coupon/templates');
+  const poolMod = getModule('coupon/code-pool');
+  const templateId = parseInt(req.params.templateId);
+  const memberId = req.member.id;
+
+  const tmpl = tmplMod.data.find(t => t.id === templateId);
+  if (!tmpl) return res.status(404).json({ code: 404, message: '券模板不存在', data: null });
+  if (tmpl.status !== 'enabled') return res.status(400).json({ code: 400, message: '券已下架', data: null });
+  if (tmpl.claimed >= tmpl.quantity) return res.status(400).json({ code: 400, message: '库存不足', data: null });
+
+  // 未重复领取
+  const alreadyClaimed = poolMod.data.some(c => c.templateId === templateId && c.memberId === memberId && c.status !== 'available');
+  if (alreadyClaimed) return res.status(400).json({ code: 400, message: '已领取该券', data: null });
+
+  // 找一个 available 的码
+  const codeItem = poolMod.data.find(c => c.templateId === templateId && c.status === 'available');
+  if (!codeItem) {
+    // 自动生成一个码
+    const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const newCode = {
+      id: poolMod.nextId++,
+      code: `HW${Date.now()}${Math.random().toString(36).substr(2, 4).toUpperCase()}`,
+      templateId,
+      templateName: tmpl.name,
+      batchId: 0,
+      status: 'issued',
+      memberId,
+      issueTime: now,
+      issueChannel: 'capp',
+      issueOrderId: '',
+      verifyTime: '',
+      verifyShopId: '',
+      revokeTime: ''
+    };
+    poolMod.data.push(newCode);
+    tmpl.claimed += 1;
+    res.json(newCode);
+  } else {
+    const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    codeItem.status = 'issued';
+    codeItem.memberId = memberId;
+    codeItem.issueTime = now;
+    codeItem.issueChannel = 'capp';
+    tmpl.claimed += 1;
+    res.json(codeItem);
+  }
+});
+
+app.get('/v1/c/coupons/mine', cAuth, (req, res) => {
+  const poolMod = getModule('coupon/code-pool');
+  const memberId = req.member.id;
+  const mine = poolMod.data.filter(c => c.memberId === memberId && c.issueChannel === 'capp');
+
+  const unused = mine.filter(c => c.status === 'issued');
+  const used = mine.filter(c => c.status === 'verified');
+  const expired = mine.filter(c => c.status === 'revoked');
+  res.json({ unused, used, expired });
+});
+
+// ---- 6. 积分商城 ----
+app.get('/v1/c/points/mall', cAuth, (req, res) => {
+  const goodsMod = getModule('points/goods');
+  const member = req.member;
+  const hot = goodsMod.data.filter(g => g.status === 'enabled').sort((a, b) => b.stock - a.stock).slice(0, 8);
+  const categories = ['餐饮', '娱乐', '购物', '服务'];
+  res.json({ balance: member.points, hot, categories });
+});
+
+app.get('/v1/c/points/goods/:id', (req, res) => {
+  const goodsMod = getModule('points/goods');
+  const item = goodsMod.data.find(g => g.id === parseInt(req.params.id));
+  if (!item) return res.status(404).json({ code: 404, message: '商品不存在', data: null });
+  res.json(item);
+});
+
+app.post('/v1/c/points/exchange', cAuth, (req, res) => {
+  const { goodsId, quantity = 1, delivery = 'self' } = req.body || {};
+  const goodsMod = getModule('points/goods');
+  const ordersMod = getModule('points/mall-orders');
+  const logsMod = getModule('points/logs');
+  const member = req.member;
+
+  const goods = goodsMod.data.find(g => g.id === goodsId);
+  if (!goods) return res.status(404).json({ code: 404, message: '商品不存在', data: null });
+  if (goods.stock < quantity) return res.status(400).json({ code: 400, message: '库存不足', data: null });
+  const totalPoints = goods.points * quantity;
+  if (member.points < totalPoints) return res.status(400).json({ code: 400, message: '积分不足', data: null });
+
+  // 扣库存
+  goods.stock -= quantity;
+  // 扣积分
+  member.points -= totalPoints;
+  // 写订单
+  const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  const order = {
+    id: ordersMod.nextId++,
+    orderNo: `PM${Date.now()}`,
+    member: member.name,
+    goods: goods.name,
+    points: totalPoints,
+    delivery,
+    status: 'done',
+    createdAt: now,
+    updatedAt: now
+  };
+  ordersMod.data.push(order);
+  // 写积分流水
+  const log = {
+    id: logsMod.nextId++,
+    member: member.name,
+    type: 'exchange',
+    points: -totalPoints,
+    balance: member.points,
+    remark: `兑换${goods.name}x${quantity}`,
+    createdAt: now,
+    updatedAt: now
+  };
+  logsMod.data.push(log);
+
+  res.json({ order, pointsBalance: member.points });
+});
+
+app.get('/v1/c/points/logs', cAuth, (req, res) => {
+  const logsMod = getModule('points/logs');
+  const page = parseInt(req.query.page) || 1;
+  const pageSize = parseInt(req.query.pageSize) || 10;
+  const myLogs = logsMod.data.filter(l => l.member === req.member.name).sort((a, b) => b.id - a.id);
+  const total = myLogs.length;
+  const list = myLogs.slice((page - 1) * pageSize, page * pageSize);
+  res.json({ list, total, page, pageSize });
+});
+
+// ---- 7. 营销活动聚合 ----
+app.get('/v1/c/activities', (req, res) => {
+  const activityTypes = [
+    { module: 'activity/checkin', type: 'checkin' },
+    { module: 'marketing/games', type: 'game' },
+    { module: 'marketing/surveys', type: 'survey' },
+    { module: 'marketing/votes', type: 'vote' },
+    { module: 'marketing/groupbuy', type: 'groupbuy' },
+    { module: 'marketing/seckill', type: 'seckill' },
+    { module: 'marketing/help-coupon', type: 'helpCoupon' },
+    { module: 'marketing/word-coupon', type: 'wordCoupon' },
+    { module: 'marketing/new-member', type: 'newMember' },
+    { module: 'marketing/referral', type: 'referral' },
+    { module: 'marketing/lucky-draw', type: 'luckyDraw' },
+    { module: 'marketing/blind-box', type: 'blindBox' },
+    { module: 'marketing/countdown', type: 'countdown' },
+    { module: 'marketing/pre-sale', type: 'preSale' },
+    { module: 'marketing/bargain', type: 'bargain' },
+    { module: 'marketing/count-cards', type: 'countCard' },
+    { module: 'marketing/checkin-coupon', type: 'checkinCoupon' },
+    { module: 'marketing/douyin-coupon', type: 'douyinCoupon' },
+    { module: 'activity/signups', type: 'signup' }
+  ];
+
+  const result = {};
+  for (const { module, type } of activityTypes) {
+    const m = getModule(module);
+    if (!m) continue;
+    const items = m.data.filter(x => x.status === 'enabled').map(x => ({ ...x, type }));
+    result[type] = items;
+  }
+  res.json(result);
+});
+
+// ---- 8. 签到 ----
+app.post('/v1/c/checkin', cAuth, (req, res) => {
+  const member = req.member;
+  const today = new Date().toISOString().slice(0, 10);
+  const key = `${member.id}_${today}`;
+  if (cappCheckinLog.has(key)) return res.status(400).json({ code: 400, message: '今日已签到', data: null });
+
+  const checkinMod = getModule('activity/checkin');
+  const activeCheckin = checkinMod.data.find(c => c.status === 'enabled');
+  const rewardType = activeCheckin ? activeCheckin.rewardType : 'points';
+  const rewardValue = activeCheckin ? parseInt(activeCheckin.rewardValue) : 5;
+
+  let reward = {};
+  if (rewardType === 'points') {
+    member.points += rewardValue;
+    reward = { type: 'points', value: rewardValue };
+  } else if (rewardType === 'coupon') {
+    reward = { type: 'coupon', value: activeCheckin.rewardValue };
+  }
+
+  // 写积分流水
+  const logsMod = getModule('points/logs');
+  const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  logsMod.data.push({
+    id: logsMod.nextId++,
+    member: member.name,
+    type: 'signin',
+    points: rewardType === 'points' ? rewardValue : 0,
+    balance: member.points,
+    remark: '每日签到',
+    createdAt: now,
+    updatedAt: now
+  });
+
+  cappCheckinLog.set(key, reward);
+  res.json({ reward });
+});
+
+app.get('/v1/c/checkin/status', cAuth, (req, res) => {
+  const member = req.member;
+  const today = new Date().toISOString().slice(0, 10);
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth() + 1;
+  const todayKey = `${member.id}_${today}`;
+
+  // 本月签到日
+  const checkedDates = [];
+  for (const [key] of cappCheckinLog) {
+    if (key.startsWith(`${member.id}_`)) {
+      const dateStr = key.split('_')[1];
+      const d = new Date(dateStr);
+      if (d.getFullYear() === year && d.getMonth() + 1 === month) checkedDates.push(dateStr);
+    }
+  }
+
+  // 连续签到天数
+  let continuous = 0;
+  const d = new Date();
+  while (true) {
+    const key = `${member.id}_${d.toISOString().slice(0, 10)}`;
+    if (cappCheckinLog.has(key)) { continuous++; d.setDate(d.getDate() - 1); } else break;
+  }
+
+  res.json({ checkedDates, continuous, todayChecked: cappCheckinLog.has(todayKey) });
+});
+
+// ---- 9. 停车 ----
+app.get('/v1/c/parking/plates', cAuth, (req, res) => {
+  const parkingMod = getModule('parking/records');
+  const plates = [...new Set(parkingMod.data.filter(r => r.member === req.member.name).map(r => r.plate))];
+  res.json(plates);
+});
+
+app.post('/v1/c/parking/plates', cAuth, (req, res) => {
+  const { plate } = req.body || {};
+  if (!plate) return res.status(400).json({ code: 400, message: '车牌必填', data: null });
+  const parkingMod = getModule('parking/records');
+  const existing = parkingMod.data.filter(r => r.member === req.member.name);
+  const plates = [...new Set(existing.map(r => r.plate))];
+  if (plates.includes(plate)) return res.status(400).json({ code: 400, message: '车牌已绑定', data: null });
+  // 创建一条绑定记录（无入场时间的占位）
+  const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  parkingMod.data.push({
+    id: parkingMod.nextId++,
+    plate, member: req.member.name, inTime: '', outTime: '', duration: 0, fee: 0, points: 0,
+    createdAt: now, updatedAt: now
+  });
+  res.json({ plate, bound: true });
+});
+
+app.delete('/v1/c/parking/plates/:plate', cAuth, (req, res) => {
+  const parkingMod = getModule('parking/records');
+  const plate = req.params.plate;
+  // 删除该会员绑定该车牌的占位记录（inTime空的）
+  const idx = parkingMod.data.findIndex(r => r.member === req.member.name && r.plate === plate && !r.inTime);
+  if (idx !== -1) parkingMod.data.splice(idx, 1);
+  res.json({ success: true });
+});
+
+app.get('/v1/c/parking/fee', cAuth, (req, res) => {
+  const { plate } = req.query;
+  if (!plate) return res.status(400).json({ code: 400, message: '车牌必填', data: null });
+  const parkingMod = getModule('parking/records');
+  const parkingCouponsMod = getModule('parking/coupons');
+  const poolMod = getModule('coupon/code-pool');
+
+  // 查在场记录（outTime为空且有inTime）
+  let record = parkingMod.data.find(r => r.plate === plate && r.inTime && !r.outTime);
+  if (!record) {
+    // mock一条在场记录
+    record = { plate, inTime: new Date(Date.now() - 3600000 * 2).toISOString().slice(0, 19).replace('T', ' '), duration: 120, fee: 10 };
+  }
+
+  // 可用停车券
+  const myParkingCoupons = parkingCouponsMod.data.filter(c => c.status === 'enabled');
+  const myCouponCodes = poolMod.data.filter(c => c.memberId === req.member.id && c.issueChannel === 'capp' && c.status === 'issued' && c.templateName && c.templateName.includes('停车'));
+
+  // 可抵扣积分（每10积分抵1元，最多抵100%）
+  const pointsDeduct = Math.min(Math.floor(req.member.points / 10), record.fee || 10);
+
+  res.json({
+    plate, inTime: record.inTime, duration: record.duration || 120, fee: record.fee || 10,
+    availableCoupons: myParkingCoupons.map(c => ({ id: c.id, name: c.name, type: c.type, value: c.value })),
+    myCouponCodes,
+    pointsDeduct, pointsBalance: req.member.points
+  });
+});
+
+app.post('/v1/c/parking/pay', cAuth, (req, res) => {
+  const { plate, payMethod = 'wechat', couponCodes = [], usePoints = 0 } = req.body || {};
+  const parkingMod = getModule('parking/records');
+  const poolMod = getModule('coupon/code-pool');
+  const logsMod = getModule('points/logs');
+
+  let record = parkingMod.data.find(r => r.plate === plate && r.inTime && !r.outTime);
+  const baseFee = record ? record.fee : 10;
+
+  // 券抵扣
+  let couponDeduct = 0;
+  for (const code of couponCodes) {
+    const cItem = poolMod.data.find(c => c.code === code && c.memberId === req.member.id && c.status === 'issued');
+    if (cItem) { cItem.status = 'verified'; couponDeduct += 5; }
+  }
+
+  // 积分抵扣
+  let pointsDeduct = Math.min(Math.floor(usePoints / 10), baseFee - couponDeduct);
+  if (pointsDeduct > 0) {
+    req.member.points -= pointsDeduct * 10;
+    logsMod.data.push({
+      id: logsMod.nextId++, member: req.member.name, type: 'parking',
+      points: -(pointsDeduct * 10), balance: req.member.points,
+      remark: `停车积分抵扣${pointsDeduct}元`,
+      createdAt: new Date().toISOString().slice(0, 19).replace('T', ' ')
+    });
+  }
+
+  const finalFee = baseFee - couponDeduct - pointsDeduct;
+  if (record) {
+    record.outTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    record.fee = finalFee;
+  }
+
+  res.json({ success: true, finalFee, couponDeduct, pointsDeduct, payMethod });
+});
+
+app.get('/v1/c/parking/records', cAuth, (req, res) => {
+  const parkingMod = getModule('parking/records');
+  const myRecords = parkingMod.data.filter(r => r.member === req.member.name && r.inTime);
+  res.json(myRecords);
+});
+
+app.get('/v1/c/parking/coupons', cAuth, (req, res) => {
+  const parkingCouponsMod = getModule('parking/coupons');
+  const poolMod = getModule('coupon/code-pool');
+  const available = parkingCouponsMod.data.filter(c => c.status === 'enabled');
+  const myCodes = poolMod.data.filter(c => c.memberId === req.member.id && c.status === 'issued' && c.templateName && c.templateName.includes('停车'));
+  res.json({ available, myCodes });
+});
+
+app.post('/v1/c/parking/exchange', cAuth, (req, res) => {
+  const { couponId } = req.body || {};
+  const parkingCouponsMod = getModule('parking/coupons');
+  const logsMod = getModule('points/logs');
+
+  const coupon = parkingCouponsMod.data.find(c => c.id === couponId);
+  if (!coupon) return res.status(404).json({ code: 404, message: '停车券不存在', data: null });
+  if (!coupon.exchangePoints) return res.status(400).json({ code: 400, message: '此券不可积分兑换', data: null });
+  if (req.member.points < coupon.exchangePoints) return res.status(400).json({ code: 400, message: '积分不足', data: null });
+
+  req.member.points -= coupon.exchangePoints;
+  logsMod.data.push({
+    id: logsMod.nextId++, member: req.member.name, type: 'exchange',
+    points: -coupon.exchangePoints, balance: req.member.points,
+    remark: `兑换${coupon.name}`,
+    createdAt: new Date().toISOString().slice(0, 19).replace('T', ' ')
+  });
+
+  // 发一张券到 code-pool
+  const poolMod = getModule('coupon/code-pool');
+  const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  poolMod.data.push({
+    id: poolMod.nextId++,
+    code: `PK${Date.now()}${Math.random().toString(36).substr(2, 4).toUpperCase()}`,
+    templateId: 0, templateName: coupon.name, batchId: 0,
+    status: 'issued', memberId: req.member.id,
+    issueTime: now, issueChannel: 'capp', issueOrderId: '',
+    verifyTime: '', verifyShopId: '', revokeTime: ''
+  });
+
+  res.json({ success: true, couponName: coupon.name, pointsBalance: req.member.points });
+});
+
+// ---- 10. 商户导览 ----
+app.get('/v1/c/merchants', (req, res) => {
+  const merchantMod = getModule('merchant/list');
+  let merchants = merchantMod.data.filter(m => m.status === 'enabled');
+  const { category, floor } = req.query;
+  if (category) merchants = merchants.filter(m => m.category === category);
+
+  if (merchants.length === 0) {
+    merchants = [
+      { id: 1, name: '海底捞', category: '餐饮', floor: '3F', phone: '13900139001', logo: '', desc: '知名火锅品牌' },
+      { id: 2, name: '星巴克', category: '餐饮', floor: '1F', phone: '13900139002', logo: '', desc: '精品咖啡' },
+      { id: 3, name: '优衣库', category: '服装', floor: '2F', phone: '', logo: '', desc: '快时尚品牌' },
+      { id: 4, name: 'Nike', category: '运动', floor: '4F', phone: '', logo: '', desc: '运动品牌' }
+    ];
+  }
+
+  // 附带楼层位置
+  const locMod = getModule('merchant/locations');
+  merchants = merchants.map(m => {
+    const loc = locMod.data.find(l => l.merchant === m.name);
+    return { ...m, floor: loc ? loc.floor : (m.floor || ''), positionNo: loc ? loc.positionNo : '' };
+  });
+
+  if (floor) merchants = merchants.filter(m => m.floor === floor);
+  res.json(merchants);
+});
+
+app.get('/v1/c/merchants/:id', (req, res) => {
+  const merchantMod = getModule('merchant/list');
+  const merchant = merchantMod.data.find(m => m.id === parseInt(req.params.id));
+  if (!merchant) return res.status(404).json({ code: 404, message: '商户不存在', data: null });
+
+  const locMod = getModule('merchant/locations');
+  const foodMod = getModule('merchant/food-config');
+  const location = locMod.data.find(l => l.merchant === merchant.name);
+  const foodConfig = foodMod.data.find(f => f.merchant === merchant.name);
+
+  // 该商户在售活动
+  const seckillMod = getModule('marketing/seckill');
+  const groupbuyMod = getModule('marketing/groupbuy');
+  const activities = [...seckillMod.data.filter(s => s.status === 'enabled'), ...groupbuyMod.data.filter(g => g.status === 'enabled')];
+
+  res.json({ ...merchant, location, foodConfig, activities });
+});
+
+app.get('/v1/c/food', (req, res) => {
+  const merchantMod = getModule('merchant/list');
+  const foodMod = getModule('merchant/food-config');
+  let merchants = merchantMod.data.filter(m => m.category === '餐饮' && m.status === 'enabled');
+  if (merchants.length === 0) {
+    merchants = [{ id: 1, name: '海底捞', category: '餐饮' }, { id: 2, name: '星巴克', category: '餐饮' }];
+  }
+  const result = merchants.map(m => {
+    const food = foodMod.data.find(f => f.merchant === m.name);
+    return { ...m, foodConfig: food || null };
+  });
+  res.json(result);
+});
+
+// ---- 11. 在线商城 ----
+app.get('/v1/c/mall/home', (req, res) => {
+  const goodsMod = getModule('shop/goods');
+  const catMod = getModule('shop/categories');
+  const seckillMod = getModule('marketing/seckill');
+  const groupbuyMod = getModule('marketing/groupbuy');
+  const preSaleMod = getModule('marketing/pre-sale');
+  const blindBoxMod = getModule('marketing/blind-box');
+
+  const banners = [
+    { id: 1, title: '商城首页Banner', image: '/mall/banner1.jpg', link: '' },
+    { id: 2, title: '新品上线', image: '/mall/banner2.jpg', link: '' }
+  ];
+  const categories = catMod.data.filter(c => c.status === 'enabled');
+  const recommendGoods = goodsMod.data.filter(g => g.status === 'enabled').slice(0, 10);
+  const activityZone = {
+    seckill: seckillMod.data.filter(s => s.status === 'enabled').length > 0,
+    groupbuy: groupbuyMod.data.filter(g => g.status === 'enabled').length > 0,
+    preSale: preSaleMod.data.filter(p => p.status === 'enabled').length > 0,
+    blindBox: blindBoxMod.data.filter(b => b.status === 'enabled').length > 0
+  };
+
+  res.json({ banners, categories, recommendGoods, activityZone });
+});
+
+app.get('/v1/c/mall/goods', (req, res) => {
+  const goodsMod = getModule('shop/goods');
+  let goods = goodsMod.data.filter(g => g.status === 'enabled');
+  const { category, keyword, sort } = req.query;
+  if (category) goods = goods.filter(g => g.category === category);
+  if (keyword) goods = goods.filter(g => g.name.toLowerCase().includes(keyword.toLowerCase()));
+  if (sort === 'price') goods.sort((a, b) => a.price - b.price);
+  else if (sort === 'sales') goods.sort((a, b) => b.sales - a.sales);
+  else goods.sort((a, b) => b.id - a.id);
+  res.json(goods);
+});
+
+app.get('/v1/c/mall/goods/:id', (req, res) => {
+  const goodsMod = getModule('shop/goods');
+  const item = goodsMod.data.find(g => g.id === parseInt(req.params.id));
+  if (!item) return res.status(404).json({ code: 404, message: '商品不存在', data: null });
+  res.json(item);
+});
+
+app.post('/v1/c/mall/cart', cAuth, (req, res) => {
+  const { goodsId, quantity = 1 } = req.body || {};
+  const goodsMod = getModule('shop/goods');
+  const goods = goodsMod.data.find(g => g.id === goodsId);
+  if (!goods) return res.status(404).json({ code: 404, message: '商品不存在', data: null });
+
+  const cart = cappCart.get(req.member.id) || [];
+  const existing = cart.find(c => c.goodsId === goodsId);
+  if (existing) { existing.quantity += quantity; }
+  else { cart.push({ itemId: Date.now(), goodsId, name: goods.name, price: goods.price, quantity }); }
+  cappCart.set(req.member.id, cart);
+  res.json(cart);
+});
+
+app.get('/v1/c/mall/cart', cAuth, (req, res) => {
+  const cart = cappCart.get(req.member.id) || [];
+  res.json(cart);
+});
+
+app.put('/v1/c/mall/cart/:itemId', cAuth, (req, res) => {
+  const { quantity } = req.body || {};
+  const cart = cappCart.get(req.member.id) || [];
+  const item = cart.find(c => c.itemId === parseInt(req.params.itemId));
+  if (!item) return res.status(404).json({ code: 404, message: '购物车项不存在', data: null });
+  item.quantity = quantity;
+  cappCart.set(req.member.id, cart);
+  res.json(cart);
+});
+
+app.delete('/v1/c/mall/cart/:itemId', cAuth, (req, res) => {
+  let cart = cappCart.get(req.member.id) || [];
+  cart = cart.filter(c => c.itemId !== parseInt(req.params.itemId));
+  cappCart.set(req.member.id, cart);
+  res.json(cart);
+});
+
+app.post('/v1/c/mall/order', cAuth, (req, res) => {
+  const { items, addressId, delivery = 'express', remark = '' } = req.body || {};
+  const goodsMod = getModule('shop/goods');
+  const ordersMod = getModule('shop/orders');
+  const member = req.member;
+
+  // 扣库存 & 计算总额
+  let totalAmount = 0;
+  const orderItems = [];
+  for (const it of (items || [])) {
+    const goods = goodsMod.data.find(g => g.id === it.goodsId);
+    if (!goods) continue;
+    if (goods.stock < it.quantity) return res.status(400).json({ code: 400, message: `${goods.name}库存不足`, data: null });
+    goods.stock -= it.quantity;
+    goods.sales += it.quantity;
+    totalAmount += goods.price * it.quantity;
+    orderItems.push({ goodsId: goods.id, name: goods.name, price: goods.price, quantity: it.quantity });
+  }
+
+  // 写订单
+  const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  const order = {
+    id: ordersMod.nextId++,
+    orderNo: `O${Date.now()}`,
+    member: member.name,
+    goods: orderItems.map(i => i.name).join(','),
+    amount: totalAmount,
+    status: 'paid',
+    delivery,
+    remark,
+    items: orderItems,
+    createdAt: now,
+    updatedAt: now
+  };
+  ordersMod.data.push(order);
+
+  // 清购物车对应项
+  let cart = cappCart.get(member.id) || [];
+  cart = cart.filter(c => !orderItems.find(i => i.goodsId === c.goodsId));
+  cappCart.set(member.id, cart);
+
+  res.json(order);
+});
+
+app.get('/v1/c/mall/orders', cAuth, (req, res) => {
+  const ordersMod = getModule('shop/orders');
+  const myOrders = ordersMod.data.filter(o => o.member === req.member.name);
+  const unused = myOrders.filter(o => o.status === 'paid');
+  const used = myOrders.filter(o => o.status === 'finished');
+  const refunded = myOrders.filter(o => o.status === 'refunded' || o.status === 'refund_pending');
+  res.json({ unused, used, refunded });
+});
+
+app.get('/v1/c/mall/orders/:id', (req, res) => {
+  const ordersMod = getModule('shop/orders');
+  const order = ordersMod.data.find(o => o.id === parseInt(req.params.id));
+  if (!order) return res.status(404).json({ code: 404, message: '订单不存在', data: null });
+  res.json(order);
+});
+
+app.post('/v1/c/mall/orders/:id/cancel', cAuth, (req, res) => {
+  const ordersMod = getModule('shop/orders');
+  const order = ordersMod.data.find(o => o.id === parseInt(req.params.id));
+  if (!order) return res.status(404).json({ code: 404, message: '订单不存在', data: null });
+  if (order.member !== req.member.name) return res.status(403).json({ code: 403, message: '非本人订单', data: null });
+  order.status = 'cancelled';
+  res.json(order);
+});
+
+app.post('/v1/c/mall/orders/:id/refund', cAuth, (req, res) => {
+  const ordersMod = getModule('shop/orders');
+  const order = ordersMod.data.find(o => o.id === parseInt(req.params.id));
+  if (!order) return res.status(404).json({ code: 404, message: '订单不存在', data: null });
+  if (order.member !== req.member.name) return res.status(403).json({ code: 403, message: '非本人订单', data: null });
+  order.status = 'refund_pending';
+  res.json(order);
+});
+
+// 收货地址
+app.get('/v1/c/mall/addresses', cAuth, (req, res) => {
+  const addresses = cappAddresses.get(req.member.id) || [];
+  res.json(addresses);
+});
+
+app.post('/v1/c/mall/addresses', cAuth, (req, res) => {
+  const { name, phone, province, city, district, detail, isDefault = false } = req.body || {};
+  const addresses = cappAddresses.get(req.member.id) || [];
+  const newAddr = { id: Date.now(), name, phone, province, city, district, detail, isDefault };
+  if (isDefault) addresses.forEach(a => a.isDefault = false);
+  addresses.push(newAddr);
+  cappAddresses.set(req.member.id, addresses);
+  res.json(newAddr);
+});
+
+app.put('/v1/c/mall/addresses/:id', cAuth, (req, res) => {
+  const addresses = cappAddresses.get(req.member.id) || [];
+  const idx = addresses.findIndex(a => a.id === parseInt(req.params.id));
+  if (idx === -1) return res.status(404).json({ code: 404, message: '地址不存在', data: null });
+  const { isDefault } = req.body || {};
+  if (isDefault) addresses.forEach(a => a.isDefault = false);
+  addresses[idx] = { ...addresses[idx], ...req.body };
+  cappAddresses.set(req.member.id, addresses);
+  res.json(addresses[idx]);
+});
+
+app.delete('/v1/c/mall/addresses/:id', cAuth, (req, res) => {
+  let addresses = cappAddresses.get(req.member.id) || [];
+  addresses = addresses.filter(a => a.id !== parseInt(req.params.id));
+  cappAddresses.set(req.member.id, addresses);
+  res.json({ success: true });
+});
+
+// ---- 12. 营销玩法动作接口 ----
+app.post('/v1/c/groupbuy/:id/join', cAuth, (req, res) => {
+  const groupbuyMod = getModule('marketing/groupbuy');
+  const item = groupbuyMod.data.find(g => g.id === parseInt(req.params.id));
+  if (!item) return res.status(404).json({ code: 404, message: '拼团不存在', data: null });
+  item.joined += 1;
+  const ordersMod = getModule('shop/orders');
+  ordersMod.data.push({
+    id: ordersMod.nextId++, orderNo: `GB${Date.now()}`, member: req.member.name,
+    goods: item.name, amount: item.payAmount, status: 'paid',
+    createdAt: new Date().toISOString().slice(0, 19).replace('T', ' ')
+  });
+  res.json({ joined: item.joined, orderNo: `GB${Date.now()}` });
+});
+
+app.post('/v1/c/seckill/:id/buy', cAuth, (req, res) => {
+  const seckillMod = getModule('marketing/seckill');
+  const item = seckillMod.data.find(s => s.id === parseInt(req.params.id));
+  if (!item) return res.status(404).json({ code: 404, message: '秒杀不存在', data: null });
+  if (item.stock <= item.sold) return res.status(400).json({ code: 400, message: '已售罄', data: null });
+  item.sold += 1;
+  const ordersMod = getModule('shop/orders');
+  ordersMod.data.push({
+    id: ordersMod.nextId++, orderNo: `SK${Date.now()}`, member: req.member.name,
+    goods: item.name, amount: item.price, status: 'paid',
+    createdAt: new Date().toISOString().slice(0, 19).replace('T', ' ')
+  });
+  res.json({ sold: item.sold, orderNo: `SK${Date.now()}` });
+});
+
+app.post('/v1/c/help-coupon/:id/help', cAuth, (req, res) => {
+  const mod = getModule('marketing/help-coupon');
+  const item = mod.data.find(h => h.id === parseInt(req.params.id));
+  if (!item) return res.status(404).json({ code: 404, message: '助力券不存在', data: null });
+  item.helped += 1;
+  res.json({ helped: item.helped, needHelp: item.needHelp, completed: item.helped >= item.needHelp });
+});
+
+app.post('/v1/c/help-coupon/:id/claim', cAuth, (req, res) => {
+  const mod = getModule('marketing/help-coupon');
+  const item = mod.data.find(h => h.id === parseInt(req.params.id));
+  if (!item) return res.status(404).json({ code: 404, message: '助力券不存在', data: null });
+  if (item.helped < item.needHelp) return res.status(400).json({ code: 400, message: '助力未达标', data: null });
+  // 发券
+  const poolMod = getModule('coupon/code-pool');
+  poolMod.data.push({
+    id: poolMod.nextId++, code: `HC${Date.now()}`, templateId: 0, templateName: item.template, batchId: 0,
+    status: 'issued', memberId: req.member.id,
+    issueTime: new Date().toISOString().slice(0, 19).replace('T', ' '), issueChannel: 'capp',
+    issueOrderId: '', verifyTime: '', verifyShopId: '', revokeTime: ''
+  });
+  res.json({ claimed: true, couponName: item.template });
+});
+
+app.post('/v1/c/word-coupon/claim', cAuth, (req, res) => {
+  const { word } = req.body || {};
+  const mod = getModule('marketing/word-coupon');
+  const item = mod.data.find(w => w.word === word && w.status === 'enabled');
+  if (!item) return res.status(400).json({ code: 400, message: '口令不匹配', data: null });
+
+  const poolMod = getModule('coupon/code-pool');
+  poolMod.data.push({
+    id: poolMod.nextId++, code: `WC${Date.now()}`, templateId: 0, templateName: item.template, batchId: 0,
+    status: 'issued', memberId: req.member.id,
+    issueTime: new Date().toISOString().slice(0, 19).replace('T', ' '), issueChannel: 'capp',
+    issueOrderId: '', verifyTime: '', verifyShopId: '', revokeTime: ''
+  });
+  item.claimed += 1;
+  res.json({ claimed: true, couponName: item.template });
+});
+
+app.post('/v1/c/game/:id/play', cAuth, (req, res) => {
+  const mod = getModule('marketing/games');
+  const game = mod.data.find(g => g.id === parseInt(req.params.id));
+  if (!game) return res.status(404).json({ code: 404, message: '游戏不存在', data: null });
+  // 扣积分（mock 10积分）
+  req.member.points -= 10;
+  // 随机中奖
+  const rewardsList = game.rewards.split('/');
+  const prize = rewardsList[Math.floor(Math.random() * rewardsList.length)];
+  res.json({ prize, pointsCost: 10, pointsBalance: req.member.points });
+});
+
+app.post('/v1/c/survey/:id/submit', cAuth, (req, res) => {
+  const mod = getModule('marketing/surveys');
+  const survey = mod.data.find(s => s.id === parseInt(req.params.id));
+  if (!survey) return res.status(404).json({ code: 404, message: '问卷不存在', data: null });
+  survey.participants += 1;
+  // 发奖励积分
+  req.member.points += 20;
+  res.json({ reward: '20积分', pointsBalance: req.member.points });
+});
+
+app.post('/v1/c/vote/:id/submit', cAuth, (req, res) => {
+  const mod = getModule('marketing/votes');
+  const vote = mod.data.find(v => v.id === parseInt(req.params.id));
+  if (!vote) return res.status(404).json({ code: 404, message: '投票不存在', data: null });
+  vote.totalVotes += 1;
+  req.member.points += 10;
+  res.json({ reward: '10积分', pointsBalance: req.member.points });
+});
+
+app.post('/v1/c/activity/:id/signup', cAuth, (req, res) => {
+  const mod = getModule('activity/signups');
+  const activity = mod.data.find(a => a.id === parseInt(req.params.id));
+  if (!activity) return res.status(404).json({ code: 404, message: '活动不存在', data: null });
+  activity.count += 1;
+  activity.status = 'approved';
+  res.json({ signedUp: true, activityName: activity.name });
+});
+
+app.post('/v1/c/new-member/claim', cAuth, (req, res) => {
+  if (cappNewMemberClaimed.has(req.member.id)) return res.status(400).json({ code: 400, message: '已领取新人礼', data: null });
+  cappNewMemberClaimed.set(req.member.id, true);
+  req.member.points += 100;
+  const logsMod = getModule('points/logs');
+  logsMod.data.push({
+    id: logsMod.nextId++, member: req.member.name, type: 'newMember',
+    points: 100, balance: req.member.points, remark: '新人礼包积分',
+    createdAt: new Date().toISOString().slice(0, 19).replace('T', ' ')
+  });
+  res.json({ claimed: true, rewards: '停车券1小时+100积分+10元代金券', pointsBalance: req.member.points });
+});
+
+app.get('/v1/c/referral/code', cAuth, (req, res) => {
+  // 用 memberId 哈希生成邀请码
+  const code = Buffer.from(`ref_${req.member.id}`).toString('base64').replace(/[^a-zA-Z0-9]/g, '').slice(0, 8).toUpperCase();
+  res.json({ code, memberId: req.member.id });
+});
+
+app.get('/v1/c/referral/records', cAuth, (req, res) => {
+  // mock 邀请记录
+  res.json([]);
+});
+
+// ---- 13. 拍照积分 ----
+app.post('/v1/c/photo-points/upload', cAuth, (req, res) => {
+  const { merchantId, amount, image } = req.body || {};
+  const auditMod = getModule('ai/receipt-audit');
+  const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  const merchantMod = getModule('merchant/list');
+  const merchant = merchantMod.data.find(m => m.id === merchantId);
+
+  const record = {
+    id: auditMod.nextId++,
+    member: req.member.name,
+    amount: amount || 0,
+    aiAmount: amount || 0,
+    aiStatus: 'success',
+    auditStatus: 'pending',
+    pointsIssued: 0,
+    merchant: merchant ? merchant.name : '',
+    receiptImage: image || '',
+    submitTime: now,
+    createdAt: now,
+    updatedAt: now
+  };
+  auditMod.data.push(record);
+  res.json({ id: record.id, auditStatus: 'pending' });
+});
+
+app.get('/v1/c/photo-points/records', cAuth, (req, res) => {
+  const auditMod = getModule('ai/receipt-audit');
+  const myRecords = auditMod.data.filter(r => r.member === req.member.name);
+  res.json(myRecords);
+});
+
+// ---- 14. 物品租借 ----
+app.get('/v1/c/rental/items', (req, res) => {
+  const mod = getModule('rental/items');
+  const items = mod.data.filter(i => i.status === 'enabled');
+  res.json(items);
+});
+
+app.post('/v1/c/rental/apply', cAuth, (req, res) => {
+  const { itemId } = req.body || {};
+  const itemsMod = getModule('rental/items');
+  const recordsMod = getModule('rental/records');
+  const item = itemsMod.data.find(i => i.id === itemId);
+  if (!item) return res.status(404).json({ code: 404, message: '物品不存在', data: null });
+  if (item.stock <= 0) return res.status(400).json({ code: 400, message: '库存不足', data: null });
+
+  item.stock -= 1;
+  const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  const record = {
+    id: recordsMod.nextId++,
+    item: item.name, member: req.member.name,
+    outTime: now, returnTime: '', status: 'borrowed',
+    createdAt: now, updatedAt: now
+  };
+  recordsMod.data.push(record);
+  res.json({ record, deposit: item.deposit });
+});
+
+app.get('/v1/c/rental/records', cAuth, (req, res) => {
+  const recordsMod = getModule('rental/records');
+  const myRecords = recordsMod.data.filter(r => r.member === req.member.name);
+  res.json(myRecords);
+});
+
+app.post('/v1/c/rental/:recordId/return', cAuth, (req, res) => {
+  const recordsMod = getModule('rental/records');
+  const record = recordsMod.data.find(r => r.id === parseInt(req.params.recordId));
+  if (!record) return res.status(404).json({ code: 404, message: '租借记录不存在', data: null });
+  if (record.member !== req.member.name) return res.status(403).json({ code: 403, message: '非本人记录', data: null });
+
+  record.status = 'returned';
+  record.returnTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+  // 恢复库存
+  const itemsMod = getModule('rental/items');
+  const item = itemsMod.data.find(i => i.name === record.item);
+  if (item) item.stock += 1;
+
+  res.json({ returned: true, depositRefund: item ? item.deposit : 0 });
+});
+
+// ---- 15. 消息中心 ----
+app.get('/v1/c/messages', cAuth, (req, res) => {
+  const msgMod = getModule('message/campaigns');
+  let messages = msgMod.data.filter(m => m.status !== 'deleted');
+  if (messages.length === 0) {
+    messages = [
+      { id: 1, title: '618大促即将开始', content: '618年中大促活动即将开始，敬请期待！', type: 'activity', time: '2024-06-15 10:00', read: false },
+      { id: 2, title: '积分兑换提醒', content: '您有1500积分即将过期，请尽快兑换', type: 'points', time: '2024-06-10 09:00', read: false },
+      { id: 3, title: '新商户入驻通知', content: '优衣库已入驻本商场2F层', type: 'info', time: '2024-06-01 08:00', read: true }
+    ];
+  }
+  res.json(messages);
+});
+
+app.post('/v1/c/messages/read', cAuth, (req, res) => {
+  const { ids, all } = req.body || {};
+  // mock: 标记已读
+  res.json({ success: true, readCount: all ? 'all' : (ids ? ids.length : 0) });
+});
+
+// ---- 16. 客服 ----
+app.get('/v1/c/cs/knowledge', (req, res) => {
+  const mod = getModule('cs/knowledge');
+  const { keyword } = req.query;
+  let results = mod.data.filter(k => k.status === 'enabled');
+  if (keyword) {
+    results = results.filter(k =>
+      k.question.includes(keyword) || k.keywords.includes(keyword) || k.answer.includes(keyword)
+    );
+  }
+  res.json(results);
+});
+
+app.post('/v1/c/cs/chat', (req, res) => {
+  const { question } = req.body || {};
+  const mod = getModule('cs/knowledge');
+  const match = mod.data.find(k => k.status === 'enabled' && (k.keywords.split(',').some(kw => question && question.includes(kw))));
+  if (match) {
+    res.json({ answer: match.answer, matched: true, question });
+  } else {
+    res.json({
+      answer: '抱歉，我暂时无法回答这个问题。您可以点击"转人工客服"获取帮助。',
+      matched: false, question
+    });
+  }
+});
+
+app.post('/v1/c/cs/transfer', (req, res) => {
+  res.json({ success: true, message: '已转接人工客服，请稍候...' });
+});
+
+// ---- 17. 业主认证 ----
+app.post('/v1/c/property/auth', cAuth, (req, res) => {
+  const { property, community, name, phone } = req.body || {};
+  const ownersMod = getModule('property/owners');
+  const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  ownersMod.data.push({
+    id: ownersMod.nextId++,
+    name: name || req.member.name,
+    phone: phone || req.member.phone,
+    memberId: req.member.id,
+    property, community,
+    benefits: '',
+    status: 'pending',
+    createdAt: now,
+    updatedAt: now
+  });
+  res.json({ submitted: true, status: 'pending' });
+});
+
+app.get('/v1/c/property/info', cAuth, (req, res) => {
+  const ownersMod = getModule('property/owners');
+  const info = ownersMod.data.find(o => o.memberId === req.member.id);
+  res.json(info || null);
+});
+
+app.get('/v1/c/property/tasks', (req, res) => {
+  const mod = getModule('property/tasks');
+  res.json(mod.data.filter(t => t.status === 'enabled'));
+});
+
+app.post('/v1/c/property/tasks/:id/submit', cAuth, (req, res) => {
+  const tasksMod = getModule('property/tasks');
+  const auditMod = getModule('property/task-audit');
+  const task = tasksMod.data.find(t => t.id === parseInt(req.params.id));
+  if (!task) return res.status(404).json({ code: 404, message: '任务不存在', data: null });
+
+  const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  auditMod.data.push({
+    id: auditMod.nextId++,
+    taskName: task.name, applicant: req.member.name, points: task.points,
+    evidence: '', auditStatus: 'pending', auditor: '',
+    applyTime: now, auditRemark: '',
+    createdAt: now, updatedAt: now
+  });
+  res.json({ submitted: true, taskName: task.name });
+});
+
+app.get('/v1/c/property/activities', (req, res) => {
+  const mod = getModule('property/activities');
+  res.json(mod.data.filter(a => a.status === 'approved' || a.status === 'enabled'));
+});
+
+app.post('/v1/c/property/activities/:id/signup', cAuth, (req, res) => {
+  const mod = getModule('property/activities');
+  const activity = mod.data.find(a => a.id === parseInt(req.params.id));
+  if (!activity) return res.status(404).json({ code: 404, message: '活动不存在', data: null });
+  res.json({ signedUp: true, activityName: activity.name });
+});
+
+app.get('/v1/c/property/goods', (req, res) => {
+  const mod = getModule('property/goods');
+  res.json(mod.data.filter(g => g.status === 'enabled'));
+});
+
 // ============ Health check ============
 app.get('/health', (req, res) => res.json({ status: 'ok', modules: Object.keys(modules).length }));
 
