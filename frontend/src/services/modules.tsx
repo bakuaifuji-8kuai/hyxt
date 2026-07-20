@@ -707,6 +707,71 @@ export const MODULES: ModuleConfig[] = [
       tips: ['商户信息建议尽量完善，便于会员了解和选择商户', '禁用商户前请检查是否有未完成的活动和订单，避免影响会员体验', '商户分类建议结合商场实际业态设置，便于会员按品类查找', '重要商户建议配置专人对接，及时响应商户需求', '定期分析商户经营数据，识别优质商户并给予更多资源支持']
     }
   },
+  {
+    key: 'restaurant-cuisine', path: 'restaurant/cuisine', name: '菜系分类', category: '商户营销',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '菜系名称', dataIndex: 'name' },
+      { title: '图标', dataIndex: 'icon' },
+      { title: '描述', dataIndex: 'description' },
+      { title: '商户数量', dataIndex: 'shopCount' },
+      { title: '排序', dataIndex: 'sort' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
+    ],
+    fields: [
+      { name: 'name', label: '菜系名称', type: 'text', required: true },
+      { name: 'icon', label: '菜系图标', type: 'text' },
+      { name: 'description', label: '菜系描述', type: 'textarea' },
+      { name: 'shopCount', label: '关联商户数', type: 'number', hidden: true },
+      { name: 'sort', label: '排序', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
+    ],
+    doc: {
+      overview: '菜系分类是餐饮商户的分类管理工具，用于管理不同的菜系类型（如湘菜、川菜、粤菜、日料等），为餐饮商户提供分类标签，便于会员按菜系筛选和查找商户。菜系分类与商户管理、C端餐饮导览等模块深度联动，是构建餐饮消费场景、提升会员找店效率的基础数据模块。',
+      features: ['支持新增、编辑、删除菜系分类，灵活构建餐饮分类体系', '配置菜系名称和图标，提升分类识别度和视觉效果', '菜系描述说明，详细介绍菜系特点和代表菜品', '自动统计关联商户数量，掌握各菜系的商户规模', '支持排序配置，控制菜系在前端的展示顺序', '菜系状态管理：启用/禁用，灵活调整分类结构', '与商户管理联动，商户可关联一个或多个菜系分类', '与C端餐饮导览联动，会员可按菜系筛选餐饮商户', '支持菜系热度统计，分析各菜系的受欢迎程度', '支持菜系推荐配置，在首页或美食频道展示推荐菜系'],
+      tips: ['菜系名称建议简洁明了，便于会员理解和记忆', '菜系图标建议使用统一风格的图标，提升整体视觉一致性', '新增菜系后请及时在商户管理中为相关商户关联该菜系', '禁用菜系前请检查是否有关联商户，避免影响商户展示', '建议定期分析各菜系的消费数据，优化菜系配置和商户布局']
+    }
+  },
+  {
+    key: 'restaurant-dishes', path: 'restaurant/dishes', name: '菜品管理', category: '商户营销',
+    columns: [
+      { title: 'ID', dataIndex: 'id', width: 60 },
+      { title: '菜品图片', dataIndex: 'mainImage' },
+      { title: '菜品名称', dataIndex: 'name' },
+      { title: '所属商户', dataIndex: 'shopName' },
+      { title: '菜系', dataIndex: 'cuisine' },
+      { title: '价格', dataIndex: 'price' },
+      { title: '口味', dataIndex: 'taste', render: (v) => ({ spicy: '麻辣', sweet: '甜', sour: '酸', salty: '咸', light: '清淡', original: '原味' }[v] || v) },
+      { title: '是否推荐', dataIndex: 'isRecommend', render: (v) => (v === 'yes' ? '是' : '否') },
+      { title: '排序', dataIndex: 'sort' },
+      { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '上架' : '下架') }
+    ],
+    fields: [
+      { name: 'name', label: '菜品名称', type: 'text', required: true },
+      { name: 'shopName', label: '所属商户', type: 'select', source: { path: 'merchant/list', labelField: 'name', valueField: 'name' } },
+      { name: 'cuisine', label: '菜系', type: 'select', source: { path: 'restaurant/cuisine', labelField: 'name', valueField: 'name' } },
+      { name: 'mainImage', label: '菜品主图', type: 'text' },
+      { name: 'price', label: '价格(元)', type: 'number' },
+      { name: 'description', label: '菜品描述', type: 'textarea' },
+      { name: 'ingredients', label: '主要食材', type: 'textarea' },
+      { name: 'taste', label: '口味', type: 'select', options: [
+        { label: '麻辣', value: 'spicy' }, { label: '甜', value: 'sweet' }, { label: '酸', value: 'sour' },
+        { label: '咸', value: 'salty' }, { label: '清淡', value: 'light' }, { label: '原味', value: 'original' }
+      ] },
+      { name: 'isRecommend', label: '是否推荐', type: 'select', options: [
+        { label: '是', value: 'yes' }, { label: '否', value: 'no' }
+      ] },
+      { name: 'sort', label: '排序', type: 'number' },
+      { name: 'status', label: '状态', type: 'select', options: [
+        { label: '上架', value: 'enabled' }, { label: '下架', value: 'disabled' }
+      ] }
+    ],
+    doc: {
+      overview: '菜品管理是餐饮商户的菜品信息维护模块，用于管理各餐饮商户的菜品信息，包括菜品名称、图片、价格、口味、食材、推荐状态等。菜品信息是餐饮消费决策的重要参考，完善的菜品信息有助于提升会员点餐效率和消费体验。菜品管理与商户管理、菜系分类、C端餐饮导览等模块深度联动，是构建餐饮消费场景、促进餐饮消费的重要基础数据模块。',
+      features: ['支持新增、编辑、删除菜品信息，完整管理菜品全生命周期', '配置菜品基础信息：名称、主图、描述、价格等', '关联所属商户，明确菜品归属', '关联菜系分类，支持按菜系筛选菜品', '设置菜品口味（麻辣、甜、酸、咸、清淡、原味等）', '记录主要食材，便于会员了解菜品成分', '支持推荐菜品配置，在商户详情或美食频道展示', '菜品上下架管理，灵活控制菜品销售状态', '支持排序配置，控制菜品在商户详情页的展示顺序', '与商户管理联动，查看商户下的所有菜品', '与菜系分类联动，支持按菜系筛选和查找菜品', '与C端餐饮导览联动，会员可查看菜品详情和下单', '支持菜品销量统计，分析热门菜品和销售趋势', '支持菜品标签管理，便于按特色筛选菜品'],
+      tips: ['菜品主图建议使用高清实拍图片，提升菜品吸引力和点餐转化率', '菜品描述建议突出特色和卖点，激发会员点餐欲望', '菜品价格请确保与实际售价一致，避免产生纠纷', '推荐菜品建议选择商户招牌菜或高毛利菜品', '下架菜品前请确认无正在进行的相关营销活动', '定期更新菜品信息，保持菜单的新鲜感和吸引力']
+    }
+  },
   // ===== 在线商城 =====
   {
     key: 'shop-goods', path: 'shop/goods', name: '商城商品', category: '在线商城',
@@ -900,20 +965,37 @@ export const MODULES: ModuleConfig[] = [
       { title: '姓名', dataIndex: 'name' },
       { title: '用户名', dataIndex: 'username' },
       { title: '角色', dataIndex: 'role' },
+      { title: '手机号', dataIndex: 'phone' },
+      { title: '邮箱', dataIndex: 'email' },
+      { title: '最后登录', dataIndex: 'lastLogin' },
+      { title: '密码状态', dataIndex: 'passwordStatus', render: (v) => ({ normal: '正常', needReset: '需重置', expired: '已过期' }[v] || v) },
       { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
     ],
     fields: [
       { name: 'name', label: '姓名', type: 'text', required: true },
       { name: 'username', label: '用户名', type: 'text', required: true },
+      { name: 'password', label: '初始密码', type: 'text', placeholder: '新增用户时设置初始密码' },
       { name: 'role', label: '角色', type: 'select', options: [
         { label: '管理员', value: 'admin' }, { label: '运营', value: 'operator' }, { label: '客服', value: 'service' }
+      ] },
+      { name: 'phone', label: '手机号', type: 'text' },
+      { name: 'email', label: '邮箱', type: 'text' },
+      { name: 'department', label: '所属部门', type: 'text' },
+      { name: 'lastLogin', label: '最后登录时间', type: 'date', hidden: true },
+      { name: 'passwordStatus', label: '密码状态', type: 'select', options: [
+        { label: '正常', value: 'normal' }, { label: '需重置', value: 'needReset' }, { label: '已过期', value: 'expired' }
+      ] },
+      { name: 'passwordResetTime', label: '密码重置时间', type: 'date', hidden: true },
+      { name: 'passwordExpireDays', label: '密码有效期(天)', type: 'number' },
+      { name: 'needChangePassword', label: '首次登录需改密', type: 'select', options: [
+        { label: '是', value: 'yes' }, { label: '否', value: 'no' }
       ] },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
     doc: {
-      overview: '系统用户是后台管理系统的账号管理工具，管理管理员、运营、客服等不同岗位的登录账号。是系统权限控制的基础，确保不同角色只能访问授权范围内的功能。',
-      features: ['支持新增、编辑、删除系统用户', '用户基本信息：姓名、用户名', '角色分配，赋予用户相应权限', '用户状态管理：启用/禁用', '与角色管理联动，继承角色的权限配置', '密码管理，保障账号安全'],
-      tips: ['用户账号建议一人一号，避免共用账号导致责任不清', '离职员工账号请及时禁用，防止数据泄露', '建议定期检查用户权限，确保权限与岗位匹配']
+      overview: '系统用户是后台管理系统的账号管理工具，管理管理员、运营、客服等不同岗位的登录账号。是系统权限控制的基础，确保不同角色只能访问授权范围内的功能。系统支持密码重置、密码有效期管理、首次登录强制改密等安全功能，保障账号安全。',
+      features: ['支持新增、编辑、删除系统用户', '用户基本信息：姓名、用户名、手机号、邮箱、所属部门', '角色分配，赋予用户相应权限', '用户状态管理：启用/禁用', '与角色管理联动，继承角色的权限配置', '密码管理：初始密码设置、密码重置、密码有效期管理', '首次登录强制改密功能，提升账号安全性', '密码状态监控：正常、需重置、已过期', '记录最后登录时间，跟踪用户登录情况', '支持批量重置密码，便于统一管理', '操作日志记录，所有用户操作可追溯'],
+      tips: ['用户账号建议一人一号，避免共用账号导致责任不清', '离职员工账号请及时禁用，防止数据泄露', '建议定期检查用户权限，确保权限与岗位匹配', '初始密码建议设置为强密码，并要求用户首次登录后修改', '密码有效期建议设置为90天，定期更换密码提升安全性', '重置密码后建议通过短信或邮件通知用户及时修改']
     }
   },
   {
@@ -1575,19 +1657,45 @@ export const MODULES: ModuleConfig[] = [
       { title: 'ID', dataIndex: 'id', width: 60 },
       { title: '业主', dataIndex: 'owner' },
       { title: '房产', dataIndex: 'property' },
-      { title: '积分', dataIndex: 'points' },
+      { title: '地产积分', dataIndex: 'points' },
+      { title: '商业积分', dataIndex: 'businessPoints' },
+      { title: '权益互通', dataIndex: 'benefitInterconnect', render: (v) => (v === 'enabled' ? '已开通' : '未开通') },
+      { title: '会员等级', dataIndex: 'memberLevel' },
+      { title: '认证状态', dataIndex: 'verifyStatus', render: (v) => ({ pending: '待审核', approved: '已认证', rejected: '已拒绝' }[v] || v) },
       { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
     ],
     fields: [
-      { name: 'owner', label: '业主', type: 'text', required: true },
-      { name: 'property', label: '房产', type: 'text' },
-      { name: 'points', label: '积分', type: 'number' },
+      { name: 'owner', label: '业主姓名', type: 'text', required: true },
+      { name: 'phone', label: '业主手机号', type: 'text', required: true },
+      { name: 'property', label: '房产信息', type: 'text' },
+      { name: 'buildingNo', label: '楼栋号', type: 'text' },
+      { name: 'roomNo', label: '房号', type: 'text' },
+      { name: 'area', label: '建筑面积(㎡)', type: 'number' },
+      { name: 'points', label: '地产积分', type: 'number' },
+      { name: 'businessPoints', label: '商业积分', type: 'number' },
+      { name: 'exchangeRatio', label: '积分兑换比例', type: 'text', placeholder: '如 1:1 表示地产积分:商业积分=1:1' },
+      { name: 'benefitInterconnect', label: '权益互通', type: 'select', options: [
+        { label: '已开通', value: 'enabled' }, { label: '未开通', value: 'disabled' }
+      ] },
+      { name: 'memberLevel', label: '关联会员等级', type: 'select', source: { path: 'member/level', labelField: 'name', valueField: 'code' } },
+      { name: 'memberBindTime', label: '会员绑定时间', type: 'date', hidden: true },
+      { name: 'verifyStatus', label: '业主认证状态', type: 'select', options: [
+        { label: '待审核', value: 'pending' }, { label: '已认证', value: 'approved' }, { label: '已拒绝', value: 'rejected' }
+      ] },
+      { name: 'verifyTime', label: '认证时间', type: 'date', hidden: true },
+      { name: 'verifyRemark', label: '审核备注', type: 'textarea' },
+      { name: 'idCard', label: '身份证号', type: 'text', hidden: true },
+      { name: 'purchaseContract', label: '购房合同号', type: 'text' },
+      { name: 'ownerType', label: '业主类型', type: 'select', options: [
+        { label: '住宅业主', value: 'residential' }, { label: '商铺业主', value: 'commercial' }, { label: '租户', value: 'tenant' }
+      ] },
+      { name: 'remark', label: '备注', type: 'textarea' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
     doc: {
-      overview: '地产积分是地产行业的业主积分管理工具，业主购房、缴费可累计地产积分，积分可兑换物业权益或其他服务。是地产项目提升业主满意度和粘性的重要运营手段。',
-      features: ['支持新增、编辑、删除地产积分账户', '业主和房产信息关联，明确积分归属', '积分余额管理，记录业主积分数量', '账户状态管理：启用/禁用', '与地产积分任务联动，完成任务自动发放积分', '与物业权益联动，积分可兑换物业相关服务'],
-      tips: ['地产积分发放规则建议提前公示，避免产生纠纷', '积分有效期建议明确告知业主，定期提醒即将过期积分', '建议设置丰富的积分兑换商品，提升积分价值感知']
+      overview: '地产积分是地产行业的业主积分管理工具，业主购房、缴费可累计地产积分，积分可兑换物业权益或其他服务。系统支持地产积分与商业会员权益互通，业主认证通过后可自动成为商业会员，享受商业会员权益，实现地产+商业的会员权益打通。是地产项目提升业主满意度和粘性、促进商业消费转化的重要运营手段。',
+      features: ['支持新增、编辑、删除地产积分账户', '业主和房产信息关联，明确积分归属', '地产积分余额管理，记录业主积分数量', '商业积分余额管理，记录互通后的商业积分', '积分兑换比例配置，灵活设置地产积分与商业积分的兑换比例', '权益互通开关，控制是否开通地产与商业的权益互通', '关联会员等级，业主认证后自动获得对应的商业会员等级', '业主认证审核：待审核、已认证、已拒绝', '认证资料管理：身份证、购房合同号等证明材料', '业主类型：住宅业主、商铺业主、租户', '账户状态管理：启用/禁用', '与地产积分任务联动，完成任务自动发放积分', '与物业权益联动，积分可兑换物业相关服务', '与会员档案联动，认证通过后自动绑定商业会员账户', '与会员等级联动，自动享受对应等级的商业权益'],
+      tips: ['地产积分发放规则建议提前公示，避免产生纠纷', '积分有效期建议明确告知业主，定期提醒即将过期积分', '建议设置丰富的积分兑换商品，提升积分价值感知', '业主认证需严格审核，确保身份真实有效', '权益互通比例需合理设置，平衡地产与商业的权益价值', '建议为业主提供专属的商业权益，提升业主尊贵感和满意度']
     }
   },
   // ===== 物品租借 =====
@@ -2826,20 +2934,40 @@ export const MODULES: ModuleConfig[] = [
       { title: '活动名称', dataIndex: 'name' },
       { title: '抖音券码', dataIndex: 'douyinCode' },
       { title: '兑换权益', dataIndex: 'reward' },
+      { title: '抖音发券量', dataIndex: 'totalIssued' },
       { title: '已兑换', dataIndex: 'exchanged' },
+      { title: '已核销', dataIndex: 'verifiedCount' },
+      { title: '抖音核销金额', dataIndex: 'douyinVerifyAmount' },
+      { title: '中台核销金额', dataIndex: 'platformVerifyAmount' },
+      { title: '对账状态', dataIndex: 'reconcileStatus', render: (v) => ({ matched: '已对账', unmatched: '账不平', pending: '待对账' }[v] || v) },
       { title: '状态', dataIndex: 'status', render: (v) => (v === 'enabled' ? '启用' : '禁用') }
     ],
     fields: [
       { name: 'name', label: '活动名称', type: 'text', required: true },
       { name: 'douyinCode', label: '抖音券码', type: 'text' },
+      { name: 'douyinTemplateId', label: '抖音券模板ID', type: 'text' },
       { name: 'reward', label: '兑换权益', type: 'select', source: { path: 'marketing/prizes', labelField: 'name', valueField: 'name' } },
-      { name: 'exchanged', label: '已兑换', type: 'number' },
+      { name: 'couponTemplate', label: '关联平台券模板', type: 'select', source: { path: 'coupon/templates', labelField: 'name', valueField: 'name' } },
+      { name: 'totalIssued', label: '抖音发券总量', type: 'number' },
+      { name: 'exchanged', label: '已兑换数', type: 'number' },
+      { name: 'verifiedCount', label: '已核销数', type: 'number' },
+      { name: 'douyinVerifyAmount', label: '抖音核销金额(元)', type: 'number' },
+      { name: 'platformVerifyAmount', label: '中台核销金额(元)', type: 'number' },
+      { name: 'diffAmount', label: '差异金额(元)', type: 'number', hidden: true },
+      { name: 'reconcileStatus', label: '对账状态', type: 'select', options: [
+        { label: '待对账', value: 'pending' }, { label: '已对账', value: 'matched' }, { label: '账不平', value: 'unmatched' }
+      ] },
+      { name: 'lastReconcileTime', label: '最后对账时间', type: 'date', hidden: true },
+      { name: 'reconcileOperator', label: '对账操作人', type: 'select', source: { path: 'system/staff', labelField: 'name', valueField: 'name' } },
+      { name: 'reconcileRemark', label: '对账备注', type: 'textarea' },
+      { name: 'validFrom', label: '有效期开始', type: 'date' },
+      { name: 'validTo', label: '有效期结束', type: 'date' },
       { name: 'status', label: '状态', type: 'select', options: STATUS_OPTIONS }
     ],
     doc: {
-      overview: '抖音兑换券是公域引流工具，顾客在抖音购买的团购券可到小程序兑换为平台权益，实现抖音公域流量向私域会员的转化。是打通公域获客和私域运营的重要桥梁。',
-      features: ['支持新增、编辑、删除抖音兑换券活动', '配置抖音券码，验证抖音团购券', '设置兑换权益，抖音券可兑换为平台券或积分', '统计已兑换数量，掌握引流效果', '活动状态管理：启用/禁用', '与会员档案联动，兑换后自动绑定会员'],
-      tips: ['抖音券码建议与抖音后台实时同步，确保验证准确', '兑换权益建议设置有吸引力的权益，提升抖音用户转化意愿', '建议定期分析抖音引流数据，优化投放策略']
+      overview: '抖音兑换券是公域引流工具，顾客在抖音购买的团购券可到小程序兑换为平台权益，实现抖音公域流量向私域会员的转化。系统支持抖音核销数据与中台核销数据的对账功能，确保核销数据准确一致，是打通公域获客和私域运营的重要桥梁。',
+      features: ['支持新增、编辑、删除抖音兑换券活动', '配置抖音券码和券模板ID，验证抖音团购券', '设置兑换权益，抖音券可兑换为平台券或积分', '关联平台券模板，兑换后自动发放平台券', '抖音发券总量统计，掌握券的发放规模', '已兑换数量统计，掌握引流转化效果', '已核销数量统计，掌握券的使用情况', '抖音核销金额与中台核销金额双轨记录', '自动计算差异金额，快速发现对账差异', '对账状态管理：待对账、已对账、账不平', '记录最后对账时间和对账操作人', '对账备注功能，记录对账差异原因和处理情况', '活动有效期配置，控制活动时间窗口', '活动状态管理：启用/禁用', '与会员档案联动，兑换后自动绑定会员', '与核销记录联动，核销数据自动同步更新'],
+      tips: ['抖音券码建议与抖音后台实时同步，确保验证准确', '兑换权益建议设置有吸引力的权益，提升抖音用户转化意愿', '建议每日进行对账操作，及时发现和处理对账差异', '对账差异需及时排查原因，确保数据准确性', '重要活动建议设置专人负责对账和数据核查', '建议定期分析抖音引流数据，优化投放策略']
     }
   },
   // ===== 地产积分（补充）=====

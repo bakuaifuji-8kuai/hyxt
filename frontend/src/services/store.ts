@@ -206,8 +206,9 @@ initModule('marketing/checkin-coupon', ['name', 'location', 'template', 'claimed
   { name: '打卡领券', location: 'L1中庭', template: '满50减10', claimed: 89, status: 'enabled' }
 ]);
 
-initModule('marketing/douyin-coupon', ['name', 'douyinCode', 'reward', 'exchanged', 'status'], [
-  { name: '抖音团购券', douyinCode: 'DY2024001', reward: '双人套餐', exchanged: 45, status: 'enabled' }
+initModule('marketing/douyin-coupon', ['name', 'douyinCode', 'douyinTemplateId', 'reward', 'couponTemplate', 'totalIssued', 'exchanged', 'verifiedCount', 'douyinVerifyAmount', 'platformVerifyAmount', 'diffAmount', 'reconcileStatus', 'lastReconcileTime', 'reconcileOperator', 'reconcileRemark', 'validFrom', 'validTo', 'status'], [
+  { name: '抖音团购券活动', douyinCode: 'DY2024001', douyinTemplateId: 'dy_temp_001', reward: '双人套餐', couponTemplate: '满200减50', totalIssued: 500, exchanged: 45, verifiedCount: 32, douyinVerifyAmount: 6400, platformVerifyAmount: 6400, diffAmount: 0, reconcileStatus: 'matched', lastReconcileTime: '2024-07-19 09:00:00', reconcileOperator: '运营A', reconcileRemark: '', validFrom: '2024-07-01', validTo: '2024-07-31', status: 'enabled' },
+  { name: '抖音新客专享', douyinCode: 'DY2024002', douyinTemplateId: 'dy_temp_002', reward: '50元代金券', couponTemplate: '50元代金券', totalIssued: 1000, exchanged: 156, verifiedCount: 89, douyinVerifyAmount: 4450, platformVerifyAmount: 4400, diffAmount: 50, reconcileStatus: 'unmatched', lastReconcileTime: '2024-07-19 09:00:00', reconcileOperator: '运营A', reconcileRemark: '有1单差异待核实', validFrom: '2024-07-10', validTo: '2024-08-10', status: 'enabled' }
 ]);
 
 initModule('activity/signups', ['name', 'signupTime', 'member', 'count', 'status'], [
@@ -358,9 +359,10 @@ initModule('config/terminals', ['name', 'shop', 'type', 'status'], [
   { name: '收银机1', shop: '总店', type: 'cashier', status: 'enabled' }
 ]);
 
-initModule('system/users', ['name', 'username', 'role', 'status'], [
-  { name: '超级管理员', username: 'admin', role: 'admin', status: 'enabled' },
-  { name: '运营小李', username: 'li', role: 'operator', status: 'enabled' }
+initModule('system/users', ['name', 'username', 'password', 'role', 'phone', 'email', 'department', 'lastLogin', 'passwordStatus', 'passwordResetTime', 'passwordExpireDays', 'needChangePassword', 'status'], [
+  { name: '超级管理员', username: 'admin', password: 'admin123', role: 'admin', phone: '13800138000', email: 'admin@example.com', department: '技术部', lastLogin: '2024-07-15 09:30:00', passwordStatus: 'normal', passwordResetTime: '2024-06-01', passwordExpireDays: 90, needChangePassword: 'no', status: 'enabled' },
+  { name: '运营小李', username: 'li', password: 'li123456', role: 'operator', phone: '13800138011', email: 'li@example.com', department: '运营部', lastLogin: '2024-07-18 14:20:00', passwordStatus: 'normal', passwordResetTime: '2024-06-15', passwordExpireDays: 90, needChangePassword: 'no', status: 'enabled' },
+  { name: '客服小王', username: 'wang', password: 'wang123', role: 'service', phone: '13800138010', email: 'wang@example.com', department: '客服部', lastLogin: '2024-07-10 16:45:00', passwordStatus: 'needReset', passwordResetTime: '2024-04-01', passwordExpireDays: 90, needChangePassword: 'yes', status: 'enabled' }
 ]);
 
 initModule('system/roles', ['name', 'code', 'permissions', 'status'], [
@@ -403,8 +405,10 @@ initModule('public-domain/ads', ['name', 'channel', 'budget', 'leads', 'status']
   { name: '抖音投放', channel: 'douyin', budget: 20000, leads: 1500, status: 'enabled' }
 ]);
 
-initModule('property/points', ['owner', 'property', 'points', 'status'], [
-  { owner: '业主王先生', property: 'A栋1001', points: 50000, status: 'enabled' }
+initModule('property/points', ['owner', 'phone', 'property', 'buildingNo', 'roomNo', 'area', 'points', 'businessPoints', 'exchangeRatio', 'benefitInterconnect', 'memberLevel', 'memberBindTime', 'verifyStatus', 'verifyTime', 'verifyRemark', 'idCard', 'purchaseContract', 'ownerType', 'remark', 'status'], [
+  { owner: '业主王先生', phone: '13900139001', property: '凯德壹中心住宅', buildingNo: 'A栋', roomNo: '1001', area: 120, points: 50000, businessPoints: 5000, exchangeRatio: '10:1', benefitInterconnect: 'enabled', memberLevel: 'GOLD', memberBindTime: '2024-01-15', verifyStatus: 'approved', verifyTime: '2024-01-10', verifyRemark: '资料齐全，审核通过', idCard: '430101********0001', purchaseContract: 'HT20230001', ownerType: 'residential', remark: 'VIP业主', status: 'enabled' },
+  { owner: '业主李女士', phone: '13900139002', property: '凯德壹中心住宅', buildingNo: 'B栋', roomNo: '1502', area: 95, points: 32000, businessPoints: 3200, exchangeRatio: '10:1', benefitInterconnect: 'enabled', memberLevel: 'SILVER', memberBindTime: '2024-02-20', verifyStatus: 'approved', verifyTime: '2024-02-18', verifyRemark: '', idCard: '430101********0002', purchaseContract: 'HT20230002', ownerType: 'residential', remark: '', status: 'enabled' },
+  { owner: '业主张先生', phone: '13900139003', property: '碧湘楚巷商铺', buildingNo: 'S1栋', roomNo: '105', area: 80, points: 80000, businessPoints: 0, exchangeRatio: '10:1', benefitInterconnect: 'disabled', memberLevel: '', memberBindTime: '', verifyStatus: 'pending', verifyTime: '', verifyRemark: '', idCard: '', purchaseContract: 'HT20230003', ownerType: 'commercial', remark: '待认证', status: 'enabled' }
 ]);
 
 initModule('property/tasks', ['name', 'category', 'points', 'limit', 'status'], [

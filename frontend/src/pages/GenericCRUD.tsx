@@ -7,7 +7,8 @@ import {
 import {
   PlusOutlined, EditOutlined, DeleteOutlined, ReloadOutlined,
   EyeOutlined, SwapOutlined, DatabaseOutlined, CheckCircleOutlined,
-  StopOutlined, RiseOutlined, InboxOutlined
+  StopOutlined, RiseOutlined, InboxOutlined, ImportOutlined, ExportOutlined,
+  DownloadOutlined, UploadOutlined
 } from '@ant-design/icons';
 import { fetchListData, createItemData, updateItemData, deleteItemData, toggleStatusData } from '../services/request';
 import { getModule } from '../services/modules';
@@ -228,6 +229,8 @@ export default function GenericCRUD({ moduleKey }: { moduleKey: string }) {
   const [detailOpen, setDetailOpen] = useState(false);
   const [detailRecord, setDetailRecord] = useState<any>(null);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [importModalOpen, setImportModalOpen] = useState(false);
+  const [importText, setImportText] = useState('');
 
   const loadData = useCallback(async () => {
     if (!module) return;
@@ -357,6 +360,132 @@ export default function GenericCRUD({ moduleKey }: { moduleKey: string }) {
   const handleViewDetail = (record: any) => {
     setDetailRecord(record);
     setDetailOpen(true);
+  };
+
+  // ============ 导入导出功能 ============
+
+  const handleExport = () => {
+    try {
+      const exportData = statusFilter ? filteredData : data;
+      const jsonStr = JSON.stringify(exportData, null, 2);
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${module.name}_${dayjs().format('YYYYMMDD_HHmmss')}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      message.success(`成功导出 ${exportData.length} 条数据`);
+    } catch (e: any) {
+      message.error('导出失败：' + (e.message || '未知错误'));
+    }
+  };
+
+  const handleExportCSV = () => {
+    try {
+      const exportData = statusFilter ? filteredData : data;
+      if (exportData.length === 0) {
+        message.warning('暂无数据可导出');
+        return;
+      }
+      const headers = module.columns.map(c => c.title);
+      const keys = module.columns.map(c => c.dataIndex);
+      const csvContent = [
+        headers.join(','),
+        ...exportData.map(row =>
+          keys.map(key => {
+            const val = row[key];
+            const str = val != null ? String(val) : '';
+            return str.includes(',') || str.includes('"') || str.includes('\n')
+              ? `"${str.replace(/"/g, '""')}"`
+              : str;
+          }).join(',')
+        )
+      ].join('\n');
+      const BOM = '\uFEFF';
+      const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${module.name}_${dayjs().format('YYYYMMDD_HHmmss')}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      message.success(`成功导出 ${exportData.length} 条数据`);
+    } catch (e: any) {
+      message.error('导出失败：' + (e.message || '未知错误'));
+    }
+  };
+
+  const handleImport = async () => {
+    try {
+      let importData: any[] = [];
+      const text = importText.trim();
+      if (!text) {
+        message.warning('请输入要导入的数据');
+        return;
+      }
+      try {
+        importData = JSON.parse(text);
+        if (!Array.isArray(importData)) {
+          throw new Error('数据格式错误：需要数组格式');
+        }
+      } catch (jsonError: any) {
+        const lines = text.split('\n').filter(line => line.trim());
+        if (lines.length > 0) {
+          const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+          importData = lines.slice(1).map(line => {
+            const values = line.split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+            const obj: Record<string, string> = {};
+            headers.forEach((h, i) => {
+              obj[h] = values[i] || '';
+            });
+            return obj;
+          });
+        } else {
+          throw new Error('无法解析数据，请检查JSON或CSV格式');
+        }
+      }
+      let successCount = 0;
+      let failCount = 0;
+      for (const item of importData) {
+        try {
+          const cleanItem: any = {};
+          module.fields.forEach(field => {
+            if (item[field.name] !== undefined && item[field.name] !== null) {
+              cleanItem[field.name] = item[field.name];
+            }
+          });
+          if (Object.keys(cleanItem).length > 0) {
+            await createItemData(module.path, cleanItem);
+            successCount++;
+          } else {
+            failCount++;
+          }
+        } catch {
+          failCount++;
+        }
+      }
+      message.success(`导入完成：成功 ${successCount} 条，失败 ${failCount} 条`);
+      setImportModalOpen(false);
+      setImportText('');
+      loadData();
+    } catch (e: any) {
+      message.error('导入失败：' + (e.message || '未知错误'));
+    }
+  };
+
+  const handleFileImport = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const text = e.target?.result as string;
+      setImportText(text);
+    };
+    reader.readAsText(file);
+    return false;
   };
 
   // ============ 表单字段渲染 ============
@@ -594,6 +723,9 @@ export default function GenericCRUD({ moduleKey }: { moduleKey: string }) {
               ]}
             />
             <Button icon={<ReloadOutlined />} onClick={loadData}>刷新</Button>
+            <Button icon={<ExportOutlined />} onClick={handleExport}>导出JSON</Button>
+            <Button icon={<DownloadOutlined />} onClick={handleExportCSV}>导出CSV</Button>
+            <Button icon={<ImportOutlined />} onClick={() => setImportModalOpen(true)}>导入</Button>
           </Space>
           <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
             新增{module.name}
@@ -671,6 +803,42 @@ export default function GenericCRUD({ moduleKey }: { moduleKey: string }) {
             })}
           </Row>
         </Form>
+      </Modal>
+
+      {/* 导入弹窗 */}
+      <Modal
+        title={<span style={{ fontSize: 16 }}>批量导入{module.name}</span>}
+        open={importModalOpen}
+        onOk={handleImport}
+        onCancel={() => { setImportModalOpen(false); setImportText(''); }}
+        width={720}
+        destroyOnClose
+        okText="开始导入"
+      >
+        <div style={{ marginTop: 16 }}>
+          <p style={{ marginBottom: 8, color: '#666' }}>
+            支持 JSON 和 CSV 格式导入。JSON 格式需为数组，CSV 格式第一行为表头。
+          </p>
+          <Upload.Dragger
+            accept=".json,.csv,.txt"
+            beforeUpload={handleFileImport}
+            showUploadList={false}
+            style={{ marginBottom: 16 }}
+          >
+            <p className="ant-upload-drag-icon">
+              <InboxOutlined />
+            </p>
+            <p className="ant-upload-text">点击或拖拽文件到此处上传</p>
+            <p className="ant-upload-hint">支持 .json, .csv, .txt 格式文件</p>
+          </Upload.Dragger>
+          <div style={{ marginBottom: 8, color: '#666' }}>或直接粘贴数据：</div>
+          <Input.TextArea
+            value={importText}
+            onChange={(e) => setImportText(e.target.value)}
+            placeholder='粘贴 JSON 数据，如：[{"name":"名称","status":"enabled"}]'
+            rows={10}
+          />
+        </div>
       </Modal>
 
       {/* 详情抽屉 */}
