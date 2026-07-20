@@ -25,6 +25,13 @@ import ParkingManage from './pages/ParkingManage';
 import CouponManage from './pages/CouponManage';
 import PointsMall from './pages/PointsMall';
 import MarketingCenter from './pages/MarketingCenter';
+// 移动端页面
+import {
+  MobileLayout, MobileLogin, MobileHome, MobileVerify,
+  MobileVerifyRecord, MobileActivities, MobileActivityDetail,
+  MobileNotices, MobileNoticeDetail, MobileShop
+} from './mobile';
+import { isMobileAuthenticated } from './services/request';
 
 const { Header, Sider, Content } = Layout;
 
@@ -73,6 +80,30 @@ export default function App() {
   useEffect(() => {
     setAuthed(isAuthenticated());
   }, [location.pathname]);
+
+  // 移动端路由处理
+  if (location.pathname.startsWith('/mobile')) {
+    const mobileAuthed = isMobileAuthenticated();
+    if (!mobileAuthed && location.pathname !== '/mobile/login') {
+      return <Navigate to="/mobile/login" replace />;
+    }
+    return (
+      <MobileLayout>
+        <Routes>
+          <Route path="/mobile/login" element={<MobileLogin />} />
+          <Route path="/mobile/home" element={<MobileHome />} />
+          <Route path="/mobile/verify" element={<MobileVerify />} />
+          <Route path="/mobile/verify-record" element={<MobileVerifyRecord />} />
+          <Route path="/mobile/activities" element={<MobileActivities />} />
+          <Route path="/mobile/activity/:id" element={<MobileActivityDetail />} />
+          <Route path="/mobile/notices" element={<MobileNotices />} />
+          <Route path="/mobile/notice/:id" element={<MobileNoticeDetail />} />
+          <Route path="/mobile/shop" element={<MobileShop />} />
+          <Route path="/mobile/*" element={<Navigate to="/mobile/home" replace />} />
+        </Routes>
+      </MobileLayout>
+    );
+  }
 
   if (!authed && !location.pathname.startsWith('/login')) {
     return <Navigate to="/login" replace />;

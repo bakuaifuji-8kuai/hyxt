@@ -40,6 +40,29 @@ export async function fetchUserInfo() {
   return { id: 1, username: 'admin', name: '超级管理员', role: 'admin', permissions: ['*'] };
 }
 
+// 移动端商户登录
+export function loginMobile(phone: string) {
+  const token = 'mobile-token-' + Date.now();
+  localStorage.setItem('mobileToken', token);
+  localStorage.setItem('mobilePhone', phone);
+
+  // 模拟获取店铺信息
+  const shopInfo = { id: 1, name: '海底捞', category: '餐饮', phone: '0731-88888001', contractExpiry: '2025-12-31', status: 'enabled' };
+  localStorage.setItem('mobileShopInfo', JSON.stringify(shopInfo));
+
+  return { token, shopInfo };
+}
+
+export function isMobileAuthenticated() {
+  return !!localStorage.getItem('mobileToken');
+}
+
+export function handleMobileLogout() {
+  localStorage.removeItem('mobileToken');
+  localStorage.removeItem('mobilePhone');
+  localStorage.removeItem('mobileShopInfo');
+}
+
 export async function fetchDashboardSummary() {
   return fetchDashboard();
 }
