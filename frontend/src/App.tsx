@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Routes, Route, useNavigate, useLocation, Navigate, Link } from 'react-router-dom';
 import { Layout, Menu, Avatar, Dropdown, Button, Space, theme } from 'antd';
 import {
@@ -65,14 +65,11 @@ const CATEGORY_ICONS: Record<string, any> = {
 
 export default function App() {
   const [collapsed, setCollapsed] = useState(false);
-  const [authed, setAuthed] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { token: themeToken } = theme.useToken();
-
-  useEffect(() => {
-    setAuthed(isAuthenticated());
-  }, [location.pathname]);
+  // Direct synchronous check so login → navigate works without a stale-state bounce back to /login
+  const authed = isAuthenticated();
 
   if (!authed && !location.pathname.startsWith('/login')) {
     return <Navigate to="/login" replace />;
@@ -152,6 +149,7 @@ export default function App() {
             <Route path="/m/shop-goods" element={<ShopGoods />} />
             <Route path="/m/shop-orders" element={<OrderManage />} />
             <Route path="/m/shop-home-config" element={<ShopHomeConfig />} />
+            <Route path="/m/c-app-home" element={<ShopHomeConfig />} />
             <Route path="/m/coupon-templates" element={<CouponManage />} />
             <Route path="/m/points-goods" element={<PointsMall />} />
             <Route path="/m/analytics-overview" element={<AnalyticsCenter />} />
