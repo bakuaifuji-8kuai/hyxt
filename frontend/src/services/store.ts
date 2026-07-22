@@ -116,9 +116,13 @@ initModule('points/mall-orders', ['orderNo', 'member', 'goods', 'points', 'deliv
   { orderNo: 'PM20240601001', member: '张三', goods: '星巴克咖啡券', points: 500, delivery: 'self', status: 'done' }
 ]);
 
-initModule('coupon/templates', ['name', 'type', 'value', 'minSpend', 'quantity', 'claimed', 'status'], [
-  { name: '满200减30', type: 'fullcut', value: 30, minSpend: 200, quantity: 500, claimed: 128, status: 'enabled' },
-  { name: '停车券1小时', type: 'parking', value: 60, minSpend: 0, quantity: 1000, claimed: 356, status: 'enabled' }
+initModule('coupon/templates', ['name', 'scope', 'shopName', 'type', 'value', 'minSpend', 'quantity', 'claimed', 'used', 'coverImage', 'validityType', 'validityDays', 'startTime', 'endTime', 'useScope', 'description', 'status', 'groupPrice'], [
+  { name: '满200减30', scope: 'platform', type: 'fullcut', value: 30, minSpend: 200, quantity: 1000, claimed: 320, used: 156, validityType: 'days', validityDays: 30, useScope: 'all', description: '全场通用，不可与其他优惠叠加', status: 'enabled' },
+  { name: '新人立减10元', scope: 'platform', type: 'cash', value: 10, minSpend: 0, quantity: 5000, claimed: 1200, used: 890, validityType: 'days', validityDays: 7, useScope: 'all', description: '新用户专享，无门槛使用', status: 'enabled' },
+  { name: '8折优惠券', scope: 'platform', type: 'discount', value: 8, minSpend: 100, quantity: 2000, claimed: 560, used: 230, validityType: 'days', validityDays: 15, useScope: 'all', description: '全场商品8折，最高优惠50元', status: 'enabled' },
+  { name: '团50抵扣100', scope: 'platform', type: 'groupbuy', value: 100, minSpend: 0, groupPrice: 50, quantity: 1000, claimed: 450, used: 280, validityType: 'days', validityDays: 30, useScope: 'all', description: '团购专享，50元抵100元', status: 'enabled' },
+  { name: '海底捞满300减50', scope: 'shop', shopName: '海底捞', type: 'fullcut', value: 50, minSpend: 300, quantity: 500, claimed: 280, used: 120, validityType: 'days', validityDays: 30, useScope: 'all', description: '仅限海底捞门店使用', status: 'enabled' },
+  { name: '星巴克满100减20', scope: 'shop', shopName: '星巴克', type: 'fullcut', value: 20, minSpend: 100, quantity: 800, claimed: 450, used: 200, validityType: 'days', validityDays: 15, useScope: 'all', description: '仅限星巴克门店使用', status: 'enabled' }
 ]);
 
 initModule('coupon/batches', ['name', 'template', 'count', 'claimed', 'status'], [

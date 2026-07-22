@@ -15,12 +15,13 @@ const { RangePicker } = DatePicker;
 interface CouponData {
   id: number;
   name: string;
-  type: 'fullcut' | 'cash' | 'discount';
+  type: 'fullcut' | 'cash' | 'discount' | 'groupbuy';
   value: number;
   minSpend: number;
   quantity: number;
   claimed: number;
   status: 'enabled' | 'disabled';
+  groupPrice?: number;
 }
 
 const TYPE_CONFIG: Record<string, { label: string; color: string; bg: string; gradient: string; unit: string; valueLabel: string }> = {
@@ -47,6 +48,14 @@ const TYPE_CONFIG: Record<string, { label: string; color: string; bg: string; gr
     gradient: 'linear-gradient(135deg, #9254DE 0%, #722ED1 100%)',
     unit: '折',
     valueLabel: '折扣',
+  },
+  groupbuy: {
+    label: '团购券',
+    color: '#13C2C2',
+    bg: '#E6FFFB',
+    gradient: 'linear-gradient(135deg, #36CFC9 0%, #13C2C2 100%)',
+    unit: '元',
+    valueLabel: '抵扣金额',
   },
 };
 
@@ -108,6 +117,7 @@ export default function CouponManage() {
       type: item.type,
       value: item.value,
       minSpend: item.minSpend,
+      groupPrice: item.groupPrice,
       quantity: item.quantity,
       status: item.status,
     });
@@ -194,6 +204,15 @@ export default function CouponManage() {
               <span style={{ fontSize: '28px' }}>{coupon.value}</span>
               <span style={{ fontSize: '16px' }}>{cfg.unit}</span>
             </>
+          ) : coupon.type === 'groupbuy' ? (
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: '14px', opacity: 0.9, marginBottom: '4px' }}>
+                团¥{coupon.groupPrice || 0}
+              </div>
+              <div style={{ fontSize: '32px', fontWeight: 800 }}>
+                <span style={{ fontSize: '16px' }}>抵扣¥</span>{coupon.value}
+              </div>
+            </div>
           ) : (
             <>
               <span style={{ fontSize: '18px' }}>¥</span>
@@ -203,7 +222,7 @@ export default function CouponManage() {
         </div>
 
         <div style={{ fontSize: '12px', opacity: 0.85, marginTop: '6px' }}>
-          {coupon.minSpend > 0 ? `满${coupon.minSpend}可用` : '无门槛'}
+          {coupon.type === 'groupbuy' ? '团购专享' : (coupon.minSpend > 0 ? `满${coupon.minSpend}可用` : '无门槛')}
         </div>
 
         {/* 锯齿线模拟 */}
@@ -287,6 +306,7 @@ export default function CouponManage() {
                 { label: '满减券', value: 'fullcut' },
                 { label: '代金券', value: 'cash' },
                 { label: '折扣券', value: 'discount' },
+                { label: '团购券', value: 'groupbuy' },
               ]}
             />
             <Select
@@ -451,11 +471,12 @@ export default function CouponManage() {
             <Col span={12}>
               <Form.Item name="type" label="券类型" rules={[{ required: true, message: '请选择券类型' }]}>
                 <Select
-                  onChange={(v) => { setCurrentType(v); form.setFieldsValue({ value: undefined }); }}
+                  onChange={(v) => { setCurrentType(v); form.setFieldsValue({ value: undefined, groupPrice: undefined }); }}
                   options={[
                     { label: '满减券', value: 'fullcut' },
                     { label: '代金券', value: 'cash' },
                     { label: '折扣券', value: 'discount' },
+                    { label: '团购券', value: 'groupbuy' },
                   ]}
                 />
               </Form.Item>
@@ -467,7 +488,25 @@ export default function CouponManage() {
             <CheckCircleOutlined style={{ marginRight: '8px' }} />规则配置
           </div>
           <Row gutter={16}>
-            <Col span={8}>
+            {currentType === 'groupbuy' && (
+              <Col span={8}>
+                <Form.Item
+                  name="groupPrice"
+                  label="团购价"
+                  rules={[{ required: true, message: '请输入团购价' }]}
+                >
+                  <InputNumber
+                    style={{ width: '100%' }}
+                    min={1}
+                    step={1}
+                    addonBefore="团"
+                    addonAfter="元"
+                    placeholder="如: 50"
+                  />
+                </Form.Item>
+              </Col>
+            )}
+            <Col span={currentType === 'groupbuy' ? 8 : 8}>
               <Form.Item
                 name="value"
                 label={TYPE_CONFIG[currentType]?.valueLabel || '面值'}
@@ -483,16 +522,18 @@ export default function CouponManage() {
                 />
               </Form.Item>
             </Col>
-            <Col span={8}>
-              <Form.Item name="minSpend" label="使用门槛">
-                <InputNumber
-                  style={{ width: '100%' }}
-                  min={0}
-                  addonAfter="元"
-                  placeholder="0表示无门槛"
-                />
-              </Form.Item>
-            </Col>
+            {currentType !== 'groupbuy' && (
+              <Col span={8}>
+                <Form.Item name="minSpend" label="使用门槛">
+                  <InputNumber
+                    style={{ width: '100%' }}
+                    min={0}
+                    addonAfter="元"
+                    placeholder="0表示无门槛"
+                  />
+                </Form.Item>
+              </Col>
+            )}
             <Col span={8}>
               <Form.Item name="quantity" label="发行总量" rules={[{ required: true, message: '请输入发行总量' }]}>
                 <InputNumber style={{ width: '100%' }} min={1} placeholder="如: 500" />
