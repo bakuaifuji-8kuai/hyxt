@@ -66,15 +66,13 @@ function RedirectHome() {
 }
 
 export default function App() {
-  // Restore hash route quirks — ensure clean root
   useEffect(() => {
     if (location.pathname === '/' || location.pathname === '') {
-      // let the routes handle redirection
     }
   }, [])
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.VITE_BASE_PATH || '/'}>
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route
