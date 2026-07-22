@@ -3,10 +3,11 @@ import {
   UtensilsCrossed, ShoppingBag, Tag, Bell, User, Settings, Star, Heart,
   MapPin, Clock, Coffee, Film, Smartphone, Ticket, Percent, Award,
   TrendingUp, ShoppingCart, Package, Store, Phone, MessageCircle,
-  ChevronRight, CheckCircle, XCircle, AlertCircle, Info
+  ChevronRight, CheckCircle, XCircle, AlertCircle, Info,
+  type LucideIcon
 } from 'lucide-react';
 
-const ICON_MAP: Record<string, React.FC<{ size?: number; color?: string; strokeWidth?: number }>> = {
+const ICON_MAP: Record<string, LucideIcon> = {
   'parking': CircleParking,
   'coins': Coins,
   'qrcode': QrCode,
