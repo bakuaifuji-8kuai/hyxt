@@ -6,7 +6,7 @@ import {
   ChevronRight, CheckCircle, XCircle, AlertCircle, Info
 } from 'lucide-react';
 
-const ICON_MAP: Record<string, React.FC<{ size?: number; color?: string; strokeWidth?: number }>> = {
+const ICON_MAP: Record<string, any> = {
   'parking': CircleParking,
   'coins': Coins,
   'qrcode': QrCode,
