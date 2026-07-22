@@ -207,7 +207,11 @@ export default function MemberProfile() {
               {members.map((member) => (
                 <div
                   key={member.id}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`选择会员${member.name}`}
                   onClick={() => handleSelectMember(member)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSelectMember(member); } }}
                   style={{
                     padding: '12px',
                     marginBottom: '8px',
@@ -215,7 +219,7 @@ export default function MemberProfile() {
                     cursor: 'pointer',
                     backgroundColor: selectedMember?.id === member.id ? '#EBF5FF' : '#FFFFFF',
                     border: selectedMember?.id === member.id ? '1px solid #3B82F6' : '1px solid #E5E7EB',
-                    transition: 'all 0.2s'
+                    transition: 'background-color 0.2s, box-shadow 0.2s'
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -409,10 +413,10 @@ export default function MemberProfile() {
           <Row gutter={[16, 16]}>
             <Col span={12}>
               <Form.Item name="name" label="姓名" rules={[{ required: true }]}>
-                <Input placeholder="请输入姓名" />
+                <Input placeholder="请输入姓名…" />
               </Form.Item>
               <Form.Item name="phone" label="手机号" rules={[{ required: true }]}>
-                <Input placeholder="请输入手机号" />
+                <Input placeholder="请输入手机号" name="phone" autoComplete="tel" />
               </Form.Item>
               <Form.Item name="gender" label="性别">
                 <Select options={[{ label: '男', value: 'male' }, { label: '女', value: 'female' }, { label: '保密', value: 'unknown' }]} />

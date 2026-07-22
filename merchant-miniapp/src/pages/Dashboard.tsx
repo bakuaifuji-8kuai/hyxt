@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { PullToRefresh, Toast } from 'antd-mobile'
 import {
   CheckCircle,
@@ -46,13 +46,11 @@ function formatMoney(n: unknown): string {
 }
 
 function formatDate(): string {
-  const d = new Date()
-  const week = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][d.getDay()]
-  return `${d.getMonth() + 1}月${d.getDate()}日 ${week}`
+  const dt = new Date()
+  return new Intl.DateTimeFormat('zh-CN', { month: 'long', day: 'numeric', weekday: 'short' }).format(dt)
 }
 
 export default function Dashboard() {
-  const navigate = useNavigate()
   const userInfo = getUserInfo()
   const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
@@ -184,26 +182,26 @@ export default function Dashboard() {
         {/* Quick actions */}
         <section className="mt-12">
           <div className="dash-actions">
-            <button
+            <Link
+              to="/coupon-verify"
               className="dash-action dash-action--primary"
-              onClick={() => navigate('/coupon-verify')}
             >
               <span className="dash-action-icon">
                 <ScanLine size={22} strokeWidth={2.2} />
               </span>
               <span className="dash-action-label">核销券</span>
               <span className="dash-action-sub">扫码或输入码</span>
-            </button>
-            <button
+            </Link>
+            <Link
+              to="/parking-issue"
               className="dash-action dash-action--accent"
-              onClick={() => navigate('/parking-issue')}
             >
               <span className="dash-action-icon">
                 <CircleParking size={22} strokeWidth={2.2} />
               </span>
               <span className="dash-action-label">发停车券</span>
               <span className="dash-action-sub">输入车牌发放</span>
-            </button>
+            </Link>
           </div>
         </section>
 

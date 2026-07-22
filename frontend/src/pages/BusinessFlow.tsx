@@ -1257,7 +1257,11 @@ export default function BusinessFlow() {
             </div>
 
             <div
+              role="button"
+              tabIndex={0}
+              aria-label="全部流程"
               onClick={() => setActiveCategory('all')}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActiveCategory('all'); } }}
               style={{
                 padding: '10px 16px',
                 cursor: 'pointer',
@@ -1266,7 +1270,7 @@ export default function BusinessFlow() {
                 alignItems: 'center',
                 background: activeCategory === 'all' ? '#eff6ff' : 'transparent',
                 borderLeft: activeCategory === 'all' ? '3px solid #2563eb' : '3px solid transparent',
-                transition: 'all 0.2s',
+                transition: 'background-color 0.2s, color 0.2s',
                 fontWeight: activeCategory === 'all' ? 600 : 400,
                 color: activeCategory === 'all' ? '#2563eb' : '#334155',
                 fontSize: 13,
@@ -1279,7 +1283,11 @@ export default function BusinessFlow() {
             {CATEGORIES.map(cat => (
               <div key={cat.key}>
                 <div
+                  role="button"
+                  tabIndex={0}
+                  aria-label={cat.name}
                   onClick={() => setActiveCategory(cat.key)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActiveCategory(cat.key); } }}
                   style={{
                     padding: '10px 16px',
                     cursor: 'pointer',
@@ -1288,7 +1296,7 @@ export default function BusinessFlow() {
                     alignItems: 'center',
                     background: activeCategory === cat.key ? '#eff6ff' : 'transparent',
                     borderLeft: activeCategory === cat.key ? `3px solid ${cat.color}` : '3px solid transparent',
-                    transition: 'all 0.2s',
+                    transition: 'background-color 0.2s, color 0.2s',
                     fontWeight: activeCategory === cat.key ? 600 : 400,
                     color: activeCategory === cat.key ? cat.color : '#334155',
                     fontSize: 13,
@@ -1310,7 +1318,11 @@ export default function BusinessFlow() {
               {filteredFlows.map(f => (
                 <div
                   key={f.key}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={f.name}
                   onClick={() => setSelected(f.key)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelected(f.key); } }}
                   style={{
                     padding: '10px 16px 10px 28px',
                     cursor: 'pointer',
@@ -1319,7 +1331,7 @@ export default function BusinessFlow() {
                     background: selected === f.key ? '#fff' : 'transparent',
                     color: selected === f.key ? '#0f172a' : '#475569',
                     fontWeight: selected === f.key ? 600 : 400,
-                    transition: 'all 0.2s',
+                    transition: 'background-color 0.2s, color 0.2s',
                     display: 'flex',
                     alignItems: 'center',
                     gap: 8,

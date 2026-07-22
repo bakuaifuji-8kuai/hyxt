@@ -131,7 +131,7 @@ export default function Records() {
 
                 <div className="rec-card-foot">
                   <span className="rec-amount-label">核销金额</span>
-                  <span className="rec-amount">¥{Number(item.amount ?? 0).toFixed(2)}</span>
+                  <span className="rec-amount">¥{new Intl.NumberFormat('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(item.amount ?? 0))}</span>
                 </div>
               </article>
             ))}

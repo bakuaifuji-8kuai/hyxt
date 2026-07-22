@@ -76,7 +76,7 @@ export default function ParkingIssue() {
 
       <form className="pi-form" onSubmit={handleIssue}>
         {/* Plate input — license-plate styled */}
-        <label className="field-label">车牌号</label>
+        <label className="field-label" htmlFor="pi-plate">车牌号</label>
         <div className="pi-plate">
           <div className="pi-plate-badge">京</div>
           <div className="field pi-plate-field">
@@ -84,10 +84,13 @@ export default function ParkingIssue() {
               <Car size={20} strokeWidth={2} />
             </span>
             <input
+              id="pi-plate"
+              name="plateNo"
               type="text"
               value={plate}
               onChange={(e) => setPlate(e.target.value.toUpperCase())}
-              placeholder="如 A12345"
+              placeholder="如 A12345…"
+              autoComplete="off"
               autoCapitalize="characters"
               autoCorrect="off"
               maxLength={8}
@@ -128,7 +131,7 @@ export default function ParkingIssue() {
         <button
           type="submit"
           className="btn btn-accent btn-block pi-submit"
-          disabled={loading || !plate.trim()}
+          disabled={loading}
         >
           {loading ? '发放中…' : `发放 ${hours} 小时停车券`}
           {!loading && <CheckCircle size={18} strokeWidth={2.4} />}
@@ -157,7 +160,7 @@ export default function ParkingIssue() {
               <div className="pi-result-meta-item">
                 <span className="pi-result-meta-label">优惠时长</span>
                 <span className="pi-result-meta-value text-accent">
-                  {result.hours} 小时
+                  {result.hours}{'\u00a0'}小时
                 </span>
               </div>
               {result.validUntil && (
@@ -272,7 +275,7 @@ export default function ParkingIssue() {
           flex-direction: column;
           align-items: center;
           gap: 1px;
-          transition: all 0.15s ease;
+          transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
         }
         .pi-hour-chip.active {
           background: var(--accent-soft);

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import {
   Crown, Coins, Ticket, Package, Wallet, ChevronRight, Settings,
   ShieldCheck, Headphones, Bell, LogOut, Sparkles,
@@ -50,7 +50,7 @@ export default function Member() {
     { label: '金币', value: data?.points ?? 0, icon: Coins, route: '/points' },
     { label: '卡券', value: data?.couponCount ?? 0, icon: Ticket, route: '/coupons' },
     { label: '订单', value: data?.orderCount ?? 0, icon: Package, route: '/orders' },
-    { label: '余额', value: `¥${data?.balance ?? 0}`, icon: Wallet, route: '' },
+    { label: '余额', value: new Intl.NumberFormat('zh-CN', { style: 'currency', currency: 'CNY', maximumFractionDigits: 2 }).format(Number(data?.balance ?? 0)), icon: Wallet, route: '' },
   ]
 
   const menus = [
@@ -81,14 +81,14 @@ export default function Member() {
         <div className="member-card-top">
           <div className="member-avatar">
             {data?.avatar ? (
-              <img src={data.avatar} alt={name} />
+              <img src={data.avatar} alt={name} width={64} height={64} />
             ) : (
               <span>{name.slice(0, 1)}</span>
             )}
           </div>
           <div className="member-id">
             <div className="member-name-row">
-              <h2 className="member-name">{name}</h2>
+              <h1 className="member-name">{name}</h1>
               <span className="member-level-badge">
                 <Crown size={12} />
                 {data?.levelName || '金卡会员'}
@@ -122,12 +122,8 @@ export default function Member() {
       <section className="section card member-stats">
         {stats.map((s) => {
           const Icon = s.icon
-          return (
-            <button
-              key={s.label}
-              className="member-stat"
-              onClick={() => (s.route ? navigate(s.route) : Toast.show({ content: '敬请期待' }))}
-            >
+          const inner = (
+            <>
               <span className="member-stat-icon">
                 <Icon size={18} />
               </span>
@@ -135,6 +131,19 @@ export default function Member() {
                 {typeof s.value === 'number' ? s.value.toLocaleString() : s.value}
               </span>
               <span className="member-stat-label">{s.label}</span>
+            </>
+          )
+          return s.route ? (
+            <Link key={s.label} to={s.route} className="member-stat">
+              {inner}
+            </Link>
+          ) : (
+            <button
+              key={s.label}
+              className="member-stat"
+              onClick={() => Toast.show({ content: '敬请期待' })}
+            >
+              {inner}
             </button>
           )
         })}
@@ -167,17 +176,26 @@ export default function Member() {
       <section className="section card member-menu">
         {menus.map((m) => {
           const Icon = m.icon
-          return (
-            <button
-              key={m.label}
-              className="member-menu-item"
-              onClick={() => (m.route ? navigate(m.route) : Toast.show({ content: '敬请期待' }))}
-            >
+          const inner = (
+            <>
               <span className="member-menu-icon">
                 <Icon size={18} />
               </span>
               <span className="member-menu-label">{m.label}</span>
               <ChevronRight size={16} className="member-menu-arrow" />
+            </>
+          )
+          return m.route ? (
+            <Link key={m.label} to={m.route} className="member-menu-item">
+              {inner}
+            </Link>
+          ) : (
+            <button
+              key={m.label}
+              className="member-menu-item"
+              onClick={() => Toast.show({ content: '敬请期待' })}
+            >
+              {inner}
             </button>
           )
         })}

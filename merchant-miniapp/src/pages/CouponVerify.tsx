@@ -72,7 +72,7 @@ export default function CouponVerify() {
       </header>
 
       <form className="cv-form" onSubmit={handleVerify}>
-        <label className="field-label">核销码</label>
+        <label className="field-label" htmlFor="cv-code">核销码</label>
         <div className="cv-input-wrap">
           <div className="field cv-field">
             <span className="field-icon">
@@ -80,10 +80,13 @@ export default function CouponVerify() {
             </span>
             <input
               ref={inputRef}
+              id="cv-code"
+              name="code"
               type="text"
               value={code}
               onChange={(e) => setCode(e.target.value)}
-              placeholder="请输入核销码"
+              placeholder="请输入核销码…"
+              autoComplete="off"
               autoCapitalize="none"
               autoCorrect="off"
               maxLength={64}
@@ -103,7 +106,7 @@ export default function CouponVerify() {
         <button
           type="submit"
           className="btn btn-primary btn-block cv-submit"
-          disabled={loading || !code.trim()}
+          disabled={loading}
         >
           {loading ? '核销中…' : '立即核销'}
           {!loading && <CheckCircle size={18} strokeWidth={2.4} />}
@@ -154,7 +157,7 @@ export default function CouponVerify() {
                 </span>
                 <span className="cv-result-label">券面值</span>
                 <span className="cv-result-value">
-                  {result.couponValue ? `¥${Number(result.couponValue).toFixed(2)}` : '—'}
+                  {result.couponValue ? `¥${new Intl.NumberFormat('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(result.couponValue))}` : '—'}
                 </span>
               </div>
             )}

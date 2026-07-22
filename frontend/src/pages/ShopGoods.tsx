@@ -153,7 +153,7 @@ export default function ShopGoods() {
   ];
 
   const goodsColumns = [
-    { title: '商品图片', dataIndex: 'mainImage', width: 80, render: (url: string) => url ? <img src={url} style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '4px' }} /> : <div style={{ width: '60px', height: '60px', background: '#F3F4F6', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>无图</div> },
+    { title: '商品图片', dataIndex: 'mainImage', width: 80, render: (url: string, record: GoodsData) => url ? <img src={url} alt={record.name || '商品图片'} width={60} height={60} style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '4px' }} /> : <div style={{ width: '60px', height: '60px', background: '#F3F4F6', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>无图</div> },
     { title: '商品名称', dataIndex: 'name', render: (text: string, record: GoodsData) => <div><div style={{ fontWeight: '600' }}>{text}</div><div style={{ fontSize: '12px', color: '#6B7280' }}>{record.subtitle || '暂无副标题'}</div></div> },
     { title: '商品编码', dataIndex: 'spuCode', render: (text: string) => <Tag>{text}</Tag> },
     { title: '分类', dataIndex: 'category' },
@@ -165,7 +165,6 @@ export default function ShopGoods() {
     { title: '状态', dataIndex: 'status', render: (text: string) => <Badge status={text === 'enabled' ? 'success' : 'default'} text={text === 'enabled' ? '上架' : '下架'} /> },
     { title: '操作', render: (_: any, record: GoodsData) => (
       <Space>
-        <Button size="small" icon={<EyeOutlined />}>预览</Button>
         <Button size="small" icon={<EditOutlined />} onClick={() => handleEdit(record)}>编辑</Button>
         <Popconfirm title="确认删除?" onConfirm={() => handleDelete(record.id)}>
           <Button size="small" danger icon={<DeleteOutlined />}>删除</Button>
@@ -253,8 +252,8 @@ export default function ShopGoods() {
                       <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                         {previewImages.map((url, index) => (
                           <div key={index} style={{ position: 'relative' }}>
-                            <img src={url} style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '4px' }} />
-                            <Button size="small" danger style={{ position: 'absolute', top: '-8px', right: '-8px' }} onClick={() => removeImage(index)}>×</Button>
+                            <img src={url} alt="商品图片" width={100} height={100} style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '4px' }} />
+                            <Button size="small" danger aria-label="关闭预览" style={{ position: 'absolute', top: '-8px', right: '-8px' }} onClick={() => removeImage(index)}>×</Button>
                           </div>
                         ))}
                       </div>
@@ -322,7 +321,7 @@ export default function ShopGoods() {
               <Button type="primary" icon={<PlusOutlined />} onClick={addSKU}>添加SKU</Button>
             </div>
             <Table
-              rowKey={(record, index) => index}
+              rowKey="id"
               dataSource={skuData}
               columns={skuColumns}
               pagination={false}

@@ -298,7 +298,7 @@ const ComponentPreview: React.FC<{ comp: PageComponent; isSelected: boolean; onC
     cursor: 'pointer',
     border: isSelected ? '2px dashed #1890ff' : '2px solid transparent',
     borderRadius: 4,
-    transition: 'all 0.2s',
+    transition: 'transform 0.2s, box-shadow 0.2s',
   };
 
   const renderContent = () => {
@@ -341,7 +341,7 @@ const ComponentPreview: React.FC<{ comp: PageComponent; isSelected: boolean; onC
         return (
           <div style={{ position: 'relative', height: cfg.height || 160, background: '#f0f0f0', borderRadius: 4, overflow: 'hidden' }}>
             {cfg.items?.[0]?.image ? (
-              <img src={cfg.items[0].image} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+              <img src={cfg.items[0].image} width="100%" height="100%" style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
             ) : (
               <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#999', fontSize: 14 }}>
                 <PictureOutlined style={{ fontSize: 32, marginRight: 8 }} /> 轮播图区域
@@ -370,7 +370,7 @@ const ComponentPreview: React.FC<{ comp: PageComponent; isSelected: boolean; onC
                     overflow: 'hidden'
                   }}>
                     {item.image ? (
-                      <img src={item.image} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                      <img src={item.image} width="100%" height="100%" style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
                     ) : (
                       <AppstoreOutlined style={{ color: '#ccc', fontSize: 20 }} />
                     )}
@@ -404,7 +404,7 @@ const ComponentPreview: React.FC<{ comp: PageComponent; isSelected: boolean; onC
         return (
           <div style={{ padding: cfg.padding || 12, background: '#fff' }}>
             {cfg.image ? (
-              <img src={cfg.image} style={{ width: '100%', borderRadius: cfg.borderRadius || 8 }} alt="" />
+              <img src={cfg.image} width="100%" style={{ width: '100%', borderRadius: cfg.borderRadius || 8 }} alt="" />
             ) : (
               <div style={{
                 width: '100%', height: 120, background: '#f0f0f0', borderRadius: cfg.borderRadius || 8,
@@ -474,7 +474,7 @@ const ComponentPreview: React.FC<{ comp: PageComponent; isSelected: boolean; onC
                 <div key={i} style={{ flex: 1, background: '#fff', borderRadius: 8, overflow: 'hidden' }}>
                   <div style={{ position: 'relative', height: 100 }}>
                     {item.image ? (
-                      <img src={item.image} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                      <img src={item.image} width="100%" height="100%" style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
                     ) : (
                       <div style={{ width: '100%', height: '100%', background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#999' }}>
                         <BuildOutlined style={{ fontSize: 24 }} />
@@ -1533,7 +1533,7 @@ export default function ShopHomeConfig() {
                     </div>
                   </div>
                   <Popconfirm title="确认删除?" onConfirm={() => handleDeleteConfig(config.id)}>
-                    <Button size="small" type="text" danger icon={<DeleteOutlined />} onClick={e => e.stopPropagation()} />
+                    <Button size="small" type="text" danger aria-label="删除页面配置" icon={<DeleteOutlined />} onClick={e => e.stopPropagation()} />
                   </Popconfirm>
                 </div>
               ))}
@@ -1556,7 +1556,7 @@ export default function ShopHomeConfig() {
                         style={{
                           padding: '10px 6px', borderRadius: 6, cursor: 'pointer',
                           border: '1px solid #e8e8e8', textAlign: 'center',
-                          transition: 'all 0.2s',
+                          transition: 'transform 0.2s, box-shadow 0.2s, border-color 0.2s',
                         }}
                         onMouseEnter={e => {
                           e.currentTarget.style.borderColor = '#1890ff';
@@ -1642,10 +1642,10 @@ export default function ShopHomeConfig() {
                             position: 'absolute', right: 4, top: 4, zIndex: 10,
                             display: 'flex', gap: 2
                           }}>
-                            <Button size="small" icon={<UpOutlined />} onClick={e => { e.stopPropagation(); moveComponent(idx, 'up'); }} />
-                            <Button size="small" icon={<DownOutlined />} onClick={e => { e.stopPropagation(); moveComponent(idx, 'down'); }} />
-                            <Button size="small" icon={<CopyOutlined />} onClick={e => e.stopPropagation()} />
-                            <Button size="small" danger icon={<DeleteOutlined />} onClick={e => { e.stopPropagation(); deleteComponent(comp.id); }} />
+                            <Button size="small" aria-label="上移" icon={<UpOutlined />} onClick={e => { e.stopPropagation(); moveComponent(idx, 'up'); }} />
+                            <Button size="small" aria-label="下移" icon={<DownOutlined />} onClick={e => { e.stopPropagation(); moveComponent(idx, 'down'); }} />
+                            <Button size="small" aria-label="复制" icon={<CopyOutlined />} onClick={e => e.stopPropagation()} />
+                            <Button size="small" danger aria-label="删除" icon={<DeleteOutlined />} onClick={e => { e.stopPropagation(); deleteComponent(comp.id); }} />
                           </div>
                         )}
                       </div>

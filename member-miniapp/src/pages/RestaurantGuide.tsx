@@ -31,23 +31,35 @@ const COVER_GRADIENTS = [
 
 export default function RestaurantGuide() {
   const [list, setList] = useState<Restaurant[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     request
       .get<Restaurant[]>('/capp/restaurant-guide')
-      .then((d) => setList(d as Restaurant[]))
-      .catch((e) => Toast.show({ content: (e as Error).message, icon: 'fail' }))
+      .then((d) => { setList(d as Restaurant[]); setLoading(false) })
+      .catch((e) => { Toast.show({ content: (e as Error).message, icon: 'fail' }); setLoading(false) })
   }, [])
 
   return (
     <div className="page page--no-tab restaurant-page">
+      <h1 className="sr-only">餐饮导览</h1>
       <div className="restaurant-intro">
         <UtensilsCrossed size={18} />
         <span>甄选 {list.length || '–'} 家品质餐厅，满足您的味蕾</span>
       </div>
 
       <div className="restaurant-list">
-        {list.length ? (
+        {loading ? (
+          Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="card restaurant-card">
+              <span className="skeleton restaurant-cover" />
+              <div className="restaurant-info">
+                <span className="skeleton" style={{ width: '40%', height: 16 }} />
+                <span className="skeleton" style={{ width: '60%', height: 12, marginTop: 10 }} />
+              </div>
+            </div>
+          ))
+        ) : list.length ? (
           list.map((r, i) => (
             <div key={r.id} className="card restaurant-card">
               <div
@@ -64,7 +76,7 @@ export default function RestaurantGuide() {
               <div className="restaurant-info">
                 <div className="restaurant-info-top">
                   <h3 className="restaurant-name">{r.name}</h3>
-                  <span className="restaurant-cost">¥{r.avgCost}/人</span>
+                  <span className="restaurant-cost">{new Intl.NumberFormat('zh-CN', { style: 'currency', currency: 'CNY', maximumFractionDigits: 0 }).format(Number(r.avgCost))}/人</span>
                 </div>
                 <div className="restaurant-meta">
                   <span className="restaurant-cuisine">{r.cuisine}</span>
@@ -77,15 +89,7 @@ export default function RestaurantGuide() {
             </div>
           ))
         ) : (
-          Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="card restaurant-card">
-              <span className="skeleton restaurant-cover" />
-              <div className="restaurant-info">
-                <span className="skeleton" style={{ width: '40%', height: 16 }} />
-                <span className="skeleton" style={{ width: '60%', height: 12, marginTop: 10 }} />
-              </div>
-            </div>
-          ))
+          <div className="empty-state" style={{ textAlign: 'center', padding: '40px 0', color: 'var(--ink-3)' }}>暂无餐饮门店</div>
         )}
       </div>
     </div>

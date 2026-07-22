@@ -95,6 +95,25 @@ button {
   background: none;
 }
 
+button,
+a,
+[role="button"] {
+  touch-action: manipulation;
+}
+
+/* Screen-reader-only utility (visually hidden, still announced) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 input,
 textarea,
 select {
@@ -233,11 +252,15 @@ select {
 .field input {
   flex: 1;
   border: none;
-  outline: none;
   background: transparent;
   height: 100%;
   font-size: 15px;
   color: var(--ink);
+}
+
+.field input:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }
 
 .field input::placeholder {
@@ -311,6 +334,7 @@ select {
   color: var(--ink);
   letter-spacing: -0.02em;
   margin-top: 2px;
+  font-variant-numeric: tabular-nums;
 }
 
 .stat-suffix {
@@ -520,4 +544,16 @@ select {
 
 .adm-dialog .adm-dialog-body {
   font-size: 15px;
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }

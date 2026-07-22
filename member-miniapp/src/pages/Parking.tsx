@@ -45,6 +45,7 @@ export default function Parking() {
 
   return (
     <div className="page page--no-tab parking-page">
+      <h1 className="sr-only">停车缴费</h1>
       {/* Current parking card */}
       <section className="section parking-current">
         <div className="parking-current-glow" />
@@ -70,17 +71,17 @@ export default function Parking() {
                 <span>
                   <Wallet size={14} /> 应付费用
                 </span>
-                <span>¥{cur.fee}</span>
+                <span>{new Intl.NumberFormat('zh-CN', { style: 'currency', currency: 'CNY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(cur.fee))}</span>
               </div>
               <div className="parking-fee-row discount">
                 <span>
                   <Tag size={14} /> 会员优惠
                 </span>
-                <span>-¥{cur.discount}</span>
+                <span>{new Intl.NumberFormat('zh-CN', { style: 'currency', currency: 'CNY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(-Number(cur.discount))}</span>
               </div>
               <div className="parking-fee-row total">
                 <span>实付金额</span>
-                <span className="parking-fee-final">¥{cur.finalFee}</span>
+                <span className="parking-fee-final">{new Intl.NumberFormat('zh-CN', { style: 'currency', currency: 'CNY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(cur.finalFee))}</span>
               </div>
             </div>
 
@@ -110,7 +111,7 @@ export default function Parking() {
               {LEVEL_NAME[data.benefit.level] || '会员'} 停车权益
             </p>
             <p className="parking-benefit-desc">
-              每日免费停车 {data.benefit.freeHours} 小时 · 消费 {data.benefit.pointsRate} 元获 1 金币
+              每日免费停车 {data.benefit.freeHours}{'\u00a0'}小时 · 消费 {data.benefit.pointsRate}{'\u00a0'}元获 1 金币
             </p>
           </div>
         </section>

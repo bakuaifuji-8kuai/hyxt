@@ -135,10 +135,12 @@ export default function App() {
           <Dropdown menu={{ items: [
             { key: 'logout', icon: <LogoutOutlined />, label: '退出登录', onClick: handleLogoutClick }
           ] }}>
-            <Space style={{ cursor: 'pointer' }}>
-              <Avatar icon={<UserOutlined />} />
-              <span>{userInfo.name || 'admin'}</span>
-            </Space>
+            <button type="button" style={{ border: 'none', background: 'none', cursor: 'pointer', padding: 0 }} aria-label={userInfo.name ? `${userInfo.name}的用户菜单` : '用户菜单'}>
+              <Space>
+                <Avatar icon={<UserOutlined />} />
+                <span>{userInfo.name || 'admin'}</span>
+              </Space>
+            </button>
           </Dropdown>
         </Header>
         <Content>

@@ -19,7 +19,7 @@ export default function Login() {
       navigate('/');
     } catch (e: any) {
       if (e?.errorFields) return;
-      message.error(e.message || '登录失败');
+      message.error(e.message || '登录失败，请检查账号或密码');
     } finally {
       setLoading(false);
     }
@@ -28,15 +28,15 @@ export default function Login() {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
       <Card title="力唯智慧商业会员营销平台" style={{ width: 400, textAlign: 'center' }} styles={{ header: { fontSize: 18, fontWeight: 'bold' } }}>
-        <Form form={form} layout="vertical" initialValues={{ username: 'admin', password: 'admin' }}>
-          <Form.Item name="username" label="用户名" rules={[{ required: true }]}>
-            <Input placeholder="请输入用户名" />
+        <Form form={form} layout="vertical" onFinish={handleLogin}>
+          <Form.Item name="username" label="用户名" rules={[{ required: true, message: '请输入用户名' }]}>
+            <Input name="username" autoComplete="username" placeholder="请输入用户名…" />
           </Form.Item>
-          <Form.Item name="password" label="密码" rules={[{ required: true }]}>
-            <Input.Password placeholder="请输入密码" />
+          <Form.Item name="password" label="密码" rules={[{ required: true, message: '请输入密码' }]}>
+            <Input.Password name="password" autoComplete="current-password" placeholder="请输入密码…" />
           </Form.Item>
-          <Button type="primary" block loading={loading} onClick={handleLogin}>登录</Button>
-          <div style={{ marginTop: 12, color: '#999', fontSize: 12 }}>默认账号: admin / admin</div>
+          <Button type="primary" htmlType="submit" block loading={loading}>登录</Button>
+          <div style={{ marginTop: 12, color: '#999', fontSize: 12 }}>演示账号：admin / admin</div>
         </Form>
       </Card>
     </div>

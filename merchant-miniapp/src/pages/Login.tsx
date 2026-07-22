@@ -53,16 +53,18 @@ export default function Login() {
 
         <div className="login-fields">
           <div>
-            <label className="field-label">商户账号</label>
+            <label className="field-label" htmlFor="login-username">商户账号</label>
             <div className="field">
-              <span className="field-icon">
+              <span className="field-icon" aria-hidden="true">
                 <Store size={18} strokeWidth={2} />
               </span>
               <input
+                id="login-username"
                 type="text"
+                name="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="请输入商户账号"
+                placeholder="请输入商户账号…"
                 autoComplete="username"
                 autoCapitalize="none"
               />
@@ -70,16 +72,18 @@ export default function Login() {
           </div>
 
           <div>
-            <label className="field-label">登录密码</label>
+            <label className="field-label" htmlFor="login-password">登录密码</label>
             <div className="field">
-              <span className="field-icon">
+              <span className="field-icon" aria-hidden="true">
                 <Lock size={18} strokeWidth={2} />
               </span>
               <input
+                id="login-password"
                 type="password"
+                name="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="请输入登录密码"
+                placeholder="请输入登录密码…"
                 autoComplete="current-password"
               />
             </div>

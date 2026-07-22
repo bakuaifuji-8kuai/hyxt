@@ -112,10 +112,10 @@ export default function Home() {
           <span>恒伟商业广场</span>
           <ChevronRight size={13} className="home-loc-arrow" />
         </div>
-        <div className="home-search" onClick={() => Toast.show({ content: '搜索功能·敬请期待' })}>
+        <button type="button" className="home-search" onClick={() => Toast.show({ content: '搜索功能·敬请期待' })} aria-label="搜索">
           <Search size={15} className="home-search-icon" />
           <span className="home-search-ph">搜索品牌 / 商品 / 活动</span>
-        </div>
+        </button>
       </header>
 
       {/* Notice */}
@@ -146,7 +146,7 @@ export default function Home() {
                   >
                     <div className="home-banner-inner">
                       <span className="home-banner-eyebrow">PROMOTION</span>
-                      <h3 className="home-banner-title">{b.title}</h3>
+                      <h2 className="home-banner-title">{b.title}</h2>
                       <span className="home-banner-cta">
                         立即查看 <ChevronRight size={13} />
                       </span>
@@ -211,8 +211,8 @@ export default function Home() {
                   </div>
                   <p className="home-flash-name">{g.name}</p>
                   <div className="home-flash-price">
-                    <span className="cur">¥{g.price}</span>
-                    <span className="orig">¥{g.originalPrice}</span>
+                    <span className="cur">{new Intl.NumberFormat('zh-CN', { style: 'currency', currency: 'CNY', maximumFractionDigits: 0 }).format(Number(g.price))}</span>
+                    <span className="orig">{new Intl.NumberFormat('zh-CN', { style: 'currency', currency: 'CNY', maximumFractionDigits: 0 }).format(Number(g.originalPrice))}</span>
                   </div>
                 </div>
               ))}

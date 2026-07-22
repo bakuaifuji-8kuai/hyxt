@@ -32,6 +32,7 @@ export default function Orders() {
 
   return (
     <div className="page page--no-tab orders-page">
+      <h1 className="sr-only">我的订单</h1>
       <div className="orders-intro">
         <Package size={18} />
         <span>共 {list.length || 0} 笔订单</span>
@@ -55,7 +56,7 @@ export default function Orders() {
                 </div>
                 <div className="order-amount">
                   <span className="order-amount-sym">¥</span>
-                  <span className="order-amount-val">{o.amount}</span>
+                  <span className="order-amount-val">{new Intl.NumberFormat('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(o.amount))}</span>
                 </div>
               </div>
               <div className="order-foot">

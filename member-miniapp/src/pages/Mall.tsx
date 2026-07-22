@@ -45,6 +45,7 @@ export default function Mall() {
 
   return (
     <div className="page page--no-tab mall-page">
+      <h1 className="sr-only">金币商城</h1>
       {/* Coins balance banner */}
       <div className="mall-balance">
         <div className="mall-balance-left">
@@ -88,7 +89,7 @@ export default function Mall() {
               </div>
               <div className="mall-good-info">
                 <p className="mall-good-name">{g.name}</p>
-                <p className="mall-good-orig">价值 ¥{g.originalPrice}</p>
+                <p className="mall-good-orig">价值 {new Intl.NumberFormat('zh-CN', { style: 'currency', currency: 'CNY', maximumFractionDigits: 0 }).format(Number(g.originalPrice))}</p>
                 <div className="mall-good-bottom">
                   <span className="mall-good-price">
                     <Coins size={13} />

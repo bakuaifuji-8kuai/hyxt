@@ -353,6 +353,7 @@ export default function Profile() {
           font-weight: 700;
           color: var(--ink);
           letter-spacing: -0.01em;
+          font-variant-numeric: tabular-nums;
         }
         .pf-stat-label {
           margin-top: 2px;

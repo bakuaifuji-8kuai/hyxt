@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Phone, ShieldCheck, Crown, ChevronRight } from 'lucide-react'
 import { Toast } from 'antd-mobile'
@@ -61,42 +61,58 @@ export default function Login() {
     }
   }
 
+  const handleLoginSubmit = (e: FormEvent) => {
+    e.preventDefault()
+    handleLogin()
+  }
+
   return (
     <div className="app-shell login-page">
       <div className="login-bg" />
       <div className="login-content">
         <div className="login-brand">
-          <div className="login-brand-icon">
+          <div className="login-brand-icon" aria-hidden="true">
             <Crown size={30} strokeWidth={1.6} />
           </div>
           <h1 className="login-brand-title">会员中心</h1>
           <p className="login-brand-sub">尊享品质生活 · 璀璨每一刻</p>
         </div>
 
-        <div className="login-card">
+        <form className="login-card" onSubmit={handleLoginSubmit}>
           <div className="login-field">
-            <Phone size={18} className="login-field-icon" />
+            <Phone size={18} className="login-field-icon" aria-hidden="true" />
+            <label htmlFor="login-phone" className="sr-only">手机号</label>
             <input
+              id="login-phone"
               className="login-input"
+              name="phone"
               type="tel"
+              inputMode="numeric"
+              autoComplete="tel"
               maxLength={11}
-              placeholder="请输入手机号"
+              placeholder="请输入手机号…"
               value={phone}
               onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
             />
           </div>
 
           <div className="login-field">
-            <ShieldCheck size={18} className="login-field-icon" />
+            <ShieldCheck size={18} className="login-field-icon" aria-hidden="true" />
+            <label htmlFor="login-code" className="sr-only">验证码</label>
             <input
+              id="login-code"
               className="login-input"
-              type="tel"
+              name="code"
+              type="text"
+              inputMode="numeric"
+              autoComplete="one-time-code"
               maxLength={6}
-              placeholder="请输入验证码"
+              placeholder="请输入验证码…"
               value={code}
               onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
             />
             <button
+              type="button"
               className="login-code-btn"
               disabled={countdown > 0}
               onClick={sendCode}
@@ -106,18 +122,18 @@ export default function Login() {
           </div>
 
           <button
+            type="submit"
             className="login-submit btn-primary"
             disabled={loading}
-            onClick={handleLogin}
           >
             {loading ? '登录中…' : '登 录'}
           </button>
 
           <div className="login-hint">
-            <ChevronRight size={12} />
+            <ChevronRight size={12} aria-hidden="true" />
             <span>演示验证码为 123456，任意手机号均可登录</span>
           </div>
-        </div>
+        </form>
 
         <p className="login-terms">
           登录即表示同意 <span className="login-terms-link">《会员服务协议》</span> 与{' '}

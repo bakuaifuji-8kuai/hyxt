@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { Coins, ChevronRight, TrendingUp, Gift } from 'lucide-react'
 import { Toast } from 'antd-mobile'
 import request from '../services/request'
@@ -24,7 +24,6 @@ const TYPE_TAG: Record<string, { cls: string; label: string }> = {
 }
 
 export default function Points() {
-  const navigate = useNavigate()
   const [data, setData] = useState<PointsData | null>(null)
 
   useEffect(() => {
@@ -43,7 +42,7 @@ export default function Points() {
           <div className="points-coin-icon">
             <Coins size={26} />
           </div>
-          <span className="points-header-label">我的金币</span>
+          <h1 className="points-header-label">我的金币</h1>
         </div>
         <div className="points-total">
           {data ? data.total.toLocaleString() : '––'}
@@ -53,14 +52,14 @@ export default function Points() {
           <span>今日已获 +{data?.todayEarn ?? 0} 金币</span>
         </div>
         <div className="points-actions">
-          <button className="btn-gold-ghost points-action" onClick={() => navigate('/mall')}>
+          <Link to="/mall" className="btn-gold-ghost points-action">
             <Gift size={15} />
             <span>金币兑换</span>
-          </button>
-          <button className="btn-gold-ghost points-action" onClick={() => navigate('/orders')}>
+          </Link>
+          <Link to="/orders" className="btn-gold-ghost points-action">
             <Coins size={15} />
             <span>兑换记录</span>
-          </button>
+          </Link>
         </div>
       </header>
 

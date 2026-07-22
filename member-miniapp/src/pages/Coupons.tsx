@@ -22,7 +22,7 @@ const TABS = [
 function valueLabel(c: Coupon): string {
   if (c.type === 'parking') return `${c.value}分钟`
   if (c.type === 'goods') return '兑换券'
-  return `¥${c.value}`
+  return new Intl.NumberFormat('zh-CN', { style: 'currency', currency: 'CNY', maximumFractionDigits: 0 }).format(Number(c.value))
 }
 function unitLabel(c: Coupon): string {
   if (c.type === 'parking') return '停车'
@@ -58,7 +58,7 @@ export default function Coupons() {
         <div className="coupons-header-glow" />
         <div className="coupons-header-title">
           <Ticket size={22} />
-          <span>我的卡券</span>
+          <h1 style={{ fontSize: 'inherit', fontWeight: 'inherit' }}>我的卡券</h1>
         </div>
         <p className="coupons-header-sub">尊享权益 · 一券在手</p>
       </header>
