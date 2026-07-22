@@ -9,10 +9,11 @@
     "preview": "vite preview --host 0.0.0.0 --port 8000"
   },
   "dependencies": {
-    "antd": "^5.20.0",
     "@ant-design/icons": "^5.4.0",
+    "antd": "^5.20.0",
     "axios": "^1.7.0",
     "dayjs": "^1.11.13",
+    "lucide-react": "^1.25.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.0"

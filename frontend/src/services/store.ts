@@ -1273,6 +1273,140 @@ initModule('capp/activity-signup', ['name', 'type', 'maxParticipants', 'location
   { name: '线上秒杀活动', type: 'online', maxParticipants: 500, location: '小程序', activityTime: '2024-07-18 10:00', status: 'enabled' },
 ]);
 
+// C端小程序装修 - 页面配置（可视化拖拽）
+initModule('decoration/pages', ['name', 'pageType', 'components', 'status', 'publishedAt', 'previewToken', 'sort'], [
+  {
+    name: '商城首页',
+    pageType: 'home',
+    status: 'published',
+    publishedAt: '2024-07-15 10:00',
+    previewToken: 'prev_home_001',
+    sort: 1,
+    components: JSON.stringify([
+      {
+        id: 'comp_search',
+        type: 'search',
+        name: '搜索框',
+        config: { placeholder: '搜索商品、品牌', style: 'round', bgColor: '#f5f5f5', showLocation: true, locationText: '长沙洋湖天街' }
+      },
+      {
+        id: 'comp_notice',
+        type: 'notice',
+        name: '公告栏',
+        config: { text: '新会员注册即送100金币，立即注册享专属优惠！', color: '#ff4d4f', bgColor: '#fff7e6', icon: 'bell' }
+      },
+      {
+        id: 'comp_banner',
+        type: 'banner',
+        name: '轮播图',
+        config: {
+          items: [
+            { image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=shopping%20mall%20summer%20sale%20banner%20modern%20design%20vibrant&image_size=landscape_16_9', link: '', title: '暑期大促' },
+            { image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=new%20member%20welcome%20gift%20banner%20elegant%20gold&image_size=landscape_16_9', link: '', title: '新人专享' }
+          ],
+          height: 160, autoPlay: true, interval: 3, indicatorStyle: 'dot'
+        }
+      },
+      {
+        id: 'comp_serviceNav',
+        type: 'serviceNav',
+        name: '服务导航',
+        config: {
+          items: [
+            { icon: 'parking', text: '停车缴费', link: '/pages/parking' },
+            { icon: 'coins', text: '快速金币', link: '/pages/points' },
+            { icon: 'qrcode', text: '金币码', link: '/pages/code' },
+            { icon: 'crown', text: '会员权益', link: '/pages/member' },
+            { icon: 'headphones', text: '联系客服', link: '/pages/service' },
+            { icon: 'search', text: '自助寻车', link: '/pages/findcar' },
+            { icon: 'car', text: '我要打车', link: '/pages/taxi' },
+            { icon: 'zap', text: '我要充电', link: '/pages/charge' },
+            { icon: 'gift', text: '金币兑换', link: '/pages/mall' },
+            { icon: 'utensils', text: '餐饮导览', link: '/pages/restaurant' }
+          ],
+          columns: 5
+        }
+      },
+      {
+        id: 'comp_flashSale',
+        type: 'flashSale',
+        name: '限时秒杀',
+        config: {
+          title: '限时秒杀', subtitle: '好物限时抢', bgColor: '#fff2f0', countdown: true, goodsCount: 3,
+          goods: [
+            { name: '星巴克咖啡券', price: 500, originalPrice: 800, image: '' },
+            { name: '电影票兑换券', price: 1200, originalPrice: 1800, image: '' },
+            { name: '2小时停车券', price: 200, originalPrice: 400, image: '' }
+          ]
+        }
+      },
+      {
+        id: 'comp_eventCard',
+        type: 'eventCard',
+        name: '活动预告',
+        config: {
+          title: '07月活动预告', subtitle: '天街会员活动等你来', year: '2026', month: '07',
+          events: [
+            { date: '07.05', title: '亲子运动会', location: 'A区1-3门外广场' },
+            { date: '07.07', title: '安全教育', location: 'A区L2南风空间' },
+            { date: '07.15', title: '会员日专享', location: '全场商户' }
+          ]
+        }
+      },
+      {
+        id: 'comp_merchantCard',
+        type: 'merchantCard',
+        name: '商户卡片',
+        config: {
+          items: [
+            { image: '', title: '新店开业', subtitle: '魏斯理', tag: '开业' },
+            { image: '', title: '新店入驻', subtitle: '金粒门', tag: '入驻' }
+          ],
+          layout: 'grid2'
+        }
+      },
+      {
+        id: 'comp_categoryTabs',
+        type: 'categoryTabs',
+        name: '分类标签',
+        config: {
+          categories: [
+            { name: '餐饮美食', count: 36 },
+            { name: '服饰鞋包', count: 27 },
+            { name: '儿童成长', count: 15 },
+            { name: '生活服务', count: 20 },
+            { name: '数码电器', count: 13 }
+          ],
+          showCount: true, activeColor: '#ff4d4f'
+        }
+      }
+    ])
+  },
+  {
+    name: '会员中心页',
+    pageType: 'member',
+    status: 'draft',
+    publishedAt: '',
+    previewToken: 'prev_member_001',
+    sort: 2,
+    components: JSON.stringify([
+      {
+        id: 'comp_member_info',
+        type: 'memberInfo',
+        name: '会员信息卡',
+        config: { showAvatar: true, showLevel: true, showPoints: true, pointsLabel: '金币', showBalance: true }
+      }
+    ])
+  }
+]);
+
+// C端小程序装修 - 千人千面受众
+initModule('decoration/audience', ['name', 'description', 'rules', 'memberCount', 'status'], [
+  { name: '高消费会员', description: '消费总额>5000元的会员', rules: '消费总额>5000', memberCount: 86, status: 'enabled' },
+  { name: '新注册会员', description: '30天内注册的会员', rules: '注册时间<30天', memberCount: 156, status: 'enabled' },
+  { name: '沉睡会员', description: '90天未消费的会员', rules: '90天无消费', memberCount: 42, status: 'enabled' },
+]);
+
 export function fetchDashboard() {
   const memberCount = modules['member/list']?.data.length || 0;
   const pointsIssued = (modules['points/logs']?.data.reduce((s, x) => s + (x.points || 0), 0)) || 0;

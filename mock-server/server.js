@@ -1074,6 +1074,292 @@ const moduleRoutes = [
   'bapp/verify-stats', 'bapp/sales-stats', 'bapp/shop-info', 'bapp/shop-notice',
 ];
 
+// ============ C端小程序 自定义业务API ============
+function miniAuth(req, res, next) {
+  const h = req.headers.authorization || '';
+  const token = h.startsWith('Bearer ') ? h.slice(7) : null;
+  if (!token) return res.status(401).json({ code: 401, message: '未登录', data: null });
+  try {
+    req.user = jwt.verify(token, SECRET);
+    next();
+  } catch (e) {
+    return res.status(401).json({ code: 401, message: 'token无效', data: null });
+  }
+}
+
+// C端登录
+app.post('/v1/capp/login', (req, res) => {
+  const { phone, code } = req.body || {};
+  if (!phone) return res.status(400).json({ code: 400, message: '请输入手机号', data: null });
+  const token = jwt.sign({ sub: phone, type: 'capp' }, SECRET, { expiresIn: '30d' });
+  res.json({
+    code: 200, message: 'success',
+    data: {
+      token, tokenType: 'Bearer', expiresIn: 2592000,
+      userInfo: {
+        id: 1, phone, name: '张三', avatar: '',
+        level: 'GOLD', levelName: '金卡会员',
+        points: 6200, balance: 500, growthValue: 6200,
+        cardNo: 'VIP20240001'
+      }
+    }
+  });
+});
+
+// C端首页数据
+app.get('/v1/capp/home', miniAuth, (req, res) => {
+  res.json({
+    code: 200, message: 'success',
+    data: {
+      notices: ['新会员注册即送100金币', '618活动火热进行中', '金币商城上新好物'],
+      banners: [
+        { id: 1, image: '', title: '618大促', link: '/pages/promotion' },
+        { id: 2, image: '', title: '金币翻倍', link: '/pages/points' },
+        { id: 3, image: '', title: '新品上市', link: '/pages/new' }
+      ],
+      services: [
+        { id: 1, name: '停车缴费', icon: 'parking', link: '/parking' },
+        { id: 2, name: '快速金币', icon: 'coins', link: '/points' },
+        { id: 3, name: '金币码', icon: 'qrcode', link: '/member' },
+        { id: 4, name: '会员权益', icon: 'crown', link: '/member' },
+        { id: 5, name: '联系客服', icon: 'headphones', link: '/service' },
+        { id: 6, name: '自助寻车', icon: 'search', link: '/parking' },
+        { id: 7, name: '我要打车', icon: 'car', link: '/taxi' },
+        { id: 8, name: '我要充电', icon: 'zap', link: '/charge' },
+        { id: 9, name: '金币兑换', icon: 'gift', link: '/mall' },
+        { id: 10, name: '餐饮导览', icon: 'utensils', link: '/restaurant' }
+      ],
+      events: [
+        { date: '07.05', title: '亲子运动会', location: 'A区1-3门外广场' },
+        { date: '07.07', title: '安全教育讲座', location: 'A区L2南风空间' },
+        { date: '07.15', title: '夏日音乐节', location: 'B区中庭广场' },
+        { date: '07.20', title: '会员专属日', location: '全馆参与' }
+      ],
+      merchants: [
+        { title: '新店开业', subtitle: '魏斯理汉堡', tag: '开业', image: '' },
+        { title: '新店入驻', subtitle: '金粒门餐饮', tag: '入驻', image: '' }
+      ],
+      categories: [
+        { name: '餐饮美食', count: 36 },
+        { name: '服饰鞋包', count: 27 },
+        { name: '儿童成长', count: 15 },
+        { name: '生活服务', count: 20 },
+        { name: '数码电器', count: 13 }
+      ],
+      flashSale: {
+        title: '限时秒杀', subtitle: '好物限时抢', endTime: '2026-07-25 10:00',
+        goods: [
+          { name: '星巴克拿铁', price: 15, originalPrice: 35, image: '' },
+          { name: '海底捞代金券', price: 50, originalPrice: 100, image: '' },
+          { name: '电影票2张', price: 29, originalPrice: 80, image: '' }
+        ]
+      }
+    }
+  });
+});
+
+// C端会员信息
+app.get('/v1/capp/member', miniAuth, (req, res) => {
+  res.json({
+    code: 200, message: 'success',
+    data: {
+      id: 1, name: '张三', phone: '138****8001', avatar: '',
+      level: 'GOLD', levelName: '金卡会员',
+      points: 6200, balance: 500, growthValue: 6200,
+      cardNo: 'VIP20240001',
+      couponCount: 8, orderCount: 24, totalSpent: 12000,
+      benefits: ['金卡免费停车2小时', '生日双倍金币', '金卡专属优惠券'],
+      nextLevel: 'DIAMOND', nextLevelPoints: 20000, progress: 31
+    }
+  });
+});
+
+// C端金币明细
+app.get('/v1/capp/points', miniAuth, (req, res) => {
+  res.json({
+    code: 200, message: 'success',
+    data: {
+      total: 6200,
+      todayEarn: 5,
+      logs: [
+        { id: 1, type: '消费', points: 100, balance: 6200, remark: '消费100元', time: '2024-06-15 10:30' },
+        { id: 2, type: '签到', points: 5, balance: 6300, remark: '每日签到', time: '2024-06-15 08:00' },
+        { id: 3, type: '消费', points: 50, balance: 6295, remark: '消费50元', time: '2024-06-14 15:20' },
+        { id: 4, type: '奖励', points: 200, balance: 6345, remark: '活动奖励', time: '2024-06-13 12:00' },
+        { id: 5, type: '消费', points: 80, balance: 6145, remark: '餐饮消费80元', time: '2024-06-12 18:30' },
+        { id: 6, type: '签到', points: 5, balance: 6065, remark: '每日签到', time: '2024-06-12 08:00' }
+      ]
+    }
+  });
+});
+
+// C端卡券
+app.get('/v1/capp/coupons', miniAuth, (req, res) => {
+  res.json({
+    code: 200, message: 'success',
+    data: [
+      { id: 1, name: '满200减30', type: 'fullcut', value: 30, minSpend: 200, status: 'unused', expireDate: '2024-12-31' },
+      { id: 2, name: '停车券1小时', type: 'parking', value: 60, minSpend: 0, status: 'unused', expireDate: '2024-09-30' },
+      { id: 3, name: '新人立减10', type: 'cash', value: 10, minSpend: 0, status: 'unused', expireDate: '2024-08-31' },
+      { id: 4, name: '星巴克咖啡券', type: 'goods', value: 35, minSpend: 0, status: 'used', expireDate: '2024-06-10' },
+      { id: 5, name: '满500减100', type: 'fullcut', value: 100, minSpend: 500, status: 'expired', expireDate: '2024-05-31' }
+    ]
+  });
+});
+
+// C端金币商城
+app.get('/v1/capp/mall', miniAuth, (req, res) => {
+  res.json({
+    code: 200, message: 'success',
+    data: {
+      banners: [],
+      categories: ['全部', '餐饮美食', '生活服务', '数码电器', '电影演出'],
+      goods: [
+        { id: 1, name: '星巴克咖啡券', points: 500, originalPrice: 35, stock: 100, image: '', category: '餐饮美食' },
+        { id: 2, name: '电影票2张', points: 1500, originalPrice: 80, stock: 50, image: '', category: '电影演出' },
+        { id: 3, name: '100元无门槛券', points: 1000, originalPrice: 100, stock: 80, image: '', category: '生活服务' },
+        { id: 4, name: '海底捞代金券', points: 800, originalPrice: 50, stock: 60, image: '', category: '餐饮美食' },
+        { id: 5, name: '蓝牙耳机', points: 5000, originalPrice: 299, stock: 20, image: '', category: '数码电器' },
+        { id: 6, name: '停车券3小时', points: 300, originalPrice: 15, stock: 200, image: '', category: '生活服务' }
+      ]
+    }
+  });
+});
+
+// C端停车
+app.get('/v1/capp/parking', miniAuth, (req, res) => {
+  res.json({
+    code: 200, message: 'success',
+    data: {
+      current: {
+        plate: '京A12345', inTime: '2024-06-15 10:00', duration: '2小时30分',
+        fee: 20, discount: 5, finalFee: 15
+      },
+      records: [
+        { id: 1, plate: '京A12345', inTime: '2024-06-01 10:00', outTime: '2024-06-01 12:00', duration: '2小时', fee: 20, discount: 5 },
+        { id: 2, plate: '京A12345', inTime: '2024-05-28 14:00', outTime: '2024-05-28 16:30', duration: '2小时30分', fee: 25, discount: 5 }
+      ],
+      benefit: { freeHours: 2, pointsRate: 1, level: 'GOLD' }
+    }
+  });
+});
+
+// C端餐饮导览
+app.get('/v1/capp/restaurant-guide', miniAuth, (req, res) => {
+  res.json({
+    code: 200, message: 'success',
+    data: [
+      { id: 1, name: '海底捞', cuisine: '火锅', floor: '4F', avgCost: 120, tag: '热门', image: '' },
+      { id: 2, name: '星巴克', cuisine: '咖啡', floor: '1F', avgCost: 35, tag: '推荐', image: '' },
+      { id: 3, name: '西贝莜面村', cuisine: '西北菜', floor: '3F', avgCost: 80, tag: '亲子', image: '' },
+      { id: 4, name: '喜茶', cuisine: '茶饮', floor: 'B1', avgCost: 25, tag: '网红', image: '' },
+      { id: 5, name: '麦当劳', cuisine: '快餐', floor: '1F', avgCost: 30, tag: '便捷', image: '' },
+      { id: 6, name: '凑凑火锅', cuisine: '火锅', floor: '5F', avgCost: 150, tag: '新店', image: '' }
+    ]
+  });
+});
+
+// C端订单
+app.get('/v1/capp/orders', miniAuth, (req, res) => {
+  res.json({
+    code: 200, message: 'success',
+    data: [
+      { id: 1, orderNo: 'O20240601001', goods: '纯棉T恤', amount: 99, status: '已完成', time: '2024-06-01 10:00' },
+      { id: 2, orderNo: 'O20240520002', goods: '星巴克咖啡券', amount: 35, status: '已完成', time: '2024-05-20 14:30' },
+      { id: 3, orderNo: 'O20240515003', goods: '电影票2张', amount: 80, status: '已退款', time: '2024-05-15 19:00' }
+    ]
+  });
+});
+
+// ============ 商户小程序 自定义业务API ============
+
+// 商户登录
+app.post('/v1/bapp/login', (req, res) => {
+  const { username, password } = req.body || {};
+  const merchants = {
+    'haidilao': { id: 1, username: 'haidilao', password: '123456', name: '海底捞', category: '餐饮', shopId: 1 },
+    'starbucks': { id: 2, username: 'starbucks', password: '123456', name: '星巴克', category: '餐饮', shopId: 2 }
+  };
+  const m = merchants[username];
+  if (!m || m.password !== password) {
+    return res.status(401).json({ code: 401, message: '账号或密码错误', data: null });
+  }
+  const token = jwt.sign({ sub: m.username, type: 'bapp', shopId: m.shopId }, SECRET, { expiresIn: '12h' });
+  res.json({
+    code: 200, message: 'success',
+    data: {
+      token, tokenType: 'Bearer', expiresIn: 43200,
+      userInfo: { id: m.id, username: m.username, name: m.name, category: m.category, shopId: m.shopId }
+    }
+  });
+});
+
+// 商户工作台
+app.get('/v1/bapp/dashboard', miniAuth, (req, res) => {
+  res.json({
+    code: 200, message: 'success',
+    data: {
+      shopName: '海底捞',
+      today: {
+        verifyCount: 28, revenue: 3680, newMembers: 5, issuedCoins: 368
+      },
+      week: {
+        verifyCount: 186, revenue: 24500, newMembers: 32, issuedCoins: 2450
+      },
+      tasks: [
+        { id: 1, title: '3张停车券待发放', desc: '请及时处理', level: 'normal' },
+        { id: 2, title: '5笔核销待确认', desc: '请核实后确认', level: 'high' }
+      ]
+    }
+  });
+});
+
+// 商户核销记录
+app.get('/v1/bapp/records', miniAuth, (req, res) => {
+  res.json({
+    code: 200, message: 'success',
+    data: [
+      { id: 1, orderNo: 'V20240615001', member: '张三', coupon: '满200减30', amount: 30, time: '2024-06-15 12:30', status: 'success' },
+      { id: 2, orderNo: 'V20240615002', member: '李四', coupon: '新人立减10', amount: 10, time: '2024-06-15 11:20', status: 'success' },
+      { id: 3, orderNo: 'V20240614003', member: '王五', coupon: '停车券1小时', amount: 0, time: '2024-06-14 18:00', status: 'success' },
+      { id: 4, orderNo: 'V20240614004', member: '赵六', coupon: '满500减100', amount: 100, time: '2024-06-14 16:45', status: 'success' },
+      { id: 5, orderNo: 'V20240613005', member: '张三', coupon: '星巴克咖啡券', amount: 35, time: '2024-06-13 09:15', status: 'success' }
+    ]
+  });
+});
+
+// 商户核销卡券
+app.post('/v1/bapp/coupon-verify', miniAuth, (req, res) => {
+  const { code } = req.body || {};
+  if (!code) return res.status(400).json({ code: 400, message: '请输入核销码', data: null });
+  res.json({
+    code: 200, message: '核销成功',
+    data: { code, member: '张三', coupon: '满200减30', amount: 30, time: new Date().toISOString().slice(0, 19).replace('T', ' ') }
+  });
+});
+
+// 商户发放停车券
+app.post('/v1/bapp/parking-issue', miniAuth, (req, res) => {
+  const { plate, hours } = req.body || {};
+  if (!plate) return res.status(400).json({ code: 400, message: '请输入车牌号', data: null });
+  res.json({
+    code: 200, message: '停车券发放成功',
+    data: { plate, hours: hours || 1, time: new Date().toISOString().slice(0, 19).replace('T', ' ') }
+  });
+});
+
+// 商户个人信息
+app.get('/v1/bapp/profile', miniAuth, (req, res) => {
+  res.json({
+    code: 200, message: 'success',
+    data: {
+      shopName: '海底捞', category: '餐饮', floor: '4F',
+      contact: '王经理', phone: '13900139001',
+      memberCount: 580, monthRevenue: 98000, monthVerify: 420
+    }
+  });
+});
+
 for (const route of moduleRoutes) {
   app.use(`/v1/${route}`, crudRouter(route));
 }

@@ -13,6 +13,7 @@ import {
   BuildOutlined, FilterOutlined, RightOutlined
 } from '@ant-design/icons';
 import { fetchListData, createItemData, updateItemData, deleteItemData, request } from '../services/request';
+import { MiniIcon } from '../components/MiniIcons';
 
 const { TabPane } = Tabs;
 
@@ -55,7 +56,7 @@ const COMPONENT_TYPES: CompTypeDef[] = [
     name: '公告栏',
     icon: <BellOutlined />,
     group: '基础',
-    defaultConfig: { text: '欢迎来到我们的商城！', color: '#ff4d4f', bgColor: '#fff7e6', icon: '🔊' }
+    defaultConfig: { text: '欢迎来到我们的商城！', color: '#ff4d4f', bgColor: '#fff7e6', icon: 'bell' }
   },
   {
     type: 'banner',
@@ -117,16 +118,16 @@ const COMPONENT_TYPES: CompTypeDef[] = [
     group: '服务',
     defaultConfig: {
       items: [
-        { icon: '🚗', text: '停车缴费', link: '/pages/parking' },
-        { icon: '⭐', text: '快速积分', link: '/pages/points' },
-        { icon: '🔢', text: '珑珠码', link: '/pages/code' },
-        { icon: '👤', text: '会员权益', link: '/pages/member' },
-        { icon: '💬', text: '联系客服', link: '/pages/service' },
-        { icon: '🔍', text: '自助寻车', link: '/pages/findcar' },
-        { icon: '🚕', text: '我要打车', link: '/pages/taxi' },
-        { icon: '⚡', text: '我要充电', link: '/pages/charge' },
-        { icon: '🐾', text: '宠物服务', link: '/pages/pet' },
-        { icon: '☰', text: '全部服务', link: '/pages/services' }
+        { icon: 'parking', text: '停车缴费', link: '/pages/parking' },
+        { icon: 'coins', text: '快速金币', link: '/pages/points' },
+        { icon: 'qrcode', text: '金币码', link: '/pages/code' },
+        { icon: 'crown', text: '会员权益', link: '/pages/member' },
+        { icon: 'headphones', text: '联系客服', link: '/pages/service' },
+        { icon: 'search', text: '自助寻车', link: '/pages/findcar' },
+        { icon: 'car', text: '我要打车', link: '/pages/taxi' },
+        { icon: 'zap', text: '我要充电', link: '/pages/charge' },
+        { icon: 'gift', text: '金币兑换', link: '/pages/mall' },
+        { icon: 'utensils', text: '餐饮导览', link: '/pages/restaurant' }
       ],
       columns: 5
     }
@@ -327,7 +328,9 @@ const ComponentPreview: React.FC<{ comp: PageComponent; isSelected: boolean; onC
             padding: '8px 12px', background: cfg.bgColor || '#fff7e6',
             display: 'flex', alignItems: 'center', gap: 8, fontSize: 12
           }}>
-            <span style={{ color: cfg.color || '#ff4d4f', flexShrink: 0 }}>{cfg.icon || '🔊'}</span>
+            <span style={{ color: cfg.color || '#ff4d4f', flexShrink: 0, display: 'flex', alignItems: 'center' }}>
+              <MiniIcon name={cfg.icon || 'bell'} size={14} />
+            </span>
             <span style={{ color: '#666', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {cfg.text || '公告内容'}
             </span>
@@ -422,9 +425,9 @@ const ComponentPreview: React.FC<{ comp: PageComponent; isSelected: boolean; onC
                   <div style={{
                     width: 48, height: 48, borderRadius: '50%', background: '#f5f5f5',
                     margin: '0 auto 6px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 24
+                    fontSize: 20, color: '#ff4d4f'
                   }}>
-                    {item.icon || '📦'}
+                    <MiniIcon name={item.icon} />
                   </div>
                   <div style={{ fontSize: 11, color: '#333' }}>{item.text || `服务${i + 1}`}</div>
                 </div>
@@ -647,7 +650,7 @@ const ComponentPreview: React.FC<{ comp: PageComponent; isSelected: boolean; onC
                 <div style={{ fontSize: 12, color: '#999', marginTop: 2 }}>金卡会员</div>
               </div>
               <div style={{ textAlign: 'right' }}>
-                {cfg.showPoints && <div style={{ fontSize: 14, fontWeight: 600, color: '#ff4d4f' }}>6200 积分</div>}
+                {cfg.showPoints && <div style={{ fontSize: 14, fontWeight: 600, color: '#ff4d4f' }}>6200 金币</div>}
                 {cfg.showCouponCount && <div style={{ fontSize: 12, color: '#999', marginTop: 2 }}>3张优惠券</div>}
               </div>
             </div>
@@ -858,22 +861,38 @@ const ConfigForm: React.FC<{
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {(cfg.items || []).map((item: any, idx: number) => (
                   <Card key={idx} size="small" style={{ background: '#fafafa' }}>
-                    <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                      <Input placeholder="图标(emoji)" value={item.icon} onChange={e => {
+                    <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                      <Select value={item.icon} onChange={v => {
                         const items = [...cfg.items];
-                        items[idx] = { ...items[idx], icon: e.target.value };
+                        items[idx] = { ...items[idx], icon: v };
                         updateConfig('items', items);
-                      }} style={{ width: 80 }} />
+                      }} style={{ width: 120 }} options={[
+                        { label: '停车', value: 'parking' },
+                        { label: '金币', value: 'coins' },
+                        { label: '二维码', value: 'qrcode' },
+                        { label: '皇冠', value: 'crown' },
+                        { label: '客服', value: 'headphones' },
+                        { label: '搜索', value: 'search' },
+                        { label: '汽车', value: 'car' },
+                        { label: '充电', value: 'zap' },
+                        { label: '礼物', value: 'gift' },
+                        { label: '餐具', value: 'utensils' },
+                        { label: '商城', value: 'shopping-bag' },
+                        { label: '标签', value: 'tag' },
+                        { label: '铃铛', value: 'bell' },
+                        { label: '用户', value: 'user' },
+                        { label: '设置', value: 'settings' },
+                      ]} />
                       <Input placeholder="服务名称" value={item.text} onChange={e => {
                         const items = [...cfg.items];
                         items[idx] = { ...items[idx], text: e.target.value };
                         updateConfig('items', items);
-                      }} />
+                      }} style={{ flex: 1 }} />
                       <Input placeholder="跳转链接" value={item.link} onChange={e => {
                         const items = [...cfg.items];
                         items[idx] = { ...items[idx], link: e.target.value };
                         updateConfig('items', items);
-                      }} style={{ flex: 1 }} />
+                      }} style={{ width: 120 }} />
                       <Button danger size="small" onClick={() => {
                         const items = cfg.items.filter((_: any, i: number) => i !== idx);
                         updateConfig('items', items);
@@ -882,7 +901,7 @@ const ConfigForm: React.FC<{
                   </Card>
                 ))}
                 <Button type="dashed" block icon={<PlusOutlined />} onClick={() => {
-                  updateConfig('items', [...(cfg.items || []), { icon: '📦', text: '', link: '' }]);
+                  updateConfig('items', [...(cfg.items || []), { icon: 'parking', text: '', link: '' }]);
                 }}>添加服务项</Button>
               </div>
             </Form.Item>
@@ -1149,7 +1168,7 @@ const ConfigForm: React.FC<{
       case 'memberInfo':
         return (
           <>
-            <Form.Item label="显示积分"><Switch checked={cfg.showPoints} onChange={v => updateConfig('showPoints', v)} /></Form.Item>
+            <Form.Item label="显示金币"><Switch checked={cfg.showPoints} onChange={v => updateConfig('showPoints', v)} /></Form.Item>
             <Form.Item label="显示等级"><Switch checked={cfg.showLevel} onChange={v => updateConfig('showLevel', v)} /></Form.Item>
             <Form.Item label="显示余额"><Switch checked={cfg.showBalance} onChange={v => updateConfig('showBalance', v)} /></Form.Item>
             <Form.Item label="显示优惠券数量"><Switch checked={cfg.showCouponCount} onChange={v => updateConfig('showCouponCount', v)} /></Form.Item>
