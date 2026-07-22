@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>智慧商业会员营销平台</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .container {
+      background: #fff;
+      border-radius: 16px;
+      padding: 48px 36px;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    }
+    .title {
+      font-size: 26px;
+      font-weight: 700;
+      text-align: center;
+      color: #1a1a2e;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      font-size: 14px;
+      color: #888;
+      text-align: center;
+      margin-bottom: 36px;
+    }
+    .app-card {
+      display: flex;
+      align-items: center;
+      padding: 18px 20px;
+      border: 1px solid #eee;
+      border-radius: 12px;
+      margin-bottom: 14px;
+      text-decoration: none;
+      color: #1a1a2e;
+      transition: all 0.2s ease;
+    }
+    .app-card:hover {
+      border-color: #667eea;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
+    }
+    .app-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 16px;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .app-icon.admin { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; }
+    .app-icon.member { background: linear-gradient(135deg, #f093fb, #f5576c); color: #fff; }
+    .app-icon.merchant { background: linear-gradient(135deg, #4facfe, #00f2fe); color: #fff; }
+    .app-info { flex: 1; }
+    .app-name {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .app-desc {
+      font-size: 12px;
+      color: #999;
+    }
+    .app-arrow {
+      color: #ccc;
+      font-size: 20px;
+    }
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: #bbb;
+      margin-top: 28px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">智慧商业会员营销平台</h1>
+    <p class="subtitle">请选择要访问的应用</p>
+    <a class="app-card" href="/hyxt/admin/">
+      <div class="app-icon admin">⚙</div>
+      <div class="app-info">
+        <div class="app-name">后台管理系统</div>
+        <div class="app-desc">运营管理、会员管理、数据统计</div>
+      </div>
+      <div class="app-arrow">›</div>
+    </a>
+    <a class="app-card" href="/hyxt/member/">
+      <div class="app-icon member">👤</div>
+      <div class="app-info">
+        <div class="app-name">C端会员小程序</div>
+        <div class="app-desc">会员积分、卡券、商城、停车</div>
+      </div>
+      <div class="app-arrow">›</div>
+    </a>
+    <a class="app-card" href="/hyxt/merchant/">
+      <div class="app-icon merchant">🏪</div>
+      <div class="app-info">
+        <div class="app-name">商户助手小程序</div>
+        <div class="app-desc">核销管理、数据看板、发券</div>
+      </div>
+      <div class="app-arrow">›</div>
+    </a>
+    <div class="footer">Powered by 恒伟智慧商业</div>
+  </div>
+</body>
+</html>
